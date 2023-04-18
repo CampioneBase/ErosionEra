@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "erosion-era",
+	"version": "1.0.0",
+	"name": "Erosion Era",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Lunastic"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/erosion-era/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.lunastic.erosionEra.ErosionEraMod"
+		]
+	},
+	"mixins": [
+		"erosion-era.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.19",
+		"minecraft": "~1.16.4",
+		"java": ">=16"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
