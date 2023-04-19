@@ -12,27 +12,36 @@ import net.minecraft.util.Lazy;
 
 import java.util.function.Supplier;
 
-public enum ErosionEraArmorMaterial implements ArmorMaterial {
+public enum ErosionEraArmorMaterials implements ArmorMaterial {
 
-    TEST_MATERIAL("test", 5, new int[]{1, 2, 3, 1}, 15,
+    Basic_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
             SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.1F, () -> Ingredient.ofItems(ModItems.TEST_ITEM))
     ;
+    // 所有盔甲的基础耐久数值 {头, 胸甲, 腿甲, 鞋}
     private static final int[] BASE_DURABILITY = {13, 15, 16, 11};
+
+    // 材质名称
     private final String name;
+    // 耐久倍率
     private final int durabilityMultiplier;
+    // 护甲值 {头, 胸甲, 腿甲, 鞋}
     private final int[] armorValues;
+    // 最大附魔等级
     private final int enchantability;
+    // 穿戴音效
     private final SoundEvent equipSound;
+    // 护甲韧性
     private final float toughness;
+    // 修复材料（懒加载）
     private final Lazy<Ingredient> repairIngredient;
 
-    ErosionEraArmorMaterial(String name,
-                            int durabilityMultiplier,
-                            int[] armorValueArr,
-                            int enchantability,
-                            SoundEvent soundEvent,
-                            float toughness,
-                            Supplier<Ingredient> repairIngredient) {
+    ErosionEraArmorMaterials(String name,
+                             int durabilityMultiplier,
+                             int[] armorValueArr,
+                             int enchantability,
+                             SoundEvent soundEvent,
+                             float toughness,
+                             Supplier<Ingredient> repairIngredient) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
         this.armorValues = armorValueArr;

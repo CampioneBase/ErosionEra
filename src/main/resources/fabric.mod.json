@@ -12,7 +12,7 @@
 		"sources": ""
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/erosion-era/icon.png",
+	"icon": "assets/erosion_era/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

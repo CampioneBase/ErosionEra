@@ -7,23 +7,31 @@ import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class AbstractArmorItem extends ArmorItem {
+/** 盔甲物品总类 */
+public class ArmorItemBase extends ArmorItem {
 
     /** 装备组 */
     public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
-            new Identifier(ErosionEraMod.NAMESPACE, "equipment-group"))
+            new Identifier(ErosionEraMod.NAMESPACE, "armor_group"))
             .icon(() -> new ItemStack(Items.IRON_INGOT))
             .build();
 
-    public AbstractArmorItem(String name, ArmorMaterial material, EquipmentSlot slot) {
-        super(material, slot, new ArmorSetting());
+    /**
+     * 盔甲物品总类
+     * @param name 盔甲注册名称
+     * @param material 盔甲游戏材质
+     * @param slot 盔甲部位
+     */
+    public ArmorItemBase(String name, ArmorMaterial material, EquipmentSlot slot) {
+        super(material, slot, new ArmorItemSetting());
         Registry.register(Registry.ITEM, new Identifier(ErosionEraMod.NAMESPACE, name), this);
     }
 
-    public static class ArmorSetting extends Item.Settings{
-        public ArmorSetting(){
+    /** 盔甲设定类 */
+    public static class ArmorItemSetting extends Item.Settings{
+        public ArmorItemSetting(){
             super();
-            this.group(AbstractArmorItem.GROUP);
+            this.group(ArmorItemBase.GROUP);
         }
     }
 }

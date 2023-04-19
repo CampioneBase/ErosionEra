@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "erosion-era:item/test-item"
+    "layer0": "erosion_era:item/test_item"
   }
 }
