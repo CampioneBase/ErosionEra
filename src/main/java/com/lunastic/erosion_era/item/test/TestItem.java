@@ -12,6 +12,10 @@ import java.util.List;
 
 public class TestItem extends AbstractErodedItem {
 
+    public TestItem(String name) {
+        super(name);
+    }
+
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
 

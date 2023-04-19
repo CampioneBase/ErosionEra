@@ -23,6 +23,6 @@ public class ErosionEraMod implements ModInitializer {
 
 		LOGGER.info("Erosion Befalling!");
 
-		ModItems.load();
+		ModItems.register();
 	}
 }
