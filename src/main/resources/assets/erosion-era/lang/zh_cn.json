@@ -1,3 +1,7 @@
 {
-  "item.erosion-era.test-item": "测试物品"
+  "itemGroup.erosion-era.test-group": "测试组",
+  "item.erosion-era.test-item": "测试物品",
+  "item.erosion-era.test-item-description": "测试物品说明",
+
+  "itemGroup.erosion-era.eroded-group": "受侵蚀物品"
 }

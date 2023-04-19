@@ -1,4 +1,4 @@
-package com.lunastic.erosionEra.mixin;
+package com.lunastic.erosion_era.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
