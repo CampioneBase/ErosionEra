@@ -5,6 +5,8 @@ import com.lunastic.erosion_era.item.armor.ArmorItemBase;
 import com.lunastic.erosion_era.item.armor.ErosionEraArmorMaterials;
 import com.lunastic.erosion_era.item.basic.ErosionDebris;
 import com.lunastic.erosion_era.item.test.TestItem;
+import com.lunastic.erosion_era.item.tool.BasicPickaxeItem;
+import com.lunastic.erosion_era.item.tool.ErosionEraToolMaterials;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 
@@ -17,10 +19,13 @@ public class ModItems{
     public static final Item EROSION_DEBRIS = new ErosionDebris();
 
     // 装备组
-    public static final Item BASIC_HELMET = new ArmorItemBase("basic_helmet", ErosionEraArmorMaterials.Basic_MATERIAL, EquipmentSlot.HEAD);
-    public static final Item BASIC_CHEST = new ArmorItemBase("basic_chestplate", ErosionEraArmorMaterials.Basic_MATERIAL, EquipmentSlot.CHEST);
-    public static final Item BASIC_LEGS = new ArmorItemBase("basic_leggings", ErosionEraArmorMaterials.Basic_MATERIAL, EquipmentSlot.LEGS);
-    public static final Item BASIC_FEET = new ArmorItemBase("basic_boots", ErosionEraArmorMaterials.Basic_MATERIAL, EquipmentSlot.FEET);
+    public static final Item BASIC_HELMET = new ArmorItemBase("basic_helmet", ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.HEAD);
+    public static final Item BASIC_CHEST = new ArmorItemBase("basic_chestplate", ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.CHEST);
+    public static final Item BASIC_LEGS = new ArmorItemBase("basic_leggings", ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.LEGS);
+    public static final Item BASIC_FEET = new ArmorItemBase("basic_boots", ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.FEET);
+
+    // 工具组
+    public static final Item BASIC_PICKAXE = new BasicPickaxeItem("basic_pickaxe", ErosionEraToolMaterials.BASIC_MATERIAL, 1, -2.8F);
 
     public static void register(){
         ErosionEraMod.LOGGER.info("加载物品");

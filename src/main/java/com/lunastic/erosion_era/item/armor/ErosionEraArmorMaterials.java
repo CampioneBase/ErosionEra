@@ -1,22 +1,37 @@
 package com.lunastic.erosion_era.item.armor;
 
+import com.lunastic.erosion_era.ErosionEraMod;
 import com.lunastic.erosion_era.item.ModItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 
 import java.util.function.Supplier;
 
 public enum ErosionEraArmorMaterials implements ArmorMaterial {
 
-    Basic_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
-            SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.1F, () -> Ingredient.ofItems(ModItems.TEST_ITEM))
+    BASIC_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
+            SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0F, 0F,
+            () -> Ingredient.ofItems(ModItems.TEST_ITEM))
     ;
+
+    /** 装备组 */
+    public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
+            new Identifier(ErosionEraMod.NAMESPACE, "armor_group"))
+            .icon(() -> new ItemStack(Items.IRON_INGOT))
+            .build();
+
+
     // 所有盔甲的基础耐久数值 {头, 胸甲, 腿甲, 鞋}
     private static final int[] BASE_DURABILITY = {13, 15, 16, 11};
 
@@ -32,22 +47,26 @@ public enum ErosionEraArmorMaterials implements ArmorMaterial {
     private final SoundEvent equipSound;
     // 护甲韧性
     private final float toughness;
-    // 修复材料（懒加载）
+    // 击退抗性
+    private final float knockbackResistance;
+    // 修复材料/方式（懒加载）
     private final Lazy<Ingredient> repairIngredient;
 
     ErosionEraArmorMaterials(String name,
                              int durabilityMultiplier,
                              int[] armorValueArr,
                              int enchantability,
-                             SoundEvent soundEvent,
+                             SoundEvent equipSound,
                              float toughness,
+                             float knockbackResistance,
                              Supplier<Ingredient> repairIngredient) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
         this.armorValues = armorValueArr;
         this.enchantability = enchantability;
-        this.equipSound = soundEvent;
+        this.equipSound = equipSound;
         this.toughness = toughness;
+        this.knockbackResistance = knockbackResistance;
         this.repairIngredient = new Lazy<>(repairIngredient);
     }
 
@@ -95,7 +114,13 @@ public enum ErosionEraArmorMaterials implements ArmorMaterial {
     }
 
     @Override
+    // leave this value at 0. If you want to implement it,
+    // write '0.XF' (in which X is how much knockback protection you want),
+    // and I'll teach you how to make it work later on.
+    // 将此值保留为0。如果你想实现它，
+    // 请写“0.XF”（其中X是你想要的击退保护程度），
+    // 我稍后会教你如何使它发挥作用。
     public float getKnockbackResistance() {
-        return 0;
+        return this.knockbackResistance;
     }
 }

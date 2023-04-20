@@ -12,5 +12,8 @@
     "item.erosion_era.basic_helmet": "基础侵蚀头盔",
     "item.erosion_era.basic_chestplate": "基础侵蚀胸甲",
     "item.erosion_era.basic_leggings": "基础侵蚀腿甲",
-    "item.erosion_era.basic_boots": "基础侵蚀鞋子"
+    "item.erosion_era.basic_boots": "基础侵蚀鞋子",
+
+  "itemGroup.erosion_era.tool_group": "侵蚀工具",
+    "item.erosion_era.basic_pickaxe": "基础侵蚀镐"
 }
