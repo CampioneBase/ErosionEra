@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "erosion_era:item/basic_boots"
+  }
+}
