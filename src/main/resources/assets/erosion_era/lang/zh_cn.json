@@ -1,7 +1,5 @@
 {
-  "itemGroup.erosion_era.test_group": "测试组",
-    "item.erosion_era.test_item": "测试物品",
-      "item.erosion_era.test_item_description": "测试物品说明",
+  "erosion_era": "侵蚀国度",
 
   "itemGroup.erosion_era.eroded_group": "受侵蚀物品",
 
@@ -15,5 +13,13 @@
     "item.erosion_era.basic_boots": "基础侵蚀鞋子",
 
   "itemGroup.erosion_era.tool_group": "侵蚀工具",
-    "item.erosion_era.basic_pickaxe": "基础侵蚀镐"
+    "item.erosion_era.basic_pickaxe": "基础侵蚀镐",
+
+  "itemGroup.erosion_era.eroded_block": "侵蚀方块",
+    "item.erosion_era.eroded_glass_block": "受侵蚀草方块",
+
+
+  "itemGroup.erosion_era.test_group": "测试组",
+    "item.erosion_era.test_item": "测试物品",
+      "item.erosion_era.test_item_description": "测试物品说明"
 }

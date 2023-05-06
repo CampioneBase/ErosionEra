@@ -4,16 +4,13 @@ import com.lunastic.erosion_era.ErosionEraMod;
 import com.lunastic.erosion_era.item.armor.ArmorItemBase;
 import com.lunastic.erosion_era.item.armor.ErosionEraArmorMaterials;
 import com.lunastic.erosion_era.item.basic.ErosionDebris;
-import com.lunastic.erosion_era.item.test.TestItem;
 import com.lunastic.erosion_era.item.tool.BasicPickaxeItem;
 import com.lunastic.erosion_era.item.tool.ErosionEraToolMaterials;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 
 // 物品类单例集合
-public class ModItems{
-
-    public static final Item TEST_ITEM = new TestItem("test_item");
+public class ErosionEraItems {
 
     // 基础组
     public static final Item EROSION_DEBRIS = new ErosionDebris();
@@ -28,7 +25,7 @@ public class ModItems{
     public static final Item BASIC_PICKAXE = new BasicPickaxeItem("basic_pickaxe", ErosionEraToolMaterials.BASIC_MATERIAL, 1, -2.8F);
 
     public static void register(){
-        ErosionEraMod.LOGGER.info("加载物品");
+        ErosionEraMod.LOGGER.info("Loading Erosion Era Items......");
     }
 }
 

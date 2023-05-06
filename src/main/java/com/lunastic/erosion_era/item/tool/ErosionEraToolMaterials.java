@@ -1,8 +1,9 @@
 package com.lunastic.erosion_era.item.tool;
 
 import com.lunastic.erosion_era.ErosionEraMod;
-import com.lunastic.erosion_era.item.ModItems;
+import com.lunastic.erosion_era.item.ErosionEraItems;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
@@ -13,14 +14,15 @@ import net.minecraft.util.Lazy;
 import java.util.function.Supplier;
 
 public enum ErosionEraToolMaterials implements ToolMaterial {
+    // 基础侵蚀材料
     BASIC_MATERIAL(2, 121, 6.0F, 2.0F, 22,
-            ()-> Ingredient.ofItems(ModItems.EROSION_DEBRIS))
+            ()-> Ingredient.ofItems(ErosionEraItems.EROSION_DEBRIS))
     ;
 
     // 工具组
     public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
             new Identifier(ErosionEraMod.NAMESPACE, "tool_group"))
-            .icon(() -> new ItemStack(ModItems.EROSION_DEBRIS))
+            .icon(() -> new ItemStack(ErosionEraItems.EROSION_DEBRIS))
             .build();
 
     // 挖掘等级：木镐  0 = 金镐 0 < 石镐 1 < 铁镐 2 < 钻石镐 3 < 下界合金镐 4

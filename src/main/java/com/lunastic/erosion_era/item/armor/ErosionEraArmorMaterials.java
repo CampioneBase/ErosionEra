@@ -1,7 +1,7 @@
 package com.lunastic.erosion_era.item.armor;
 
 import com.lunastic.erosion_era.ErosionEraMod;
-import com.lunastic.erosion_era.item.ModItems;
+import com.lunastic.erosion_era.item.ErosionEraItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -9,7 +9,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -22,13 +21,13 @@ public enum ErosionEraArmorMaterials implements ArmorMaterial {
 
     BASIC_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
             SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0F, 0F,
-            () -> Ingredient.ofItems(ModItems.TEST_ITEM))
+            () -> Ingredient.ofItems(ErosionEraItems.EROSION_DEBRIS))
     ;
 
     /** 装备组 */
     public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
             new Identifier(ErosionEraMod.NAMESPACE, "armor_group"))
-            .icon(() -> new ItemStack(Items.IRON_INGOT))
+            .icon(() -> new ItemStack(ErosionEraItems.EROSION_DEBRIS))
             .build();
 
 

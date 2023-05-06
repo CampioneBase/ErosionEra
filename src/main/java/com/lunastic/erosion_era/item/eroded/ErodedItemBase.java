@@ -1,7 +1,7 @@
 package com.lunastic.erosion_era.item.eroded;
 
 import com.lunastic.erosion_era.ErosionEraMod;
-import com.lunastic.erosion_era.item.ModItems;
+import com.lunastic.erosion_era.item.ErosionEraItems;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.*;
@@ -14,7 +14,7 @@ public class ErodedItemBase extends Item {
     /** 受侵蚀物品组 */
     public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
             new Identifier(ErosionEraMod.NAMESPACE, "eroded_group"))
-            .icon(() -> new ItemStack(ModItems.TEST_ITEM))
+            .icon(() -> new ItemStack(ErosionEraItems.EROSION_DEBRIS))
             .build();
 
     /**

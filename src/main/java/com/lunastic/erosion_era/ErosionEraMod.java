@@ -1,6 +1,7 @@
 package com.lunastic.erosion_era;
 
-import com.lunastic.erosion_era.item.ModItems;
+import com.lunastic.erosion_era.block.ErosionEraBlocks;
+import com.lunastic.erosion_era.item.ErosionEraItems;
 import net.fabricmc.api.ModInitializer;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public class ErosionEraMod implements ModInitializer {
 
 		LOGGER.info("Erosion Befalling!");
 
-		ModItems.register();
+		ErosionEraItems.register();
+		ErosionEraBlocks.register();
 	}
 }

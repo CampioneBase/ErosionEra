@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+        "model": "erosion_era:block/eroded_grass_block"
+    }
+  }
+}
