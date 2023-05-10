@@ -1,18 +1,10 @@
 package com.lunastic.erosion_era.block.eroded;
 
-import com.lunastic.erosion_era.ErosionEraMod;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.render.RenderLayer;
 
 public class ErodedGrassBlock extends ErodedBlockBase{
     public ErodedGrassBlock() {
@@ -20,19 +12,10 @@ public class ErodedGrassBlock extends ErodedBlockBase{
                 .copyOf(Blocks.GRASS_BLOCK)
                 .requiresTool()
         );
+        // 使用草方块的纹理，添加侵蚀颜色
+        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> 0xd412e0, this);
+        ColorProviderRegistry.ITEM.register((itemStack, layer) -> 0xd412e0, this);
+        // 处理半透明纹理
+        BlockRenderLayerMap.INSTANCE.putBlock(this, RenderLayer.getTranslucent());
     }
-
-
-    @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        ErosionEraMod.LOGGER.info("Eroded Grass has been placed！" + placer.getName().asString());
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        player.sendMessage(Text.of(player.getName().asString() + " clicks this block with " + player.getActiveItem().toString()), false);
-        return ActionResult.PASS;
-    }
-
-
 }

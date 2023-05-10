@@ -16,7 +16,7 @@
     "item.erosion_era.basic_pickaxe": "基础侵蚀镐",
 
   "itemGroup.erosion_era.eroded_block": "侵蚀方块",
-    "item.erosion_era.eroded_glass_block": "受侵蚀草方块",
+    "block.erosion_era.eroded_grass_block": "受侵蚀草方块",
 
 
   "itemGroup.erosion_era.test_group": "测试组",
