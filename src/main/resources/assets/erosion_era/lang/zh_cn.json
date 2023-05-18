@@ -15,9 +15,12 @@
   "itemGroup.erosion_era.tool_group": "侵蚀工具",
     "item.erosion_era.basic_pickaxe": "基础侵蚀镐",
 
-  "itemGroup.erosion_era.eroded_block": "侵蚀方块",
+  "itemGroup.erosion_era.eroded_block": "受侵蚀方块",
     "block.erosion_era.eroded_grass_block": "受侵蚀草方块",
+    "block.erosion_era.eroded_dirt": "受侵蚀泥土",
 
+  "itemGroup.erosion_era.erosion_env_block": "侵蚀环境方块",
+    "block.erosion_era.shimmer_core": "微光核心",
 
   "itemGroup.erosion_era.test_group": "测试组",
     "item.erosion_era.test_item": "测试物品",

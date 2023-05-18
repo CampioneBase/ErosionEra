@@ -24,7 +24,7 @@ public class ErosionEraItems {
     // 工具组
     public static final Item BASIC_PICKAXE = new BasicPickaxeItem("basic_pickaxe", ErosionEraToolMaterials.BASIC_MATERIAL, 1, -2.8F);
 
-    public static void register(){
+    public static void registering(){
         ErosionEraMod.LOGGER.info("Loading Erosion Era Items......");
     }
 }

@@ -1,3 +1,3 @@
 {
-  "parent": "erosion_era:block/eroded_grass_block"
+  "parent": "erosion_era:block/eroded_block/eroded_grass_block"
 }

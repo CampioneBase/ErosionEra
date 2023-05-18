@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "": [
+      {"model": "erosion_era:block/eroded_block/eroded_dirt1", "y": 0},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt1", "y": 90},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt1", "y": 180},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt1", "y": 270},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt2", "y": 0},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt2", "y": 90},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt2", "y": 180},
+      {"model": "erosion_era:block/eroded_block/eroded_dirt2", "y": 270}
+    ]
+  }
+}

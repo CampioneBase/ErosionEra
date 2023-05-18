@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+        "model": "erosion_era:block/shimmer_core"
+    }
+  }
+}
