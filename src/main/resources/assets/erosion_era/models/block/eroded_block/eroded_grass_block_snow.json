@@ -3,7 +3,7 @@
     "textures": {
         "particle": "block/dirt",
         "bottom": "block/dirt",
-        "top": "erosion_era:block/eroded_grass_block_top",
+        "top": "block/grass_block_top",
         "side": "block/grass_block_snow",
         "erosion1": "erosion_era:block/erosion_overlay/erosion_overlay1",
         "erosion2": "erosion_era:block/erosion_overlay/erosion_overlay2"

@@ -27,7 +27,7 @@ import java.util.Random;
  *     <li>无法开垦</li>
  * </ul>
  * <p>
- *     此外，我发现能否种花是是写死在花方块类{@link PlantBlock}里的（即，判断右击的方块是否为特定方块）
+ *     此外，我发现能否种花是是写死在种植方块类{@link PlantBlock}里的（即，判断右击的方块是否为特定方块）
  * </p>
  * @author Lunastic
  */

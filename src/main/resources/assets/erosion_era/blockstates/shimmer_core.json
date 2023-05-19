@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-        "model": "erosion_era:block/shimmer_core"
+        "model": "erosion_era:block/env_block/shimmer_core"
     }
   }
 }

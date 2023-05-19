@@ -2,6 +2,7 @@ package com.lunastic.erosion_era.block.environment;
 
 import com.lunastic.erosion_era.ErosionEraMod;
 import com.lunastic.erosion_era.block.ErosionEraBlocks;
+import com.lunastic.erosion_era.tag.ErosionEraTags;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -22,7 +23,7 @@ public class EnvBlock extends Block {
 
     public static final ItemGroup GROUP = FabricItemGroupBuilder
             .create(new Identifier(ErosionEraMod.NAMESPACE, "erosion_env_block"))
-            .icon(() -> new ItemStack(ErosionEraBlocks.SHIMMER_CODE))
+            .icon(() -> new ItemStack(ErosionEraBlocks.SHIMMER_CORE))
             .build();
 
     public EnvBlock(String name, Block.Settings settings) {
@@ -36,7 +37,10 @@ public class EnvBlock extends Block {
     /** 侵蚀方块默认设置 */
     public static class Settings extends FabricBlockSettings {
         private Settings(FabricBlockSettings settings) {
-            super(settings);
+            super(settings
+                    .breakByTool(ErosionEraTags.EROSION_TOOL)
+                    .requiresTool()
+            );
         }
 
         public static Settings copyOf(Block block){

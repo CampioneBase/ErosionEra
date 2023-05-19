@@ -6,7 +6,7 @@ import net.minecraft.block.Material;
 
 public class ShimmerCoreBlock extends EnvBlock {
     public ShimmerCoreBlock() {
-        super("shimmer_code", FabricBlockSettings
+        super("shimmer_core", FabricBlockSettings
                 .of(Material.METAL)
                 .breakByTool(ErosionEraTags.EROSION_TOOL)
         );
