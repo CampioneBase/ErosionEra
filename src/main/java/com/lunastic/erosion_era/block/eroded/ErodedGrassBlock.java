@@ -35,7 +35,7 @@ public class ErodedGrassBlock extends ErodedBlock {
     public static final BooleanProperty SNOWY = Properties.SNOWY;
 
     public ErodedGrassBlock() {
-        super("eroded_grass_block", ErodedGrassBlock.Settings
+        super(ErodedGrassBlock.Settings
                 .copyOf(Blocks.GRASS_BLOCK)
         );
         // 添加默认积雪状态

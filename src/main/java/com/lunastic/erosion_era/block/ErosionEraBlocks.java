@@ -8,12 +8,14 @@ import com.lunastic.erosion_era.block.eroded.ErodedGrassBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
-public class ErosionEraBlocks {
+public final class ErosionEraBlocks {
 
     // --------- Eroded block           受侵蚀方块组
-    public static final Block ERODED_GRASS_BLOCK = new ErodedGrassBlock();
-    public static final Block ERODED_DIRT = new ErodedBlock("eroded_dirt", ErodedBlock.Settings.copyOf(Blocks.DIRT));
+    public static final Block ERODED_GRASS_BLOCK = ErosionEraBlocks.register("eroded_grass_block", new ErodedGrassBlock());
+    public static final Block ERODED_DIRT = ErosionEraBlocks.register("eroded_dirt", new ErodedBlock(ErodedBlock.Settings.copyOf(Blocks.DIRT)));
 
     // --------- Environment block      环境方块组
     public static final Block SHIMMER_CORE = new ShimmerCoreBlock();
@@ -24,5 +26,13 @@ public class ErosionEraBlocks {
         ErosionEraMod.LOGGER.info("Loading Erosion Era Blocks......");
     }
 
-    // todo: 重构注册方法，使用原版的模式
+    /**
+     * @param name 注册名称
+     * @param block 注册方块
+     * @return 注册方块实例
+     */
+
+    public static Block register(String name, Block block){
+        return Registry.register(Registry.BLOCK, new Identifier(ErosionEraMod.NAMESPACE, name), block);
+    }
 }

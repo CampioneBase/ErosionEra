@@ -1,6 +1,7 @@
 package com.lunastic.erosion_era.item.armor;
 
 import com.lunastic.erosion_era.ErosionEraMod;
+import com.lunastic.erosion_era.item.items.ArmorItems;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.EquipmentSlot;
@@ -13,18 +14,16 @@ public class ArmorItemBase extends ArmorItem {
 
     /**
      * 盔甲物品总类
-     * @param name 盔甲注册名称
      * @param material 盔甲游戏材质
      * @param slot 盔甲部位
      * @param settings 设定类
      */
-    public ArmorItemBase(String name, ArmorMaterial material, EquipmentSlot slot, Item.Settings settings) {
+    public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot, Item.Settings settings) {
         super(material, slot, settings);
-        Registry.register(Registry.ITEM, new Identifier(ErosionEraMod.NAMESPACE, name), this);
     }
 
-    public ArmorItemBase(String name, ArmorMaterial material, EquipmentSlot slot){
-        this(name, material, slot, new FabricItemSettings()
-                .group(ErosionEraArmorMaterials.GROUP));
+    public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot){
+        this(material, slot, new FabricItemSettings()
+                .group(ArmorItems.GROUP));
     }
 }

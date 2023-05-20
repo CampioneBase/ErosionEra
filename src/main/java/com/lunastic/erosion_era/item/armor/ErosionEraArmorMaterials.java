@@ -1,7 +1,8 @@
 package com.lunastic.erosion_era.item.armor;
 
 import com.lunastic.erosion_era.ErosionEraMod;
-import com.lunastic.erosion_era.item.ErosionEraItems;
+import com.lunastic.erosion_era.item.items.BasicItems;
+import com.lunastic.erosion_era.item.items.ErosionEraItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -21,15 +22,8 @@ public enum ErosionEraArmorMaterials implements ArmorMaterial {
 
     BASIC_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
             SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0F, 0F,
-            () -> Ingredient.ofItems(ErosionEraItems.EROSION_DEBRIS))
+            () -> Ingredient.ofItems(BasicItems.EROSION_DEBRIS))
     ;
-
-    /** 装备组 */
-    public static final ItemGroup GROUP = FabricItemGroupBuilder.create(
-            new Identifier(ErosionEraMod.NAMESPACE, "armor_group"))
-            .icon(() -> new ItemStack(ErosionEraItems.EROSION_DEBRIS))
-            .build();
-
 
     // 所有盔甲的基础耐久数值 {头, 胸甲, 腿甲, 鞋}
     private static final int[] BASE_DURABILITY = {13, 15, 16, 11};
