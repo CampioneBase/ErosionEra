@@ -1,19 +1,10 @@
 package com.lunastic.erosion_era.item.items;
 
 import com.lunastic.erosion_era.ErosionEraMod;
-import com.lunastic.erosion_era.item.armor.ArmorItemBase;
-import com.lunastic.erosion_era.item.armor.ErosionEraArmorMaterials;
-import com.lunastic.erosion_era.item.basic.ErosionDebris;
-import com.lunastic.erosion_era.item.tool.BasicPickaxeItem;
-import com.lunastic.erosion_era.item.tool.ErosionEraToolMaterials;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 物品集合总类

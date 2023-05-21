@@ -1,6 +1,8 @@
 package com.lunastic.erosion_era.block.eroded;
 
-import com.lunastic.erosion_era.block.ErosionEraBlocks;
+import com.lunastic.erosion_era.block.blocks.ErodedBlocks;
+import com.lunastic.erosion_era.block.blocks.ErosionEraBlocks;
+import com.lunastic.erosion_era.tag.ErosionEraTags;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemPlacementContext;
@@ -31,40 +33,18 @@ import java.util.Random;
  * </p>
  * @author Lunastic
  */
-public class ErodedGrassBlock extends ErodedBlock {
+public class ErodedGrassBlock extends SpreadableBlock {
     public static final BooleanProperty SNOWY = Properties.SNOWY;
 
     public ErodedGrassBlock() {
-        super(ErodedGrassBlock.Settings
+        super(ErosionEraBlocks.Settings
                 .copyOf(Blocks.GRASS_BLOCK)
+                .eroded()
         );
-        // 添加默认积雪状态
-        this.setDefaultState((this.stateManager.getDefaultState()).with(SNOWY, false));
         // 使用草方块的纹理，添加侵蚀颜色
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> 8368696, this);
         ColorProviderRegistry.ITEM.register((itemStack, layer) -> 8368696, this);
     }
-
-    // -- Copy from SnowyBlock.java
-    @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
-        if (direction == Direction.UP) {
-            return state.with(SNOWY, newState.isOf(Blocks.SNOW_BLOCK) || newState.isOf(Blocks.SNOW));
-        }
-        return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
-    }
-
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState blockState = ctx.getWorld().getBlockState(ctx.getBlockPos().up());
-        return this.getDefaultState().with(SNOWY, blockState.isOf(Blocks.SNOW_BLOCK) || blockState.isOf(Blocks.SNOW));
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(SNOWY);
-    }
-    // -- end copy
 
     // -- Copy from SpreadableBlock.java
     private static boolean canSurvive(BlockState state, WorldView worldView, BlockPos pos) {
@@ -80,13 +60,14 @@ public class ErodedGrassBlock extends ErodedBlock {
         int i = ChunkLightProvider.getRealisticOpacity(worldView, state, pos, blockState, blockPos, Direction.UP, blockState.getOpacity(worldView, blockPos));
         return i < worldView.getMaxLightLevel();
     }
+    // -- end copy
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (!ErodedGrassBlock.canSurvive(state, world, pos)) {
-            world.setBlockState(pos, ErosionEraBlocks.ERODED_DIRT.getDefaultState());
+            world.setBlockState(pos, ErodedBlocks.ERODED_DIRT.getDefaultState());
         }
     }
-    // -- end copy
+
 }
 

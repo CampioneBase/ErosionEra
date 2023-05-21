@@ -4,6 +4,7 @@ import com.lunastic.erosion_era.ErosionEraMod;
 import com.lunastic.erosion_era.item.armor.ArmorItemBase;
 import com.lunastic.erosion_era.item.armor.ErosionEraArmorMaterials;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -23,4 +24,9 @@ public class ArmorItems extends ErosionEraItems{
     public static final Item BASIC_CHEST = register("basic_chestplate", new ArmorItemBase(ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.CHEST));
     public static final Item BASIC_LEGS = register("basic_leggings", new ArmorItemBase(ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.LEGS));
     public static final Item BASIC_FEET = register("basic_boots", new ArmorItemBase(ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.FEET));
+
+    private static Item register(Block block){
+        return ErosionEraItems.register(block, ErodedBlockItems.GROUP);
+    }
+
 }
