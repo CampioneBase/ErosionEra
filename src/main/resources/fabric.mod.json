@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"self.lunastic.erosion_era.ErosionEraMod"
+			"lunastic.erosion_era.ErosionEraMod"
 		]
 	},
 	"mixins": [
