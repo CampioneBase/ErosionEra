@@ -3,7 +3,7 @@
 	"package": "com.lunastic.erosion_era.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"mixins": [
-		"ExampleMixin"
+		"self.lunastic.erosion_era.mixin.ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

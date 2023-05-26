@@ -1,7 +1,51 @@
 {
   "variants": {
-    "": {
-        "model": "erosion_era:block/env_block/shimmer_col"
-    }
+    "": [
+      {"model": "erosion_era:block/env_block/shimmer_col1"},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col1", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col1", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col1", "z": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col2"},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col2", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col2", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col2", "z": 180, "y": 270},
+
+
+      {"model": "erosion_era:block/env_block/shimmer_col3"},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col3", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_col3", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_col3", "z": 180, "y": 270}
+    ]
   }
 }
