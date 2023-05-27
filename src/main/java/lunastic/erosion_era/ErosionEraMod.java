@@ -1,15 +1,15 @@
 package lunastic.erosion_era;
 
 import lunastic.erosion_era.feature.ShimmerFeature;
+import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
 
-import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import lunastic.erosion_era.item.items.*;
 
 
 public class ErosionEraMod implements ModInitializer {
@@ -33,19 +33,13 @@ public class ErosionEraMod implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		for(ItemGroup group : new ItemGroup[]{
-				ArmorItems.GROUP,
-				BasicItems.GROUP,
-				ErodedBlockItems.GROUP,
-				ToolItems.GROUP,
+		ErErGroups.init();
+		ErErItems.init();
+		ErErBlocks.init();
+		ErErBlockItems.init();
+	}
 
-				EnvBlockItems.GROUP,
-				ErodedBlockItems.GROUP
-		}) LOGGER.info("Loading " + group.getName());
-
-//		RegistryKey<ConfiguredFeature<?, ?>> shimmer_col = RegistryKey.of(Registry.CONFIGURED_FEATURE_WORLDGEN,
-//				new Identifier(NAMESPACE, "shimmer_col"));
-//		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, shimmer_col.getValue(), CONFIGURED_FEATURE);
-//		BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.UNDERGROUND_ORES, shimmer_col);
+	public static Identifier identifier(String id){
+		return new Identifier(ErosionEraMod.ID, id);
 	}
 }

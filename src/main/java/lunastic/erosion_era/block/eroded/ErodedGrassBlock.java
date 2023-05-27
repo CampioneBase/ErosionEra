@@ -1,7 +1,6 @@
 package lunastic.erosion_era.block.eroded;
 
-import lunastic.erosion_era.block.blocks.ErodedBlocks;
-import lunastic.erosion_era.block.blocks.ErosionEraBlocks;
+import lunastic.erosion_era.init.ErErBlocks;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
@@ -30,10 +29,8 @@ import java.util.Random;
  * @author Lunastic
  */
 public class ErodedGrassBlock extends SpreadableBlock {
-    public static final BooleanProperty SNOWY = Properties.SNOWY;
-
     public ErodedGrassBlock() {
-        super(ErosionEraBlocks.Settings
+        super(ErErBlocks.Settings
                 .copyOf(Blocks.GRASS_BLOCK)
                 .eroded()
         );
@@ -61,7 +58,7 @@ public class ErodedGrassBlock extends SpreadableBlock {
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (!ErodedGrassBlock.canSurvive(state, world, pos)) {
-            world.setBlockState(pos, ErodedBlocks.ERODED_DIRT.getDefaultState());
+            world.setBlockState(pos, ErErBlocks.ERODED_DIRT.getDefaultState());
         }
     }
 

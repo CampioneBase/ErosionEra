@@ -1,10 +1,15 @@
-package lunastic.erosion_era.block.blocks;
+package lunastic.erosion_era.init;
+
 
 import lunastic.erosion_era.ErosionEraMod;
+import lunastic.erosion_era.block.environment.EnvBlock;
+import lunastic.erosion_era.block.environment.ShimmerCoreBlock;
+import lunastic.erosion_era.block.eroded.ErodedGrassBlock;
 import lunastic.erosion_era.tag.ErosionEraTags;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.client.render.RenderLayer;
@@ -13,8 +18,16 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.function.Consumer;
 
+public class ErErBlocks {
 
-public abstract class ErosionEraBlocks {
+    // Environment Block 环境方块组
+    public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCoreBlock());
+    public static final Block SHIMMER_COL = register("shimmer_col", new EnvBlock(ErErBlocks.Settings.of(Material.METAL)));
+
+    // Eroded Block 受侵蚀方块组
+    public static final Block ERODED_GRASS_BLOCK = register("eroded_grass_block", new ErodedGrassBlock(), BlockHandler.Translucent);
+    public static final Block ERODED_DIRT = register("eroded_dirt", new Block(ErErBlocks.Settings.copyOf(Blocks.DIRT).eroded()), BlockHandler.Translucent);
+
 
     /**
      * @param name 注册名称
@@ -22,8 +35,8 @@ public abstract class ErosionEraBlocks {
      * @return 注册方块实例
      */
 
-    protected static Block register(String name, Block block){
-        return Registry.register(Registry.BLOCK, new Identifier(ErosionEraMod.ID, name), block);
+    private static Block register(String name, Block block){
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
     }
 
     /**
@@ -32,9 +45,19 @@ public abstract class ErosionEraBlocks {
      * @param handlers 方块处理器
      * @return 注册方块实例
      */
-    protected static Block register(String name, Block block, BlockHandler... handlers){
+    private static Block register(String name, Block block, BlockHandler... handlers){
         for (BlockHandler handler: handlers) handler.consumer.accept(block);
-        return Registry.register(Registry.BLOCK, new Identifier(ErosionEraMod.ID, name), block);
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
+    }
+
+
+    protected enum BlockHandler {
+        Translucent(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getTranslucent()));
+
+        public Consumer<Block> consumer;
+        BlockHandler(Consumer<Block> consumer){
+            this.consumer = consumer;
+        }
     }
 
     public static class Settings extends FabricBlockSettings {
@@ -67,16 +90,9 @@ public abstract class ErosionEraBlocks {
                     // 响应标签效果
                     .requiresTool();
         }
-
-
     }
 
-    protected enum BlockHandler {
-        Translucent(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getTranslucent()));
-
-        public Consumer<Block> consumer;
-        BlockHandler(Consumer<Block> consumer){
-            this.consumer = consumer;
-        }
+    public static void init() {
+        ErosionEraMod.LOGGER.info("Blocks Loading......");
     }
 }

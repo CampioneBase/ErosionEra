@@ -1,6 +1,6 @@
 package lunastic.erosion_era.item.tool;
 
-import lunastic.erosion_era.item.items.BasicItems;
+import lunastic.erosion_era.init.ErErItems;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Lazy;
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public enum ErosionEraToolMaterials implements ToolMaterial {
     // 基础侵蚀材料
     BASIC_MATERIAL(2, 121, 6.0F, 2.0F, 22,
-            ()-> Ingredient.ofItems(BasicItems.EROSION_DEBRIS))
+            ()-> Ingredient.ofItems(ErErItems.EROSION_DEBRIS))
     ;
 
     // 挖掘等级：木镐  0 = 金镐 0 < 石镐 1 < 铁镐 2 < 钻石镐 3 < 下界合金镐 4
