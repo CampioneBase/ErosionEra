@@ -14,11 +14,11 @@ public class ArmorItemBase extends ArmorItem {
      * @param slot 盔甲部位
      * @param settings 设定类
      */
-    public ArmorItemBase(ArmorMaterial material, Type slot, Item.Settings settings) {
+    public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot, Item.Settings settings) {
         super(material, slot, settings);
     }
 
-    public ArmorItemBase(ArmorMaterial material, Type slot){
+    public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot){
         this(material, slot, new FabricItemSettings());
 
     }

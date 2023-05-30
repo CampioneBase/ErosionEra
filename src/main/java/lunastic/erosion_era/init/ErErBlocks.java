@@ -9,8 +9,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.util.registry.Registry;
 
 import java.util.function.Consumer;
 
@@ -32,7 +31,7 @@ public class ErErBlocks {
      */
 
     private static Block register(String name, Block block){
-        return Registry.register(Registries.BLOCK, ErosionEraMod.identifier(name), block);
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
     }
 
     /**
@@ -43,11 +42,10 @@ public class ErErBlocks {
      */
     private static Block register(String name, Block block, BlockHandler... handlers){
         for (BlockHandler handler: handlers) handler.consumer.accept(block);
-        return Registry.register(Registries.BLOCK, ErosionEraMod.identifier(name), block);
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
     }
 
-
-    protected enum BlockHandler {
+    private enum BlockHandler {
         Translucent(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getTranslucent()));
 
         public Consumer<Block> consumer;

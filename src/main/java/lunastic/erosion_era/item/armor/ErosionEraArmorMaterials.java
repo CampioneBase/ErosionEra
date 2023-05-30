@@ -4,7 +4,6 @@ import lunastic.erosion_era.init.ErErItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
@@ -62,16 +61,14 @@ public enum ErosionEraArmorMaterials implements ArmorMaterial {
     // Leather uses 5, Diamond 33, Netherite 37.
     // 盔甲在破碎之前可以被击中多少次。使用我们在“BASE_DURABILITY”上写的int进行计算。
     // 皮革使用5，钻石33，下届合金37。
-    @Override
-    public int getDurability(ArmorItem.Type type) {
-        return BASE_DURABILITY[type.getEquipmentSlot().getEntitySlotId()] * this.durabilityMultiplier;
+    public int getDurability(EquipmentSlot slot) {
+        return BASE_DURABILITY[slot.getEntitySlotId()] * this.durabilityMultiplier;
     }
 
     // calls for the 'PROTECTION_VALUES' int we already wrote above.
     // 调用我们上面已经写过的“PROTECTION_VALUES”int。
-    @Override
-    public int getProtection(ArmorItem.Type type) {
-        return this.armorValues[type.getEquipmentSlot().getEntitySlotId()];
+    public int getProtectionAmount(EquipmentSlot slot) {
+        return this.armorValues[slot.getEntitySlotId()];
     }
 
     // This will be how likely the armor can get high level or multiple enchantments in an enchantment book.

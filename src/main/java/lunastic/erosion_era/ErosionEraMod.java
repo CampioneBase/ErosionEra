@@ -1,11 +1,27 @@
 package lunastic.erosion_era;
 
+import lunastic.erosion_era.feature.ShimmerColFeatureConfig;
 import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.ConstantIntProvider;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.placementmodifier.SquarePlacementModifier;
+import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 
 public class ErosionEraMod implements ModInitializer {
@@ -16,7 +32,15 @@ public class ErosionEraMod implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
+	public static final ConfiguredFeature<?, ?> SHIMMER_COL_FEATURE = new ConfiguredFeature<>(
+			ErErFeatures.SHIMMER_COL, new ShimmerColFeatureConfig(ConstantIntProvider.create(15), BlockStateProvider.of(ErErBlocks.SHIMMER_COL))
+	);
 
+	public static PlacedFeature EXAMPLE_FEATURE_PLACED = new PlacedFeature(
+			RegistryEntry.of(SHIMMER_COL_FEATURE
+//                    the SquarePlacementModifier makes the feature generate a cluster of pillars each time
+			), List.of(SquarePlacementModifier.of())
+	);
 
 	@Override
 	public void onInitialize() {
@@ -28,7 +52,14 @@ public class ErosionEraMod implements ModInitializer {
 		ErErItems.init();
 		ErErBlocks.init();
 		ErErBlockItems.init();
-
+		ErErFeatures.init();
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_col"), EXAMPLE_FEATURE_PLACED);
+		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_col"), SHIMMER_COL_FEATURE);
+		BiomeModifications.addFeature(
+				BiomeSelectors.all(),
+				GenerationStep.Feature.TOP_LAYER_MODIFICATION,
+				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_col"))
+		);
 	}
 
 	public static Identifier identifier(String id){
