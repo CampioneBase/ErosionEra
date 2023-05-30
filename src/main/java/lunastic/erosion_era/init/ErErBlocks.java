@@ -5,16 +5,12 @@ import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.block.environment.EnvBlock;
 import lunastic.erosion_era.block.environment.ShimmerCoreBlock;
 import lunastic.erosion_era.block.eroded.ErodedGrassBlock;
-import lunastic.erosion_era.tag.ErosionEraTags;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
-import net.minecraft.block.MaterialColor;
+import net.minecraft.block.*;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 
 import java.util.function.Consumer;
 
@@ -22,11 +18,11 @@ public class ErErBlocks {
 
     // Environment Block 环境方块组
     public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCoreBlock());
-    public static final Block SHIMMER_COL = register("shimmer_col", new EnvBlock(ErErBlocks.Settings.of(Material.METAL)));
+    public static final Block SHIMMER_COL = register("shimmer_col", new EnvBlock(FabricBlockSettings.of(Material.METAL)));
 
     // Eroded Block 受侵蚀方块组
     public static final Block ERODED_GRASS_BLOCK = register("eroded_grass_block", new ErodedGrassBlock(), BlockHandler.Translucent);
-    public static final Block ERODED_DIRT = register("eroded_dirt", new Block(ErErBlocks.Settings.copyOf(Blocks.DIRT).eroded()), BlockHandler.Translucent);
+    public static final Block ERODED_DIRT = register("eroded_dirt", new Block(FabricBlockSettings.copyOf(Blocks.DIRT)), BlockHandler.Translucent);
 
 
     /**
@@ -36,7 +32,7 @@ public class ErErBlocks {
      */
 
     private static Block register(String name, Block block){
-        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
+        return Registry.register(Registries.BLOCK, ErosionEraMod.identifier(name), block);
     }
 
     /**
@@ -47,7 +43,7 @@ public class ErErBlocks {
      */
     private static Block register(String name, Block block, BlockHandler... handlers){
         for (BlockHandler handler: handlers) handler.consumer.accept(block);
-        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
+        return Registry.register(Registries.BLOCK, ErosionEraMod.identifier(name), block);
     }
 
 
@@ -57,38 +53,6 @@ public class ErErBlocks {
         public Consumer<Block> consumer;
         BlockHandler(Consumer<Block> consumer){
             this.consumer = consumer;
-        }
-    }
-
-    public static class Settings extends FabricBlockSettings {
-
-        protected Settings(Material material, MaterialColor color) {
-            super(material, color);
-        }
-
-        protected Settings(FabricBlockSettings settings){
-            super(settings);
-        }
-
-        public static Settings copyOf(Block block){
-            return new Settings(FabricBlockSettings.copyOf(block));
-        }
-
-        public static Settings of(Material material){
-            return new Settings(FabricBlockSettings.of(material, material.getColor()));
-        }
-
-        public static Settings of(Material material, MaterialColor materialColor){
-            return new Settings(FabricBlockSettings.of(material, materialColor));
-        }
-
-        // 侵蚀设定
-        public Settings eroded(){
-            return (Settings) this
-                    // 只能通过侵蚀类工具破坏（产生交互）
-                    .breakByTool(ErosionEraTags.EROSION_TOOL)
-                    // 响应标签效果
-                    .requiresTool();
         }
     }
 

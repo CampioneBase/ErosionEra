@@ -1,11 +1,14 @@
 package lunastic.erosion_era.init;
 
 import lunastic.erosion_era.ErosionEraMod;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 
 public class ErErBlockItems {
 
@@ -20,8 +23,9 @@ public class ErErBlockItems {
 
 
     protected static Item register(Block block, ItemGroup group) {
-        BlockItem blockItem = new BlockItem(block, new Item.Settings().group(group));
-        return Registry.register(Registry.ITEM, Registry.BLOCK.getId(block), blockItem);
+        BlockItem blockItem = new BlockItem(block, new FabricItemSettings());
+        ItemGroupEvents.modifyEntriesEvent(group).register(g -> g.add(blockItem));
+        return Registry.register(Registries.ITEM, Registries.BLOCK.getId(block), blockItem);
     }
 
     public static void init() {

@@ -2,16 +2,16 @@ package lunastic.erosion_era.block.eroded;
 
 import lunastic.erosion_era.init.ErErBlocks;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.chunk.light.ChunkLightProvider;
-
-import java.util.Random;
 
 /**
  * <H2>受侵蚀草方块</H2>
@@ -30,9 +30,8 @@ import java.util.Random;
  */
 public class ErodedGrassBlock extends SpreadableBlock {
     public ErodedGrassBlock() {
-        super(ErErBlocks.Settings
+        super(FabricBlockSettings
                 .copyOf(Blocks.GRASS_BLOCK)
-                .eroded()
         );
         // 使用草方块的纹理，添加侵蚀颜色
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> 8368696, this);
