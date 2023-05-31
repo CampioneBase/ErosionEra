@@ -1,0 +1,51 @@
+{
+  "variants": {
+    "": [
+      {"model": "erosion_era:block/env_block/shimmer_pillar1"},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar1", "z": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar2"},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar2", "z": 180, "y": 270},
+
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar3"},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "x": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "x": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "x": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "x": 180, "y": 270},
+
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "z": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "z": 180, "y": 90},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "z": 180, "y": 180},
+      {"model": "erosion_era:block/env_block/shimmer_pillar3", "z": 180, "y": 270}
+    ]
+  }
+}

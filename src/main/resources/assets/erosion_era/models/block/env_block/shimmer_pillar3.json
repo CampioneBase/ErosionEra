@@ -4,8 +4,8 @@
         "particle": "erosion_era:block/shimmer/shimmer_top1",
         "bottom": "erosion_era:block/shimmer/shimmer_top1",
         "top": "erosion_era:block/shimmer/shimmer_top1",
-        "side1": "erosion_era:block/shimmer/shimmer_col_side1",
-        "side2": "erosion_era:block/shimmer/shimmer_col_side2"
+        "side1": "erosion_era:block/shimmer/shimmer_pillar_side1",
+        "side2": "erosion_era:block/shimmer/shimmer_pillar_side2"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

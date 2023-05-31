@@ -12,7 +12,7 @@ public class ErErBlockItems {
     // -- environment 环境方块
     // shimmer 微光
     public static final Item SHIMMER_CORE = register(ErErBlocks.SHIMMER_CORE);
-    public static final Item SHIMMER_COL = register(ErErBlocks.SHIMMER_COL);
+    public static final Item SHIMMER_PILLAR = register(ErErBlocks.SHIMMER_PILLAR);
 
     // -- eroded 侵蚀方块
     public static Item ERODED_GRASS_BLOCK = register(ErErBlocks.ERODED_GRASS_BLOCK);

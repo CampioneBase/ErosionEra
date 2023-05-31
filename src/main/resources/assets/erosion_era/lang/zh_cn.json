@@ -21,7 +21,7 @@
 
   "itemGroup.erosion_era.erosion_env_block": "侵蚀环境方块",
     "block.erosion_era.shimmer_core": "微光核心",
-    "block.erosion_era.shimmer_col": "微光柱",
+    "block.erosion_era.shimmer_pillar": "微光柱",
 
   "itemGroup.erosion_era.test_group": "测试组",
     "item.erosion_era.test_item": "测试物品",

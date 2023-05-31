@@ -17,7 +17,7 @@ public class ErErBlocks {
 
     // Environment Block 环境方块组
     public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCoreBlock());
-    public static final Block SHIMMER_COL = register("shimmer_col", new EnvBlock(FabricBlockSettings.of(Material.METAL)));
+    public static final Block SHIMMER_PILLAR = register("shimmer_pillar", new EnvBlock(FabricBlockSettings.of(Material.METAL).luminance(6)));
 
     // Eroded Block 受侵蚀方块组
     public static final Block ERODED_GRASS_BLOCK = register("eroded_grass_block", new ErodedGrassBlock(), BlockHandler.Translucent);

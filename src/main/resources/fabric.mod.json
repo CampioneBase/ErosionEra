@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"lunastic.erosion_era.ErosionEraMod"
+		],
+		"fabric-datagen": [
+			"lunastic.erosion_era.DataGeneration"
 		]
 	},
 	"mixins": [

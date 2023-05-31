@@ -7,6 +7,7 @@ public class ShimmerCoreBlock extends EnvBlock {
     public ShimmerCoreBlock() {
         super(FabricBlockSettings
                 .of(Material.METAL)
+                .luminance(state -> 6)
         );
     }
 }

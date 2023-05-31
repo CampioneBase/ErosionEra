@@ -5,8 +5,6 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
-import java.util.function.Supplier;
-
 public class ErErGroups {
     /** 装备组 */
     public static final ItemGroup ARMOR = FabricItemGroupBuilder.create(ErosionEraMod.identifier("armor_group"))
@@ -31,7 +29,7 @@ public class ErErGroups {
             .icon(() -> new ItemStack(ErErBlockItems.SHIMMER_CORE))
             .appendItems(list -> {
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_CORE));
-                list.add(new ItemStack(ErErBlockItems.SHIMMER_COL));
+                list.add(new ItemStack(ErErBlockItems.SHIMMER_PILLAR));
             }).build();
 
     /** 侵蚀方块组 */
@@ -39,7 +37,7 @@ public class ErErGroups {
             .icon(() -> new ItemStack(ErErBlockItems.ERODED_GRASS_BLOCK))
             .appendItems(list -> {
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_CORE));
-                list.add(new ItemStack(ErErBlockItems.SHIMMER_COL));
+                list.add(new ItemStack(ErErBlockItems.SHIMMER_PILLAR));
             }).build();
 
     /** 工具组 */

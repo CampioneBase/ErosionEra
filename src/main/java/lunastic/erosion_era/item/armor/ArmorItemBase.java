@@ -19,7 +19,7 @@ public class ArmorItemBase extends ArmorItem {
     }
 
     public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot){
-        this(material, slot, new FabricItemSettings());
+        this(material, slot, new FabricItemSettings().group(ErErGroups.ARMOR));
 
     }
 }

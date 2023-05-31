@@ -1,14 +1,13 @@
 package lunastic.erosion_era;
 
-import lunastic.erosion_era.feature.ShimmerColFeatureConfig;
+import lunastic.erosion_era.feature.ShimmerPillarFeatureConfig;
 import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.intprovider.ConstantIntProvider;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
@@ -32,10 +31,12 @@ public class ErosionEraMod implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
+	// ConfiguredFeature 就是将 Feature 和 FeatureConfig 封装的类，及配置好的地物
 	public static final ConfiguredFeature<?, ?> SHIMMER_COL_FEATURE = new ConfiguredFeature<>(
-			ErErFeatures.SHIMMER_COL, new ShimmerColFeatureConfig(ConstantIntProvider.create(15), BlockStateProvider.of(ErErBlocks.SHIMMER_COL))
+			ErErFeatures.SHIMMER_COL, new ShimmerPillarFeatureConfig(UniformIntProvider.create(5, 8), BlockStateProvider.of(ErErBlocks.SHIMMER_PILLAR))
 	);
 
+	// 将配置好的地物 （ConfiguredFeature）应用于给定位置生成
 	public static PlacedFeature EXAMPLE_FEATURE_PLACED = new PlacedFeature(
 			RegistryEntry.of(SHIMMER_COL_FEATURE
 //                    the SquarePlacementModifier makes the feature generate a cluster of pillars each time
@@ -53,12 +54,12 @@ public class ErosionEraMod implements ModInitializer {
 		ErErBlocks.init();
 		ErErBlockItems.init();
 		ErErFeatures.init();
-		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_col"), EXAMPLE_FEATURE_PLACED);
-		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_col"), SHIMMER_COL_FEATURE);
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), EXAMPLE_FEATURE_PLACED);
+		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), SHIMMER_COL_FEATURE);
 		BiomeModifications.addFeature(
 				BiomeSelectors.all(),
-				GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_col"))
+				GenerationStep.Feature.FLUID_SPRINGS,
+				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
 		);
 	}
 

@@ -2,23 +2,19 @@ package lunastic.erosion_era.feature;
 
 import com.mojang.serialization.Codec;
 import lunastic.erosion_era.ErosionEraMod;
-import lunastic.erosion_era.init.ErErBlocks;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 
-public class ShimmerColFeature extends Feature<ShimmerColFeatureConfig> {
-    public ShimmerColFeature(Codec<ShimmerColFeatureConfig> configCodec) {
+public class ShimmerPillarFeature extends Feature<ShimmerPillarFeatureConfig> {
+    public ShimmerPillarFeature(Codec<ShimmerPillarFeatureConfig> configCodec) {
         super(configCodec);
     }
 
@@ -26,18 +22,18 @@ public class ShimmerColFeature extends Feature<ShimmerColFeatureConfig> {
     // 如果地物配置为在每个区块生成，则每个区块被生成时都会调用一次。
     // 如果地物被配置为在每个生物群系以特定的概率生成，generate 只会在世界需要生成结构的实例中调用。
     @Override
-    public boolean generate(FeatureContext<ShimmerColFeatureConfig> context) {
+    public boolean generate(FeatureContext<ShimmerPillarFeatureConfig> context) {
         StructureWorldAccess world = context.getWorld();
         // the origin is the place where the game starts trying to place the feature
         BlockPos origin = context.getOrigin();
         // we won't use the random here, but we could if we wanted to
         Random random = context.getRandom();
-        ShimmerColFeatureConfig config = context.getConfig();
+        ShimmerPillarFeatureConfig config = context.getConfig();
 
         // don't worry about where these come from-- we'll implement these methods soon
         int height = config.height().get(random);
 
-        BlockState blockState = Registry.BLOCK.get(ErosionEraMod.identifier("shimmer_col")).getDefaultState();
+        BlockState blockState = Registry.BLOCK.get(ErosionEraMod.identifier("shimmer_pillar")).getDefaultState();
 
         // find the surface of the world
         BlockPos testPos = new BlockPos(origin);

@@ -20,7 +20,7 @@ public class ErErItems {
     public static final Item BASIC_FEET = register("basic_boots", new ArmorItemBase(ErosionEraArmorMaterials.BASIC_MATERIAL, EquipmentSlot.FEET));
 
     // -- basic 初级
-    public static final Item EROSION_DEBRIS = register("erosion_debris", new Item(new FabricItemSettings()));
+    public static final Item EROSION_DEBRIS = register("erosion_debris", new Item(new FabricItemSettings().group(ErErGroups.BASIC)));
 
     // -- tool 工具
     // basic 基础
