@@ -48,12 +48,8 @@ public class ErosionEraMod implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+		this.init();
 
-		ErErGroups.init();
-		ErErItems.init();
-		ErErBlocks.init();
-		ErErBlockItems.init();
-		ErErFeatures.init();
 		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), EXAMPLE_FEATURE_PLACED);
 		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), SHIMMER_COL_FEATURE);
 		BiomeModifications.addFeature(
@@ -61,6 +57,15 @@ public class ErosionEraMod implements ModInitializer {
 				GenerationStep.Feature.FLUID_SPRINGS,
 				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
 		);
+	}
+
+	public void init(){
+		ErErGroups.init();
+		ErErItems.init();
+		ErErBlocks.init();
+		ErErBlockItems.init();
+		ErErFeatures.init();
+		ErErStatusEffects.init();
 	}
 
 	public static Identifier identifier(String id){

@@ -25,24 +25,24 @@ public class ErErBlocks {
 
 
     /**
-     * @param name 注册名称
+     * @param id 注册名称
      * @param block 注册方块
      * @return 注册方块实例
      */
 
-    private static Block register(String name, Block block){
-        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
+    private static Block register(String id, Block block){
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(id), block);
     }
 
     /**
-     * @param name 注册名称
+     * @param id 注册名称
      * @param block 注册方块
      * @param handlers 方块处理器
      * @return 注册方块实例
      */
-    private static Block register(String name, Block block, BlockHandler... handlers){
+    private static Block register(String id, Block block, BlockHandler... handlers){
         for (BlockHandler handler: handlers) handler.consumer.accept(block);
-        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(name), block);
+        return Registry.register(Registry.BLOCK, ErosionEraMod.identifier(id), block);
     }
 
     private enum BlockHandler {

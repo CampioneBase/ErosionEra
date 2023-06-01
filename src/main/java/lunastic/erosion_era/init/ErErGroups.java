@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class ErErGroups {
     /** 装备组 */
-    public static final ItemGroup ARMOR = FabricItemGroupBuilder.create(ErosionEraMod.identifier("armor_group"))
+    public static final ItemGroup ARMOR = FabricItemGroupBuilder.create(ErosionEraMod.identifier("armor"))
             .icon(() -> new ItemStack(ErErItems.BASIC_CHEST))
             .appendItems(list -> {
                 list.add(new ItemStack(ErErItems.BASIC_HELMET));
