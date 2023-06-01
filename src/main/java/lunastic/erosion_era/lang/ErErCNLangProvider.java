@@ -15,14 +15,13 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
 
     public ErErCNLangProvider(FabricDataGenerator dataGenerator) {
         super(dataGenerator, LANG);
-        ErosionEraMod.LOGGER.info("Loading Language " + LANG + "...");
     }
 
     @Override
     public void generateTranslations(TranslationBuilder builder) {
 
-        this.effectTranslation(builder);
-        this.damageTranslation(builder);
+        this.effectTranslations(builder);
+        this.damageTranslations(builder);
 
         try {
             Path langFilePath = dataGenerator.getModContainer().findPath(
@@ -34,19 +33,20 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         }
     }
 
-    public void effectTranslation(TranslationBuilder builder){
+    private void effectTranslations(TranslationBuilder builder){
         builder.add(ErErStatusEffects.EROSION_EFFECT, "侵蚀");
     }
 
-    public void damageTranslation(TranslationBuilder builder){
+    private void damageTranslations(TranslationBuilder builder){
 
-        builder.add(getDamageSourceTranslationKey(ErErDamageSources.EROSION), "%1$s 饱受侵蚀折磨");
-        builder.add(getDamageSourceTranslationKey(ErErDamageSources.EROSION, TKTag._PLAYER), "%1$s 接受 %1$s 的侵蚀");
+        builder.add(getDSTK(ErErDamageSources.EROSION), "%1$s 饱受侵蚀折磨");
+        builder.add(getDSTK(ErErDamageSources.EROSION, TKTag._PLAYER), "%1$s 接受 %1$s 的侵蚀");
     }
 
     // 简化 DamageSource 后缀编写
-    private static String getDamageSourceTranslationKey(DamageSource damageSource, TKTag... tags){
-        StringBuilder s = new StringBuilder(TKTag.DEATH_ATTACK_ + damageSource.getName());
+    // Damage Source Translation Key
+    private static String getDSTK(DamageSource damageSource, TKTag... tags){
+        StringBuilder s = new StringBuilder(TKTag.DEATH_ATTACK_.key + damageSource.getName());
         for (TKTag tag : tags){ if (tag.isSuffix) s.append(tag.key); }
         return s.toString();
     }

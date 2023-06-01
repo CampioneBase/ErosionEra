@@ -20,6 +20,9 @@
 		],
 		"fabric-datagen": [
 			"lunastic.erosion_era.DataGeneration"
+		],
+		"client": [
+			"lunastic.erosion_era.ErosionEraClient"
 		]
 	},
 	"mixins": [

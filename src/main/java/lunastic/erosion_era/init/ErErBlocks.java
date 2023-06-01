@@ -3,7 +3,8 @@ package lunastic.erosion_era.init;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.block.environment.EnvBlock;
-import lunastic.erosion_era.block.environment.ShimmerCoreBlock;
+import lunastic.erosion_era.block.environment.ShimmerCore;
+import lunastic.erosion_era.block.environment.ShimmerPillarBlock;
 import lunastic.erosion_era.block.eroded.ErodedGrassBlock;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -16,8 +17,8 @@ import java.util.function.Consumer;
 public class ErErBlocks {
 
     // Environment Block 环境方块组
-    public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCoreBlock());
-    public static final Block SHIMMER_PILLAR = register("shimmer_pillar", new EnvBlock(FabricBlockSettings.of(Material.METAL).luminance(6)));
+    public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCore());
+    public static final Block SHIMMER_PILLAR = register("shimmer_pillar", new ShimmerPillarBlock());
 
     // Eroded Block 受侵蚀方块组
     public static final Block ERODED_GRASS_BLOCK = register("eroded_grass_block", new ErodedGrassBlock(), BlockHandler.Translucent);

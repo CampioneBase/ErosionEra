@@ -3,6 +3,7 @@ package lunastic.erosion_era.feature;
 import com.mojang.serialization.Codec;
 import lunastic.erosion_era.ErosionEraMod;
 
+import lunastic.erosion_era.block.environment.EnvBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.tag.BlockTags;
@@ -34,6 +35,7 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeatureConfig> {
         int height = config.height().get(random);
 
         BlockState blockState = Registry.BLOCK.get(ErosionEraMod.identifier("shimmer_pillar")).getDefaultState();
+        blockState.with(EnvBlock.ORIGINAL, true);
 
         // find the surface of the world
         BlockPos testPos = new BlockPos(origin);
@@ -56,4 +58,5 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeatureConfig> {
         }
         return false;
     }
+
 }
