@@ -1,16 +1,36 @@
 package lunastic.erosion_era.effect;
 
+import lunastic.erosion_era.ErosionEraMod;
+import lunastic.erosion_era.init.ErErDamageSources;
+import lunastic.erosion_era.init.ErErStatusEffects;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.task.Task;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
+import java.util.UUID;
+
 public class ErosionStatusEffect extends StatusEffect {
 
     public ErosionStatusEffect() {
         super(StatusEffectCategory.NEUTRAL, 0xd412e0);
+        this.addAttributeModifier(
+                // 增加通用伤害
+                EntityAttributes.GENERIC_ATTACK_DAMAGE,
+                UUID.randomUUID().toString(),
+                0f,
+                EntityAttributeModifier.Operation.ADDITION
+        ).addAttributeModifier(
+                EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                UUID.randomUUID().toString(),
+                -0.15f,
+                EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+        );
     }
 
     // 这个方法在每个 tick 都会调用，以检查是否应应用药水效果
@@ -24,9 +44,22 @@ public class ErosionStatusEffect extends StatusEffect {
     // 这个方法在应用药水效果时会被调用，所以我们可以在这里实现自定义功能。
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        if (entity instanceof PlayerEntity) {
 
-        }
-        entity.damage(new DamageSource("erosion"), 10f);
+        ErosionEraMod.LOGGER.info(entity.getArmorItems());
+        entity.damage(ErErDamageSources.EROSION, 1f + 0.5f * amplifier);
+    }
+
+    @Override
+    public double adjustModifierAmount(int amplifier, EntityAttributeModifier modifier) {
+        // 攻击伤害
+        if (modifier.equals(this.getAttributeModifiers().get(EntityAttributes.GENERIC_ATTACK_DAMAGE)))
+            return 1f;
+        // 地面移动速度
+        if (modifier.equals(this.getAttributeModifiers().get(EntityAttributes.GENERIC_MOVEMENT_SPEED)))
+            // 相当于缓慢效果的75%效能
+            return modifier.getValue() * (amplifier + 1) * 0.75f;
+
+        //  默认
+        return super.adjustModifierAmount(amplifier, modifier);
     }
 }

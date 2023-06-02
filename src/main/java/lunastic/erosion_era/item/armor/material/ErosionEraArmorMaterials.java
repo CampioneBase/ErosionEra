@@ -1,4 +1,4 @@
-package lunastic.erosion_era.item.armor;
+package lunastic.erosion_era.item.armor.material;
 
 import lunastic.erosion_era.init.ErErItems;
 import net.fabricmc.api.EnvType;

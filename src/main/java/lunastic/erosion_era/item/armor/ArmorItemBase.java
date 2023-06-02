@@ -2,8 +2,14 @@ package lunastic.erosion_era.item.armor;
 
 import lunastic.erosion_era.init.ErErGroups;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
+import net.minecraft.text.Text;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /** 盔甲物品总类 */
 public class ArmorItemBase extends ArmorItem {
@@ -20,6 +26,11 @@ public class ArmorItemBase extends ArmorItem {
 
     public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot){
         this(material, slot, new FabricItemSettings().group(ErErGroups.ARMOR));
+
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
 
     }
 }

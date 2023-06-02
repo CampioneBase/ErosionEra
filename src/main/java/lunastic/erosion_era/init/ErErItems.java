@@ -2,7 +2,7 @@ package lunastic.erosion_era.init;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.item.armor.ArmorItemBase;
-import lunastic.erosion_era.item.armor.ErosionEraArmorMaterials;
+import lunastic.erosion_era.item.armor.material.ErosionEraArmorMaterials;
 import lunastic.erosion_era.item.tool.BasicPickaxeItem;
 import lunastic.erosion_era.item.tool.ErosionEraToolMaterials;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;

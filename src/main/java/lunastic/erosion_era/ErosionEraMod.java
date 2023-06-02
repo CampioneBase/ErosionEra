@@ -1,5 +1,6 @@
 package lunastic.erosion_era;
 
+import com.google.common.collect.Maps;
 import lunastic.erosion_era.feature.ShimmerPillarFeatureConfig;
 import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
@@ -20,6 +21,7 @@ import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.List;
 
 
@@ -49,6 +51,7 @@ public class ErosionEraMod implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		this.init();
+		this.test();
 
 		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), EXAMPLE_FEATURE_PLACED);
 		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), SHIMMER_COL_FEATURE);
@@ -66,6 +69,12 @@ public class ErosionEraMod implements ModInitializer {
 		ErErBlockItems.init();
 		ErErFeatures.init();
 		ErErStatusEffects.init();
+	}
+
+	public void test(){
+		Map<String, Integer> map = Maps.newHashMap();
+		map.put("a", 1);
+		ErosionEraMod.LOGGER.info(map.get("b"));
 	}
 
 	public static Identifier identifier(String id){

@@ -1,5 +1,6 @@
 package lunastic.erosion_era.block.environment;
 
+import lunastic.erosion_era.init.ErErProperties;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class EnvBlock extends Block {
     // 添加布尔值属性 是否为原生方块
     // 以环境方式创建方块时为 true 其他方式为 false
-    public static BooleanProperty ORIGINAL = BooleanProperty.of("original");
+    public static BooleanProperty ORIGINAL = ErErProperties.ORIGINAL;
 
     public EnvBlock(Block.Settings settings) {
         super(settings);

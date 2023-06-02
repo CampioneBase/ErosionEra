@@ -1,5 +1,6 @@
 package lunastic.erosion_era.block.environment;
 
+import lunastic.erosion_era.init.ErErProperties;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,7 +16,7 @@ public class ShimmerPillarBlock extends EnvBlock {
     public ShimmerPillarBlock() {
         super(FabricBlockSettings
                 .of(Material.METAL)
-                .luminance(state -> state.get(EnvBlock.ORIGINAL) ? 6 : 0)
+                .luminance(state -> state.get(ORIGINAL) ? 6 : 0)
         );
     }
 
@@ -23,7 +24,7 @@ public class ShimmerPillarBlock extends EnvBlock {
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
-        if(state.get(EnvBlock.ORIGINAL) && world.getBlockState(pos.up()).isAir()){
+        if(state.get(ORIGINAL) && world.getBlockState(pos.up()).isAir()){
             world.addParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT,
                     true,
                     pos.getX() + random.nextFloat(), pos.getY(), pos.getZ() + random.nextFloat(),
