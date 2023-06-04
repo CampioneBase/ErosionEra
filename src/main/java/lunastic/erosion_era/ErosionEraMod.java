@@ -8,6 +8,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -16,6 +17,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.placementmodifier.BiomePlacementModifier;
+import net.minecraft.world.gen.placementmodifier.CountPlacementModifier;
 import net.minecraft.world.gen.placementmodifier.SquarePlacementModifier;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import org.apache.logging.log4j.LogManager;
@@ -35,13 +38,16 @@ public class ErosionEraMod implements ModInitializer {
 
 	// ConfiguredFeature 就是将 Feature 和 FeatureConfig 封装的类，及配置好的地物
 	public static final ConfiguredFeature<?, ?> SHIMMER_COL_FEATURE = new ConfiguredFeature<>(
-			ErErFeatures.SHIMMER_COL, new ShimmerPillarFeatureConfig(UniformIntProvider.create(5, 8), BlockStateProvider.of(ErErBlocks.SHIMMER_PILLAR))
-	);
+			ErErFeatures.SHIMMER_COL, new ShimmerPillarFeatureConfig(
+					UniformIntProvider.create(5, 8),
+			BlockStateProvider.of(ErErBlocks.SHIMMER_CORE),
+			BlockStateProvider.of(ErErBlocks.SHIMMER_PILLAR)
+	));
 
 	// 将配置好的地物 （ConfiguredFeature）应用于给定位置生成
 	public static PlacedFeature EXAMPLE_FEATURE_PLACED = new PlacedFeature(
 			RegistryEntry.of(SHIMMER_COL_FEATURE
-//                    the SquarePlacementModifier makes the feature generate a cluster of pillars each time
+			// SquarePlacementModifier makes the feature generate a cluster of pillars each time
 			), List.of(SquarePlacementModifier.of())
 	);
 
