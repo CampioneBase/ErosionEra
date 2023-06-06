@@ -1,15 +1,12 @@
 package lunastic.erosion_era;
 
-import com.google.common.collect.Maps;
-import lunastic.erosion_era.feature.ShimmerPillarFeatureConfig;
+import lunastic.erosion_era.feature.ShimmerPillarFeature;
 import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.intprovider.IntProvider;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
@@ -17,14 +14,10 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
-import net.minecraft.world.gen.placementmodifier.BiomePlacementModifier;
-import net.minecraft.world.gen.placementmodifier.CountPlacementModifier;
 import net.minecraft.world.gen.placementmodifier.SquarePlacementModifier;
-import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
 import java.util.List;
 
 
@@ -36,21 +29,6 @@ public class ErosionEraMod implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
-	// ConfiguredFeature 就是将 Feature 和 FeatureConfig 封装的类，及配置好的地物
-	public static final ConfiguredFeature<?, ?> SHIMMER_COL_FEATURE = new ConfiguredFeature<>(
-			ErErFeatures.SHIMMER_COL, new ShimmerPillarFeatureConfig(
-					UniformIntProvider.create(5, 8),
-			BlockStateProvider.of(ErErBlocks.SHIMMER_CORE),
-			BlockStateProvider.of(ErErBlocks.SHIMMER_PILLAR)
-	));
-
-	// 将配置好的地物 （ConfiguredFeature）应用于给定位置生成
-	public static PlacedFeature EXAMPLE_FEATURE_PLACED = new PlacedFeature(
-			RegistryEntry.of(SHIMMER_COL_FEATURE
-			// SquarePlacementModifier makes the feature generate a cluster of pillars each time
-			), List.of(SquarePlacementModifier.of())
-	);
-
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -59,13 +37,7 @@ public class ErosionEraMod implements ModInitializer {
 		this.init();
 		this.test();
 
-		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), EXAMPLE_FEATURE_PLACED);
-		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), SHIMMER_COL_FEATURE);
-		BiomeModifications.addFeature(
-				BiomeSelectors.all(),
-				GenerationStep.Feature.FLUID_SPRINGS,
-				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
-		);
+
 	}
 
 	public void init(){
@@ -78,11 +50,27 @@ public class ErosionEraMod implements ModInitializer {
 	}
 
 	public void test(){
-		Map<String, Integer> map = Maps.newHashMap();
-		map.put("a", 1);
-		ErosionEraMod.LOGGER.info(map.get("b"));
+		// ConfiguredFeature 就是将 Feature 和 FeatureConfig 封装的类，及配置好的地物
+		ConfiguredFeature<?, ?> SHIMMER_COL_FEATURE = new ConfiguredFeature<>(
+				ErErFeatures.SHIMMER_PILLAR, ShimmerPillarFeature.Config.MIDDLE_INACTIVE
+		);
+		// 将配置好的地物 （ConfiguredFeature）应用于给定位置生成
+		PlacedFeature EXAMPLE_FEATURE_PLACED = new PlacedFeature(
+				RegistryEntry.of(SHIMMER_COL_FEATURE),
+				// SquarePlacementModifier makes the feature generate a cluster of pillars each time
+				List.of(SquarePlacementModifier.of())
+		);
+
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), EXAMPLE_FEATURE_PLACED);
+		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ErosionEraMod.identifier("shimmer_pillar"), SHIMMER_COL_FEATURE);
+		BiomeModifications.addFeature(
+				BiomeSelectors.all(),
+				GenerationStep.Feature.SURFACE_STRUCTURES,
+				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
+		);
 	}
 
+	// "erosion_era:name_id"
 	public static Identifier identifier(String id){
 		return new Identifier(ErosionEraMod.ID, id);
 	}
