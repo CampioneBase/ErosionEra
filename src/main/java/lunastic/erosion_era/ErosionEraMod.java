@@ -11,6 +11,9 @@ import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
@@ -47,6 +50,7 @@ public class ErosionEraMod implements ModInitializer {
 		ErErBlockItems.init();
 		ErErFeatures.init();
 		ErErStatusEffects.init();
+		ErErRules.init();
 	}
 
 	public void test(){
@@ -68,6 +72,7 @@ public class ErosionEraMod implements ModInitializer {
 				GenerationStep.Feature.SURFACE_STRUCTURES,
 				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
 		);
+
 	}
 
 	// "erosion_era:name_id"

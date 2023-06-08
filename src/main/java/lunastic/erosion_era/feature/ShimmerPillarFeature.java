@@ -114,7 +114,6 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
                 this.createLinePillar(world, random, pillarBlockState, corePos, height, 4);
                 // 核心方块
                 world.setBlockState(corePos, coreBlockState, 0x10);
-                // TODO 四方向递归
                 BlockPos finalCorePos = corePos;
                 Direction.Type.HORIZONTAL.stream().iterator().forEachRemaining(direction -> {
                     int h = height, d = 4;
@@ -149,7 +148,6 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
 
         return false;
     }
-
 
     /**
      * 生成 1x1 指定高度的柱子(可倾斜)

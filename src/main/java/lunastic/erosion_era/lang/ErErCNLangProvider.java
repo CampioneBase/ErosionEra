@@ -2,6 +2,7 @@ package lunastic.erosion_era.lang;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.init.ErErDamageSources;
+import lunastic.erosion_era.init.ErErRules;
 import lunastic.erosion_era.init.ErErStatusEffects;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
@@ -22,6 +23,7 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
 
         this.effectTranslations(builder);
         this.damageTranslations(builder);
+        this.ruleTranslations(builder);
 
         try {
             Path langFilePath = dataGenerator.getModContainer().findPath(
@@ -33,14 +35,21 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         }
     }
 
+    // 药水效果翻译
     private void effectTranslations(TranslationBuilder builder){
         builder.add(ErErStatusEffects.EROSION_EFFECT, "侵蚀");
     }
 
+    // 伤害说明翻译
     private void damageTranslations(TranslationBuilder builder){
 
         builder.add(getDSTK(ErErDamageSources.EROSION), "%1$s 饱受侵蚀折磨");
         builder.add(getDSTK(ErErDamageSources.EROSION, TKTag._PLAYER), "%1$s 接受 %1$s 的侵蚀");
+    }
+
+    // 规则翻译
+    private void ruleTranslations(TranslationBuilder builder){
+        builder.add(ErErRules.EROSION_SELECTOR.getTranslationKey(), "仅原版侵蚀");
     }
 
     // 简化 DamageSource 后缀编写
