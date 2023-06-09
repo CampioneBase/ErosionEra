@@ -42,6 +42,18 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 	// 这些都包含在Fabric API生产分发中，允许您在以后更方便的时候将mod更新到最新的模块。
 
+	// Adds a dependency on the base cardinal components module (required by every other module)
+	// 添加对基本组件模块的依赖项（其他模块都需要）
+	// Replace modImplementation with modApi if you expose components in your own API
+	// 如果在自己的API中公开组件，请将modImplementation 替换为 modApi
+	modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.0"
+	// Adds a dependency on a specific module
+	// 添加对特定模块的依赖项
+//	modImplementation "dev.onyxstudios.cardinal-components-api:1.19.2:5.0.0"
+	// Includes Cardinal Components API as a Jar-in-Jar dependency (optional)
+	// 包括作为Jar-in-Jar依赖项的基本组件API（可选）
+	include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.0"
+//	include "dev.onyxstudios.cardinal-components-api:1.19.2:5.0.0"
 }
 
 processResources {

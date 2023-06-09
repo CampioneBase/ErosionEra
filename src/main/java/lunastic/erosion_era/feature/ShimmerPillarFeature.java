@@ -107,8 +107,12 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
             if (world.getBlockState(corePos).isAir()) {
                 // 定位下面的位置
                 corePos = corePos.down();
-                // 如果是特定方块或者标签，则继续下潜
-                while (this.ignoredBlocks(context, corePos)) corePos = corePos.down();
+                // 如果是特定方块或者标签，则继续下潜 (最低为 -60 避免末地维度卡死)
+                while (this.ignoredBlocks(context, corePos)) {
+                    if (corePos.getY() < -60) return false;
+                    corePos = corePos.down();
+                }
+
                 // ------------ 生成地物 ------------ //
                 // 中心柱
                 this.createLinePillar(world, random, pillarBlockState, corePos, height, 4);
