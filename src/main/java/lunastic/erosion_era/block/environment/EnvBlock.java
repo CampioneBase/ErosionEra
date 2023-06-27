@@ -24,23 +24,15 @@ import org.jetbrains.annotations.Nullable;
  * @author Lunastic
  */
 public class EnvBlock extends Block {
-    // 添加布尔值属性 是否为原生方块
-    // 以环境方式创建方块时为 true 其他方式为 false
-    public static BooleanProperty ORIGINAL = ErErProperties.ORIGINAL;
 
     public EnvBlock(Block.Settings settings) {
         super(settings);
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(ORIGINAL);
     }
 
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         // 放置时设置origin为false
-        return this.getDefaultState().with(EnvBlock.ORIGINAL, false);
+        return this.getDefaultState();
     }
 }

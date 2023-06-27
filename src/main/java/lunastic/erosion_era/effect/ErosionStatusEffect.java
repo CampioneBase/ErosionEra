@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ErosionStatusEffect extends StatusEffect {
 
     public ErosionStatusEffect() {
-        super(StatusEffectCategory.NEUTRAL, 0xd412e0);
+        super(StatusEffectCategory.HARMFUL, 0xd412e0);
         this.addAttributeModifier(
                 // 增加通用伤害
                 EntityAttributes.GENERIC_ATTACK_DAMAGE,
@@ -44,8 +44,7 @@ public class ErosionStatusEffect extends StatusEffect {
     // 这个方法在应用药水效果时会被调用，所以我们可以在这里实现自定义功能。
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-
-        ErosionEraMod.LOGGER.info(entity.getArmorItems());
+        // ErosionEraMod.LOGGER.info(entity.getArmorItems()); // [1 air, 1 air, 1 air, 1 air]
         entity.damage(ErErDamageSources.EROSION, 1f + 0.5f * amplifier);
     }
 

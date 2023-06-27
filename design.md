@@ -28,6 +28,10 @@
 ### 1. 微光柱 *Shimmer Pillar*
 散落在各个群系上的自然生长结构。中心拥有一块被微光柱包裹的微光核心，
 
+## 状态 *StatusEffect*
+
+### 1. 侵蚀 Erosion
+
 ## 规则 *Gamerule*
 ### 1. 侵蚀选择器 *Erosion Selector*
   - *ALL:可对所有模组对象产生侵蚀效果*

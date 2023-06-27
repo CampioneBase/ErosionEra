@@ -14,14 +14,16 @@ public class ErErGroups {
                 list.add(new ItemStack(ErErItems.BASIC_CHEST));
                 list.add(new ItemStack(ErErItems.BASIC_LEGS));
                 list.add(new ItemStack(ErErItems.BASIC_FEET));
-            }).build();
+            })
+            .build();
 
     /** 基础物品组 */
     public static final ItemGroup BASIC = FabricItemGroupBuilder.create(ErosionEraMod.identifier("basic_group"))
             .icon(() -> new ItemStack(ErErItems.EROSION_DEBRIS))
             .appendItems(list -> {
                 list.add(new ItemStack(ErErItems.EROSION_DEBRIS));
-            }).build();
+            })
+            .build();
 
 
     /** 环境方块组 */
@@ -30,7 +32,8 @@ public class ErErGroups {
             .appendItems(list -> {
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_CORE));
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_PILLAR));
-            }).build();
+            })
+            .build();
 
     /** 侵蚀方块组 */
     public static ItemGroup ERODED_BLOCK = FabricItemGroupBuilder.create(ErosionEraMod.identifier("eroded_block"))
@@ -38,14 +41,16 @@ public class ErErGroups {
             .appendItems(list -> {
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_CORE));
                 list.add(new ItemStack(ErErBlockItems.SHIMMER_PILLAR));
-            }).build();
+            })
+            .build();
 
     /** 工具组 */
     public static final ItemGroup TOOL = FabricItemGroupBuilder.create(ErosionEraMod.identifier("tool_group"))
             .icon(() -> new ItemStack(ErErItems.BASIC_PICKAXE))
             .appendItems(list -> {
                 list.add(new ItemStack(ErErItems.BASIC_PICKAXE));
-            }).build();
+            })
+            .build();
 
     public static void init() {
         ErosionEraMod.LOGGER.info("Groups Loading......");

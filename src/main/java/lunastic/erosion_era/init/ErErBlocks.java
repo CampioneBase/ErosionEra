@@ -3,6 +3,7 @@ package lunastic.erosion_era.init;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.block.environment.EnvBlock;
+import lunastic.erosion_era.block.environment.ErosionVein;
 import lunastic.erosion_era.block.environment.ShimmerCore;
 import lunastic.erosion_era.block.environment.ShimmerPillarBlock;
 import lunastic.erosion_era.block.eroded.ErodedGrassBlock;
@@ -19,6 +20,7 @@ public class ErErBlocks {
     // Environment Block 环境方块组
     public static final Block SHIMMER_CORE = register("shimmer_core", new ShimmerCore());
     public static final Block SHIMMER_PILLAR = register("shimmer_pillar", new ShimmerPillarBlock());
+    public static final Block EROSION_VEIN = register("erosion_vein", new ErosionVein(FabricBlockSettings.copyOf(Blocks.SCULK_VEIN)), BlockHandler.Translucent);
 
     // Eroded Block 受侵蚀方块组
     public static final Block ERODED_GRASS_BLOCK = register("eroded_grass_block", new ErodedGrassBlock(), BlockHandler.Translucent);

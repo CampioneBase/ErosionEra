@@ -1,6 +1,7 @@
 package lunastic.erosion_era.lang;
 
 import lunastic.erosion_era.ErosionEraMod;
+import lunastic.erosion_era.init.ErErBlocks;
 import lunastic.erosion_era.init.ErErDamageSources;
 import lunastic.erosion_era.init.ErErRules;
 import lunastic.erosion_era.init.ErErStatusEffects;
@@ -24,6 +25,7 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         this.effectTranslations(builder);
         this.damageTranslations(builder);
         this.ruleTranslations(builder);
+        this.blockTranslations(builder);
 
         try {
             Path langFilePath = dataGenerator.getModContainer().findPath(
@@ -33,6 +35,11 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    // 方块翻译
+    private void blockTranslations(TranslationBuilder builder){
+        builder.add(ErErBlocks.EROSION_VEIN, "侵蚀脉络");
     }
 
     // 药水效果翻译
@@ -64,7 +71,7 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
     private enum TKTag{
         DEATH_ATTACK_("death.attack.", false),
         _ITEM(".item", true),
-        _PLAYER(".player", true);
+        _PLAYER(".data", true);
         private final String key;
         private final boolean isSuffix;
         TKTag(String key, boolean isSuffix){ this.key = key; this.isSuffix = isSuffix; }

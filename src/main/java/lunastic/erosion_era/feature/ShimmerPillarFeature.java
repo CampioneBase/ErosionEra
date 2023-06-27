@@ -90,10 +90,10 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
         this.direction = Direction.Type.HORIZONTAL.random(random);
 
         // 读取方块
-        BlockState coreBlockState = config.core().getBlockState(random, origin)
-                .with(EnvBlock.ORIGINAL, true);
-        BlockState pillarBlockState = config.pillar().getBlockState(random, origin)
-                .with(EnvBlock.ORIGINAL, true);
+        BlockState coreBlockState = config.core().getBlockState(random, origin);
+//                .with(EnvBlock.ORIGINAL, true);
+        BlockState pillarBlockState = config.pillar().getBlockState(random, origin);
+//                .with(EnvBlock.ORIGINAL, true);
 
         // 从 y = 63 层开始寻找地面
         BlockPos corePos = new BlockPos(origin.getX(), 63, origin.getZ());
