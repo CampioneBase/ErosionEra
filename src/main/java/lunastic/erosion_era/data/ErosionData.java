@@ -1,31 +1,20 @@
-package lunastic.erosion_era.world.data;
+package lunastic.erosion_era.data;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 
 public class ErosionData{
 
-    public int getErosion() {
-        return erosion;
-    }
+    // 到下一级所需要的积蓄值(索引意义为当前等级)
+    private static final int[] NEXT_LEVEL = {1000, 1250, 1500, 1750, 2000};
 
-    public void setErosion(int erosion) {
-        this.erosion = erosion;
-    }
+    public static final int COLOR = 0xd412e0;
+    public static final int A_COLOR = 0xffd412e0;
 
-    public int getErosionLevel() {
-        return erosionLevel;
-    }
-
-    public void setErosionLevel(int erosionLevel) {
-        this.erosionLevel = erosionLevel;
-    }
 
     // 侵蚀度
-    private int erosion = 0;
+    public int erosion = 0;
     // 侵蚀等级
-    private int erosionLevel = 0;
+    public int erosionLevel = 0;
 
     private ErosionData(){}
 
@@ -37,8 +26,19 @@ public class ErosionData{
         return data;
     }
 
+    /** 获取到达下一等级所需经验 */
+    public int getNextLevelErosion(){
+        return this.isMaxLevel() ? 0 : NEXT_LEVEL[this.erosionLevel];
+    }
+
+    /** 是否为最大等级 */
+    public boolean isMaxLevel(){
+        return this.erosionLevel >= NEXT_LEVEL.length;
+    }
+
+    // test
     public void tick() {
-        erosion += 2;
+        erosion ++;
     }
 
     public void writeNbt(NbtCompound nbt){

@@ -4,9 +4,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ExampleMixin",
-    "LivingEntityMixin",
-    "player.PlayerEntityAccessor",
-    "player.PlayerEntityMixin"
+    "entity.LivingEntityMixin",
+    "entity.PlayerEntityAccessor",
+    "entity.PlayerEntityMixin",
+    "gui.hud.InGameHudAccessor",
+    "gui.hud.InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

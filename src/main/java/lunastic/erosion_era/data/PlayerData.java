@@ -1,14 +1,12 @@
-package lunastic.erosion_era.world.data;
+package lunastic.erosion_era.data;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
+import lunastic.erosion_era.ErosionEraMod;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
 
 /**
  * <h3>玩家数据池</h3>
@@ -19,8 +17,9 @@ import java.util.WeakHashMap;
 public final class PlayerData {
     public static final String NBT_TAG = "EE_PlayerData";
 
-    // 弱数据池
-    private static final Map<PlayerEntity, PlayerData> POOL = new WeakHashMap<>();
+    // todo 将 key 改写为 uuid:String
+    // 目前使用 PlayerEntity 是为了方便玩家数据测试
+    private static final Map<PlayerEntity, PlayerData> POOL = Maps.newHashMap();
 
     public PlayerData() { this.erosionData = ErosionData.create(); }
 
@@ -46,6 +45,14 @@ public final class PlayerData {
         NbtCompound nbtCompound = new NbtCompound();
         erosionData.writeNbt(nbtCompound);
         nbt.put(NBT_TAG, nbtCompound);
+
+        // 打桩检测
+        POOL.forEach((p, d) -> ErosionEraMod.LOGGER.info(
+                "[TEST] {} Data: Erosion - {} (Level {})",
+                p.getName().getString(),
+                d.erosionData.erosion,
+                d.erosionData.erosionLevel
+        ));
     }
 
     public void readNbt(NbtCompound nbt){

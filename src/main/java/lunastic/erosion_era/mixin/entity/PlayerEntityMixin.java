@@ -1,14 +1,12 @@
-package lunastic.erosion_era.mixin.player;
+package lunastic.erosion_era.mixin.entity;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.init.ErErStatusEffects;
-import lunastic.erosion_era.world.data.PlayerData;
+import lunastic.erosion_era.data.PlayerData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,12 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerEntityMixin{
 
     // 目标实例对象
-    private PlayerEntity _this;
+    private final PlayerEntity _this = (PlayerEntity) (Object) this;
 
     // 像构造器添加侵蚀度初始值
     @Inject(at = @At("TAIL"), method = "<init>")
     private void init(CallbackInfo info){
-        this._this = ((PlayerEntity)(Object)this);
         PlayerData.put(_this, PlayerData.create()); // 与数据池建立链接
     }
 
@@ -42,8 +39,8 @@ public abstract class PlayerEntityMixin{
     private void showErosion(StatusEffectInstance sei){
         ErosionEraMod.LOGGER.info("{} erosion: {} with level {} in {} tick(s)",
                 _this.getName().getString(),
-                this.getData().erosionData.getErosion(),
-                this.getData().erosionData.getErosionLevel(),
+                this.getData().erosionData.erosion,
+                this.getData().erosionData.erosionLevel,
                 sei.getDuration()
         );
     }
@@ -56,8 +53,8 @@ public abstract class PlayerEntityMixin{
         this.getData().readNbt(nbt);
         ErosionEraMod.LOGGER.info("Load Data({}): erosion {}, erosionLevel {}",
                 _this.getName().getString(),
-                this.getData().erosionData.getErosion(),
-                this.getData().erosionData.getErosionLevel()
+                this.getData().erosionData.erosion,
+                this.getData().erosionData.erosionLevel
         );
     }
 
@@ -71,12 +68,17 @@ public abstract class PlayerEntityMixin{
 //        nbt.putInt("EE_ErosionLevel", this.getData().erosionData.getErosionLevel());
         ErosionEraMod.LOGGER.info("Save Data({}): erosion {}, erosionLevel {}",
                 _this.getName().getString(),
-                this.getData().erosionData.getErosion(),
-                this.getData().erosionData.getErosionLevel()
+                this.getData().erosionData.erosion,
+                this.getData().erosionData.erosionLevel
         );
     }
     
     private PlayerData getData(){
-        return PlayerData.get(this._this);
+        PlayerData data = PlayerData.get(this._this);
+        if(data == null) {
+            data = PlayerData.create();
+            PlayerData.put(this._this, data);
+        }
+        return data;
     }
 }
