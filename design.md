@@ -21,6 +21,7 @@
 
 - **微光核心 *Shimmer Core***
   <br>激活状态时亮度为 12
+  会使周围玩家侵蚀度上升
 - **微光柱（方块） *Shimmer Pillar***
   <br>激活状态时亮度为 6
 
@@ -32,12 +33,29 @@
 
 ### 1. 侵蚀 Erosion
 
+## 玩家（实体） *PlayerEntity*
+
+### 1. 属性
+- **侵蚀度/侵蚀等级**：
+
 ## 规则 *Gamerule*
 ### 1. 侵蚀选择器 *Erosion Selector*
   - *ALL:可对所有模组对象产生侵蚀效果*
-  - *ORIGIN:对原版和本模组对象产生侵蚀效果*
+  - *ORIGIN:仅对原版和本模组对象产生侵蚀效果*
   - *OTHER:没有具体含义，用于扩展使用（没有扩展定义则效果与 ORIGIN 一样）*
   - *NONE:不选择任何对象（即禁用）*
+
+## 命令 *Command*
+
+### Erosion 命令
+
+- `/lee erosion` `/lee erosion help` 查看帮助
+- `/lee erosion data [<player>]` 查看角色侵蚀数据
+- `/lee erosion clear [<player>]` 清除侵蚀度
+- `/lee erosion clean [<player>]` 完全清除侵蚀度
+- `/lee erosion add <value> [<player>]` 增加侵蚀值（可为负值）
+- `/lee erosion level [up|down] [progress|clean|keep] [<player>]` 提升或者降低等级
+
 ------
 ### 计划
 - 增添侵蚀相关群系
@@ -52,3 +70,11 @@
 ### 日志
 - 2023-06-06 初步完成微光柱地物（中等未激活型）~~整整一个月去参考地物怎么写.jpg~~ 
 - 2023-06-09 给地物判定添加一个下边界，避免末地维度卡死。~~我错怪维度生成了~~
+- 2023-06-28 
+  1. 完成玩家数据扩展
+  2. 玩家靠近地微光柱就会被侵蚀（即和玩家数据——侵蚀数据互动）
+  3. 微光柱将不在依靠 *Status Effect* 便能对玩家产生影响（拥有独自逻辑）
+  4. 添加了画面显示侵蚀数据HUD
+
+- 2023-07-04
+  1. 搞定指令树（erosion）

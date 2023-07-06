@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ExampleMixin",
+    "command.ArgumentTypesInvoker",
+    "command.ArgumentTypesMixin",
     "entity.LivingEntityMixin",
     "entity.PlayerEntityAccessor",
     "entity.PlayerEntityMixin",

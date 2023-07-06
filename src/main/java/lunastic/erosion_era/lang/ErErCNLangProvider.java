@@ -1,6 +1,7 @@
 package lunastic.erosion_era.lang;
 
 import lunastic.erosion_era.ErosionEraMod;
+import lunastic.erosion_era.data.ErosionData;
 import lunastic.erosion_era.init.ErErBlocks;
 import lunastic.erosion_era.init.ErErDamageSources;
 import lunastic.erosion_era.init.ErErRules;
@@ -26,6 +27,7 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         this.damageTranslations(builder);
         this.ruleTranslations(builder);
         this.blockTranslations(builder);
+        this.warningTranslations(builder);
 
         try {
             Path langFilePath = dataGenerator.getModContainer().findPath(
@@ -35,6 +37,12 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    // 警告翻译
+    private void warningTranslations(TranslationBuilder builder) {
+        builder.add(ErosionData.DATA_FIX, "原始侵蚀数据异常（已录入修正后数据）");
+        builder.add(ErosionData.DATA_EXCEPTION, "原始侵蚀数据异常");
     }
 
     // 方块翻译

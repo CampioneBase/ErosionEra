@@ -24,7 +24,7 @@ public abstract class PlayerEntityMixin{
     }
 
     @Inject(at = @At("TAIL"), method = "tick")
-    private void erosionTick(CallbackInfo info){
+    private void dataTick(CallbackInfo info){
         if(_this.hasStatusEffect(ErErStatusEffects.EROSION_EFFECT)){
             StatusEffectInstance sei = _this.getStatusEffect(ErErStatusEffects.EROSION_EFFECT);
             if(sei == null) return;
@@ -39,8 +39,8 @@ public abstract class PlayerEntityMixin{
     private void showErosion(StatusEffectInstance sei){
         ErosionEraMod.LOGGER.info("{} erosion: {} with level {} in {} tick(s)",
                 _this.getName().getString(),
-                this.getData().erosionData.erosion,
-                this.getData().erosionData.erosionLevel,
+                this.getData().erosionData.getErosion(),
+                this.getData().erosionData.getErosionLevel(),
                 sei.getDuration()
         );
     }
@@ -51,11 +51,6 @@ public abstract class PlayerEntityMixin{
             , shift = At.Shift.AFTER))
     private void readErosionNbt(NbtCompound nbt, CallbackInfo ci){
         this.getData().readNbt(nbt);
-        ErosionEraMod.LOGGER.info("Load Data({}): erosion {}, erosionLevel {}",
-                _this.getName().getString(),
-                this.getData().erosionData.erosion,
-                this.getData().erosionData.erosionLevel
-        );
     }
 
     // 向nbt添加数据
@@ -64,13 +59,6 @@ public abstract class PlayerEntityMixin{
             , shift = At.Shift.AFTER))
     private void writeErosionNbt(NbtCompound nbt, CallbackInfo ci){
         this.getData().writeNbt(nbt);
-//        nbt.putInt("EE_Erosion", this.getData().erosionData.getErosion());
-//        nbt.putInt("EE_ErosionLevel", this.getData().erosionData.getErosionLevel());
-        ErosionEraMod.LOGGER.info("Save Data({}): erosion {}, erosionLevel {}",
-                _this.getName().getString(),
-                this.getData().erosionData.erosion,
-                this.getData().erosionData.erosionLevel
-        );
     }
     
     private PlayerData getData(){

@@ -1,16 +1,16 @@
 package lunastic.erosion_era;
 
-import lunastic.erosion_era.biome.BiomeHelper;
-import lunastic.erosion_era.feature.ShimmerPillarFeature;
+import lunastic.erosion_era.init.ErErCommand;
+import lunastic.erosion_era.world.biome.BiomeHelper;
+import lunastic.erosion_era.world.feature.ShimmerPillarFeature;
 import lunastic.erosion_era.init.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.TheEndBiomes;
-import net.fabricmc.fabric.impl.biome.modification.BiomeModificationImpl;
-import net.minecraft.client.render.DimensionEffects;
-import net.minecraft.entity.SpawnGroup;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -18,22 +18,17 @@ import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
-import net.minecraft.world.biome.OverworldBiomeCreator;
 import net.minecraft.world.biome.SpawnSettings;
-import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
-import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.WorldPresets;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.placementmodifier.SquarePlacementModifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.function.Consumer;
 
+import static net.minecraft.server.command.CommandManager.literal;
 
 public class ErosionEraMod implements ModInitializer {
 
@@ -41,7 +36,7 @@ public class ErosionEraMod implements ModInitializer {
 	public static final String NAME = "Erosion Era";
 	public static final String VERSION = "${version}";
 
-	public static final Logger LOGGER = LogManager.getLogger(ID);
+	public static final Logger LOGGER = LogManager.getLogger(NAME);
 
 	@Override
 	public void onInitialize() {
@@ -61,6 +56,7 @@ public class ErosionEraMod implements ModInitializer {
 		ErErFeatures.init();
 		ErErStatusEffects.init();
 		ErErRules.init();
+		ErErCommand.init();
 	}
 
 	public void test(){
@@ -83,6 +79,7 @@ public class ErosionEraMod implements ModInitializer {
 				RegistryKey.of(Registry.PLACED_FEATURE_KEY, ErosionEraMod.identifier("shimmer_pillar"))
 		);
 
+		// biome
 		Biome biome = (new Biome.Builder())
 				.precipitation(Biome.Precipitation.RAIN)
 				.temperature(0.8F)

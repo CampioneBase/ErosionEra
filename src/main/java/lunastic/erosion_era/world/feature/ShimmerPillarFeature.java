@@ -1,9 +1,8 @@
-package lunastic.erosion_era.feature;
+package lunastic.erosion_era.world.feature;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import lunastic.erosion_era.block.environment.EnvBlock;
 import lunastic.erosion_era.init.ErErBlocks;
 import lunastic.erosion_era.init.ErErTags;
 import net.minecraft.block.BlockState;

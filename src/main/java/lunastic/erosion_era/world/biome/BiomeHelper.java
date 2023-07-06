@@ -1,9 +1,6 @@
-package lunastic.erosion_era.biome;
+package lunastic.erosion_era.world.biome;
 
-import net.minecraft.resource.Resource;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.GenerationSettings;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
 
 /**

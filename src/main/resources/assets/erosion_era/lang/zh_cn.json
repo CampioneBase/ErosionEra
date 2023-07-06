@@ -25,5 +25,7 @@
 
   "itemGroup.erosion_era.test_group": "测试组",
     "item.erosion_era.test_item": "测试物品",
-      "item.erosion_era.test_item_description": "测试物品说明"
+      "item.erosion_era.test_item_description": "测试物品说明",
+
+
 }
