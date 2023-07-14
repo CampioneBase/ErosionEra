@@ -1,4 +1,4 @@
-package lunastic.erosion_era.mixin.gui.hud;
+package lunastic.erosion_era.basic.mixin.gui.hud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;

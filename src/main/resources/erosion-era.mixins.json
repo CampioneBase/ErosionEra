@@ -1,11 +1,14 @@
 {
   "required": true,
-  "package": "lunastic.erosion_era.mixin",
+  "package": "lunastic.erosion_era.basic.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ExampleMixin",
+    "biome.BuiltinBiomesMixin",
+    "biome.sorce.util.VanillaBiomeParametersMixin",
     "command.ArgumentTypesInvoker",
     "command.ArgumentTypesMixin",
+    "data.server.AbstractTagProviderInvoker",
     "entity.LivingEntityMixin",
     "entity.PlayerEntityAccessor",
     "entity.PlayerEntityMixin",

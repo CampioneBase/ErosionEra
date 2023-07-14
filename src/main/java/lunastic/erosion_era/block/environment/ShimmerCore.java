@@ -1,13 +1,12 @@
 package lunastic.erosion_era.block.environment;
 
+import lunastic.erosion_era.basic.data.ErosionData;
 import lunastic.erosion_era.block.util.Erodible;
-import lunastic.erosion_era.data.PlayerData;
-import lunastic.erosion_era.init.ErErStatusEffects;
+import lunastic.erosion_era.basic.data.PlayerExtraData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +32,7 @@ public class ShimmerCore extends EnvBlock implements Erodible{
             Box box = new Box(pos).expand(10).stretch(0.0, world.getHeight(), 0.0);
             List<PlayerEntity> list = world.getNonSpectatingEntities(PlayerEntity.class, box);
 //            list.forEach(p -> p.addStatusEffect(new StatusEffectInstance(ErErStatusEffects.EROSION_EFFECT, 100, 1, true, true)));
-            list.forEach(p -> PlayerData.get(p).erosionData.tick());
+            list.forEach(p -> ErosionData.get(p).tick());
         }
     }
 

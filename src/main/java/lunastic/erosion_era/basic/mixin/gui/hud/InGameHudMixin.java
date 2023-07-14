@@ -1,8 +1,8 @@
-package lunastic.erosion_era.mixin.gui.hud;
+package lunastic.erosion_era.basic.mixin.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import lunastic.erosion_era.data.ErosionData;
-import lunastic.erosion_era.data.PlayerData;
+import lunastic.erosion_era.basic.data.ErosionData;
+import lunastic.erosion_era.basic.data.PlayerExtraData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -27,7 +27,7 @@ public class InGameHudMixin {
     private void renderErosionBar(MatrixStack matrices, int originalX, CallbackInfo ci){
         PlayerEntity player = _this_.getClient().player;
         if(player == null) return;
-        ErosionData data = PlayerData.get(player).erosionData;
+        ErosionData data = ErosionData.get(player);
 
         // 使用原版的Sprite textures/gui/bars.png
         RenderSystem.setShaderTexture(0, new Identifier("textures/gui/bars.png"));

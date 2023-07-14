@@ -1,7 +1,7 @@
 package lunastic.erosion_era.command.argument;
 
 import com.mojang.brigadier.context.CommandContext;
-import lunastic.erosion_era.data.ErosionData;
+import lunastic.erosion_era.basic.data.ErosionData;
 import net.minecraft.command.argument.EnumArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 

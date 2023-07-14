@@ -1,11 +1,8 @@
 package lunastic.erosion_era.lang;
 
 import lunastic.erosion_era.ErosionEraMod;
-import lunastic.erosion_era.data.ErosionData;
-import lunastic.erosion_era.init.ErErBlocks;
-import lunastic.erosion_era.init.ErErDamageSources;
-import lunastic.erosion_era.init.ErErRules;
-import lunastic.erosion_era.init.ErErStatusEffects;
+import lunastic.erosion_era.basic.data.ErosionData;
+import lunastic.erosion_era.init.*;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.entity.damage.DamageSource;
@@ -28,6 +25,7 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         this.ruleTranslations(builder);
         this.blockTranslations(builder);
         this.warningTranslations(builder);
+        this.biomeTranslations(builder);
 
         try {
             Path langFilePath = dataGenerator.getModContainer().findPath(
@@ -37,6 +35,10 @@ public class ErErCNLangProvider extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    private void biomeTranslations(TranslationBuilder builder) {
+        builder.add("biome.erosion_era:erosion_area", "侵蚀平原");
     }
 
     // 警告翻译

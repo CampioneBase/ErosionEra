@@ -1,8 +1,8 @@
-package lunastic.erosion_era.mixin.entity;
+package lunastic.erosion_era.basic.mixin.entity;
 
 import lunastic.erosion_era.ErosionEraMod;
 import lunastic.erosion_era.init.ErErStatusEffects;
-import lunastic.erosion_era.data.PlayerData;
+import lunastic.erosion_era.basic.data.PlayerExtraData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -20,7 +20,7 @@ public abstract class PlayerEntityMixin{
     // 像构造器添加侵蚀度初始值
     @Inject(at = @At("TAIL"), method = "<init>")
     private void init(CallbackInfo info){
-        PlayerData.put(_this, PlayerData.create()); // 与数据池建立链接
+        PlayerExtraData.put(_this, PlayerExtraData.newData()); // 与数据池建立链接
     }
 
     @Inject(at = @At("TAIL"), method = "tick")
@@ -28,21 +28,11 @@ public abstract class PlayerEntityMixin{
         if(_this.hasStatusEffect(ErErStatusEffects.EROSION_EFFECT)){
             StatusEffectInstance sei = _this.getStatusEffect(ErErStatusEffects.EROSION_EFFECT);
             if(sei == null) return;
-            this.getData().tick();
-            this.showErosion(sei);
+            // todo 侵蚀状态与侵蚀数据影响
             // 目前还不清楚为啥这个BUFF持续时间结束后不能自动消除
             // 在此处手动添加消除
             if(sei.getDuration() <= 0) _this.removeStatusEffect(ErErStatusEffects.EROSION_EFFECT);
         }
-    }
-
-    private void showErosion(StatusEffectInstance sei){
-        ErosionEraMod.LOGGER.info("{} erosion: {} with level {} in {} tick(s)",
-                _this.getName().getString(),
-                this.getData().erosionData.getErosion(),
-                this.getData().erosionData.getErosionLevel(),
-                sei.getDuration()
-        );
     }
 
     // 从nbt读取数据
@@ -50,7 +40,7 @@ public abstract class PlayerEntityMixin{
             "Lnet/minecraft/nbt/NbtCompound;getList(Ljava/lang/String;I)Lnet/minecraft/nbt/NbtList;"
             , shift = At.Shift.AFTER))
     private void readErosionNbt(NbtCompound nbt, CallbackInfo ci){
-        this.getData().readNbt(nbt);
+        PlayerExtraData.get(_this).readNbt(nbt);
     }
 
     // 向nbt添加数据
@@ -58,15 +48,6 @@ public abstract class PlayerEntityMixin{
             "Lnet/minecraft/nbt/NbtCompound;put(Ljava/lang/String;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;"
             , shift = At.Shift.AFTER))
     private void writeErosionNbt(NbtCompound nbt, CallbackInfo ci){
-        this.getData().writeNbt(nbt);
-    }
-    
-    private PlayerData getData(){
-        PlayerData data = PlayerData.get(this._this);
-        if(data == null) {
-            data = PlayerData.create();
-            PlayerData.put(this._this, data);
-        }
-        return data;
+        PlayerExtraData.get(_this).writeNbt(nbt);
     }
 }

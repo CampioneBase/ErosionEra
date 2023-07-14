@@ -8,6 +8,7 @@ import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
  * @see DefaultBiomeFeatures
  */
 public abstract class BiomeHelper {
+    private BiomeHelper(){}
     public static GenerationSettings.Builder erosionArea(){
         GenerationSettings.Builder builder = defaultBuilder();
         return builder;

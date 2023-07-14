@@ -1,18 +1,18 @@
-package lunastic.erosion_era.data;
+package lunastic.erosion_era.basic.data;
 
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.serialization.Codec;
 import lunastic.erosion_era.ErosionEraMod;
-import net.minecraft.command.argument.BlockMirrorArgumentType;
-import net.minecraft.command.argument.EnumArgumentType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.BlockMirror;
 import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Supplier;
+
+import static lunastic.erosion_era.basic.data.PlayerExtraData.LOGGER;
 
 /**
  * <h2>侵蚀数据</h2>
@@ -33,9 +33,12 @@ import java.util.function.Supplier;
  *     <li> {@link #getTotalErosion()} </li>
  * </ul>
  * @author Lunastic
- * @see PlayerData
+ * @see PlayerExtraData
  */
-public final class ErosionData{
+public final class ErosionData implements DataCompound{
+
+    // 数据标签
+    public static final String DATA_TAG = "Erosion";
 
     /**
      * 到下一级所需要的积蓄值(索引意义为当前等级)
@@ -67,6 +70,10 @@ public final class ErosionData{
     }
 
     private ErosionData(){}
+
+    public static @NotNull ErosionData get(@NotNull PlayerEntity player){
+        return PlayerExtraData.get(player).get(ErosionData.DATA_TAG, ErosionData.class);
+    }
 
     public static ErosionData create(){ return new ErosionData(); }
     public static ErosionData of(int erosion, int erosionLevel){
@@ -219,7 +226,7 @@ public final class ErosionData{
             check = false;
         }
         if (this.erosion > this.getNextLevelErosion()){
-            this.erosion = this.getNextLevelErosion() - 1;
+            this.erosion = this.isMaxLevel() ? 0 : this.getNextLevelErosion() - 1;
             check = false;
         }
         if (this.erosion == this.getNextLevelErosion()) this.erosion = this.getNextLevelErosion() - 1;
@@ -231,16 +238,28 @@ public final class ErosionData{
         this.add(10);
     }
 
+    public Supplier<DataCompound> getDefault() {
+        return ErosionData::create;
+    }
+
     public void writeNbt(NbtCompound nbt){
-        nbt.putInt("erosion", this.erosion);
-        nbt.putInt("erosionLevel", this.erosionLevel);
+        NbtCompound nbtCompound = new NbtCompound();
+        nbtCompound.putInt("erosion", this.erosion);
+        nbtCompound.putInt("erosionLevel", this.erosionLevel);
+        nbt.put(DATA_TAG, nbtCompound);
     }
 
     public void readNbt(NbtCompound nbt){
-        this.erosion = nbt.getInt("erosion");
-        this.erosionLevel = nbt.getInt("erosionLevel");
+        NbtCompound nbtCompound = nbt.getCompound(DATA_TAG);
+        this.erosion = nbtCompound.getInt("erosion");
+        this.erosionLevel = nbtCompound.getInt("erosionLevel");
         // 数据检测
-        if (this.checkAndFixData()) ErosionEraMod.LOGGER.warn(Text.translatable(DATA_EXCEPTION));
+        if (this.checkAndFixData()) LOGGER.warn(Text.translatable(DATA_EXCEPTION));
+    }
+
+    @Override
+    public String getDataTag() {
+        return DATA_TAG;
     }
 
     /** 侵蚀度改变方式 */

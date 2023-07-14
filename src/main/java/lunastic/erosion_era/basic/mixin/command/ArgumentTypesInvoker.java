@@ -1,4 +1,4 @@
-package lunastic.erosion_era.mixin.command;
+package lunastic.erosion_era.basic.mixin.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import net.minecraft.command.argument.ArgumentTypes;

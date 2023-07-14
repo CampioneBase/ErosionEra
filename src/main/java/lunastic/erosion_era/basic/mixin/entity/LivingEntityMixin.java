@@ -1,4 +1,4 @@
-package lunastic.erosion_era.mixin.entity;
+package lunastic.erosion_era.basic.mixin.entity;
 
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;

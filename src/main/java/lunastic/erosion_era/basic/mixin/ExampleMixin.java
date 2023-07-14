@@ -1,4 +1,4 @@
-package lunastic.erosion_era.mixin;
+package lunastic.erosion_era.basic.mixin;
 
 import lunastic.erosion_era.ErosionEraMod;
 import net.minecraft.server.MinecraftServer;

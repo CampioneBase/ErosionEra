@@ -1,4 +1,4 @@
-package lunastic.erosion_era.mixin.command;
+package lunastic.erosion_era.basic.mixin.command;
 
 import lunastic.erosion_era.command.argument.ErosionChangeArgumentType;
 import net.minecraft.command.argument.ArgumentTypes;
