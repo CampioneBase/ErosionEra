@@ -25,14 +25,8 @@ public abstract class PlayerEntityMixin{
 
     @Inject(at = @At("TAIL"), method = "tick")
     private void dataTick(CallbackInfo info){
-        if(_this.hasStatusEffect(ErErStatusEffects.EROSION_EFFECT)){
-            StatusEffectInstance sei = _this.getStatusEffect(ErErStatusEffects.EROSION_EFFECT);
-            if(sei == null) return;
-            // todo 侵蚀状态与侵蚀数据影响
-            // 目前还不清楚为啥这个BUFF持续时间结束后不能自动消除
-            // 在此处手动添加消除
-            if(sei.getDuration() <= 0) _this.removeStatusEffect(ErErStatusEffects.EROSION_EFFECT);
-        }
+        // 数据tick处理
+        PlayerExtraData.get(_this).tick(_this);
     }
 
     // 从nbt读取数据

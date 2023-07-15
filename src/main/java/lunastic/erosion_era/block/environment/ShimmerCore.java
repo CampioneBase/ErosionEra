@@ -32,7 +32,7 @@ public class ShimmerCore extends EnvBlock implements Erodible{
             Box box = new Box(pos).expand(10).stretch(0.0, world.getHeight(), 0.0);
             List<PlayerEntity> list = world.getNonSpectatingEntities(PlayerEntity.class, box);
 //            list.forEach(p -> p.addStatusEffect(new StatusEffectInstance(ErErStatusEffects.EROSION_EFFECT, 100, 1, true, true)));
-            list.forEach(p -> ErosionData.get(p).tick());
+            list.forEach(p -> ErosionData.get(p).add(random.nextBetween(5, 15)));
         }
     }
 

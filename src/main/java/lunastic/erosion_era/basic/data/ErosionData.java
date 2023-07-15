@@ -1,6 +1,8 @@
 package lunastic.erosion_era.basic.data;
 
 import lunastic.erosion_era.ErosionEraMod;
+import lunastic.erosion_era.init.ErErStatusEffects;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
@@ -233,26 +235,26 @@ public final class ErosionData implements DataCompound{
         return check;
     }
 
-    // test
-    public void tick() {
-        this.add(10);
-    }
-
-    public Supplier<DataCompound> getDefault() {
-        return ErosionData::create;
+    @Override
+    public void tick(PlayerEntity player) {
+        if(player.hasStatusEffect(ErErStatusEffects.EROSION_EFFECT)){
+            StatusEffectInstance sei = player.getStatusEffect(ErErStatusEffects.EROSION_EFFECT);
+            if(sei == null) return;
+            // todo 侵蚀状态与侵蚀数据影响
+            // 目前还不清楚为啥这个BUFF持续时间结束后不能自动消除
+            // 在此处手动添加消除
+            if(sei.getDuration() <= 0) player.removeStatusEffect(ErErStatusEffects.EROSION_EFFECT);
+        }
     }
 
     public void writeNbt(NbtCompound nbt){
-        NbtCompound nbtCompound = new NbtCompound();
-        nbtCompound.putInt("erosion", this.erosion);
-        nbtCompound.putInt("erosionLevel", this.erosionLevel);
-        nbt.put(DATA_TAG, nbtCompound);
+        nbt.putInt("erosion", this.erosion);
+        nbt.putInt("erosionLevel", this.erosionLevel);
     }
 
     public void readNbt(NbtCompound nbt){
-        NbtCompound nbtCompound = nbt.getCompound(DATA_TAG);
-        this.erosion = nbtCompound.getInt("erosion");
-        this.erosionLevel = nbtCompound.getInt("erosionLevel");
+        this.erosion = nbt.getInt("erosion");
+        this.erosionLevel = nbt.getInt("erosionLevel");
         // 数据检测
         if (this.checkAndFixData()) LOGGER.warn(Text.translatable(DATA_EXCEPTION));
     }
