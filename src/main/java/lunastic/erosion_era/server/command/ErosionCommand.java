@@ -6,17 +6,16 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import lunastic.erosion_era.basic.data.ErosionData;
+import lunastic.erosion_era.data.ErosionData;
 import lunastic.erosion_era.command.argument.ErosionChangeArgumentType;
-import lunastic.erosion_era.basic.data.ErosionData.*;
-import lunastic.erosion_era.basic.data.PlayerExtraData;
+import lunastic.erosion_era.data.ErosionData.*;
 import net.minecraft.command.argument.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-import static lunastic.erosion_era.init.ErErCommand.ENTER_TEXT;
+import static lunastic.erosion_era.init.Commands.ENTER_TEXT;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ErosionCommand {

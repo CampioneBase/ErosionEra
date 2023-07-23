@@ -3,8 +3,9 @@ package lunastic.erosion_era.world.feature;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import lunastic.erosion_era.init.ErErBlocks;
-import lunastic.erosion_era.init.ErErTags;
+import lunastic.erosion_era.init.Blocks;
+import lunastic.erosion_era.init.Tags;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.tag.BlockTags;
@@ -23,6 +24,11 @@ import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import java.util.function.Predicate;
 
 public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
+    /** 非活性状态代码 */
+    public static final int INACTIVE_STATUE = 0;
+    /** 活性状态代码 */
+    public static final int ACTIVE_STATUE = 1;
+
     public ShimmerPillarFeature() {
         super(Config.CODEC);
     }
@@ -53,7 +59,7 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
     }
 
     protected boolean isErosionBlock(BlockState bs){
-        return bs.isIn(ErErTags.EROSION_ENV);
+        return bs.isIn(Tags.EROSION_ENV);
     }
 
     // 斜度 即每上升多少方块向水平方向平移一格
@@ -68,8 +74,6 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
     @Override
     public boolean generate(FeatureContext<Config> context) {
         Random random = context.getRandom();
-        // 2% 概率生成
-        if (random.nextBetween(1, 50) > 1) return false;
 
         StructureWorldAccess world = context.getWorld();
 
@@ -89,10 +93,23 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
         this.direction = Direction.Type.HORIZONTAL.random(random);
 
         // 读取方块
-        BlockState coreBlockState = config.core().getBlockState(random, origin);
-//                .with(EnvBlock.ORIGINAL, true);
-        BlockState pillarBlockState = config.pillar().getBlockState(random, origin);
-//                .with(EnvBlock.ORIGINAL, true);
+        BlockState coreBlockState ,pillarBlockState;
+        switch (config.isActive().get(random)) {
+            // 非活性
+            case INACTIVE_STATUE -> {
+                coreBlockState = Blocks.SHIMMER_CORE.getDefaultState();
+                pillarBlockState = Blocks.SHIMMER_PILLAR.getDefaultState();
+            }
+            // 活性
+            case ACTIVE_STATUE -> {
+                // todo 活性状态设置方块
+                coreBlockState = Blocks.SHIMMER_CORE.getDefaultState();
+                pillarBlockState = Blocks.SHIMMER_PILLAR.getDefaultState();
+            }
+            default -> {
+                return false;
+            }
+        }
 
         // 从 y = 63 层开始寻找地面
         BlockPos corePos = new BlockPos(origin.getX(), 63, origin.getZ());
@@ -111,13 +128,24 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
                     if (corePos.getY() < -60) return false;
                     corePos = corePos.down();
                 }
-
                 // ------------ 生成地物 ------------ //
+                // -- setBlockState 注释 -- //
+                // 生成方块状态的 flag 意义
+                // 1：NOTIFY_NEIGHBORS   向周围的块发送邻居更新事件。
+                // 2：NOTIFY_LISTENERS   通知需要在块更改时做出反应的侦听器和客户端。
+                // 4：NO_REDRAW          与NOTIFY_LISTENERS一起使用，以抑制客户端上的渲染过程。
+                // 8：REDRAW_ON_MAIN_THREAD 强制客户端进行同步重绘。
+                // 16：FORCE_STATE       绕过虚拟块状态更改并强制将传递的状态按原样存储。
+                // 32：SKIP_DROPS        防止前一个方块（容器）在销毁时丢弃物品。
+                // 64：MOVED             表示当前块正被移动到不同位置的信号，通常是因为活塞。
+                // 128：SKIP_LIGHTING_UPDATES 应跳过照明更新的信号。
+
+                // 3:NOTIFY_ALL NOTIFY_NEIGHBORS + NOTIFY_LISTENERS
+
                 // 中心柱
-                this.createLinePillar(world, random, pillarBlockState, corePos, height, 4);
-                // 核心方块
-                world.setBlockState(corePos, coreBlockState, 0x10);
+                this.createSimplePillar(world, random, pillarBlockState, corePos, height, 4);
                 BlockPos finalCorePos = corePos;
+                // 四周方块生成
                 Direction.Type.HORIZONTAL.stream().iterator().forEachRemaining(direction -> {
                     int h = height, d = 4;
                     BlockPos p = finalCorePos;
@@ -129,20 +157,21 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
                         int cut1 = random.nextBetween(this.slope / 2, this.slope);
                         if(cut1 >= h) break;
                         h -= cut1;
-                        this.createLinePillar(world, random, pillarBlockState, p, h, d);
-                        // 右转
-                        this.createLinePillar(world, random, pillarBlockState,
+                        this.createSimplePillar(world, random, pillarBlockState, p, h, d);
+                        // 绕Y顺时针
+                        this.createSimplePillar(world, random, pillarBlockState,
                                 p.offset(direction.rotateYClockwise()),
                                 random.nextBetween(h / 2, h * 3 / 4), d);
-                        // 左转
-                        this.createLinePillar(world, random, pillarBlockState,
+                        // 绕Y逆时针
+                        this.createSimplePillar(world, random, pillarBlockState,
                                 p.offset(direction.rotateYCounterclockwise()),
                                 random.nextBetween(h / 2, h * 3 / 4), d);
                         // 深度递减
                         d = Math.max(d - 1, 1);
                     } while (true);
-
                 });
+                // 核心方块 生成时向周围发送更新
+                world.setBlockState(corePos, coreBlockState, Block.NOTIFY_ALL);
                 // ------------ 结束生成 ------------ //
                 return true;
             }
@@ -162,7 +191,7 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
      * @param depth 深度
      * @return 终点坐标
      */
-    private BlockPos createLinePillar(StructureWorldAccess world, Random random, BlockState state, BlockPos pos, int height, int depth){
+    private BlockPos createSimplePillar(StructureWorldAccess world, Random random, BlockState state, BlockPos pos, int height, int depth){
         // 高度 深度 计数 偏移触发量
         int h = 0, d = 0, c = 0, s = this.slope;
         // 指针点
@@ -171,13 +200,13 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
         BlockState b1 = world.getBlockState(pos), b2 = world.getBlockState(pos.down(depth));
 
         while (d++ < depth){
-            world.setBlockState(p, state, 0x10);
+            world.setBlockState(p, state, Block.NOTIFY_LISTENERS);
             p = p.down();
         }
         // 回归中心
         p = pos;
         while (h++ < height){
-            world.setBlockState(p, state, 0x10);
+            world.setBlockState(p, state, Block.NOTIFY_LISTENERS);
             // 自增高
             p = p.up();
             // 计数偏移
@@ -189,16 +218,16 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
         }
         if(result == null) result = p;
         // 如果拐点是 环境方块则说明是在内侧，跳过生成
-        else if(world.getBlockState(result).isIn(ErErTags.EROSION_ENV)) return p;
+        else if(world.getBlockState(result).isIn(Tags.EROSION_ENV)) return p;
         // 判断是否可以生成拐点方块
         if(random.nextBetween(0,5) > 1 && this.ignoredBlocks(b1)){
             if(random.nextBetween(0,8) > 1 && this.ignoredBlocks(b2)) {
                 // 生成 2 个
-                world.setBlockState(result.up(), b1, 0x10);
-                world.setBlockState(result, b2, 0x10);
+                world.setBlockState(result.up(), b1, Block.NOTIFY_LISTENERS);
+                world.setBlockState(result, b2, Block.NOTIFY_LISTENERS);
             } else {
                 // 生成 1 个
-                world.setBlockState(result, b1, 0x10);
+                world.setBlockState(result, b1, Block.NOTIFY_LISTENERS);
             }
         }
         return p;
@@ -208,22 +237,24 @@ public class ShimmerPillarFeature extends Feature<ShimmerPillarFeature.Config> {
     public static record Config(
             IntProvider height,
             IntProvider slope,
-            BlockStateProvider core,
-            BlockStateProvider pillar
+            IntProvider isActive
     ) implements FeatureConfig {
         public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 IntProvider.VALUE_CODEC.fieldOf("height").forGetter(Config::height),
                 IntProvider.VALUE_CODEC.fieldOf("slope").forGetter(Config::slope),
-                BlockStateProvider.TYPE_CODEC.fieldOf("core").forGetter(Config::core),
-                BlockStateProvider.TYPE_CODEC.fieldOf("pillar").forGetter(Config::pillar)
-
+                IntProvider.VALUE_CODEC.fieldOf("isActive").forGetter(Config::isActive)
         ).apply(instance, instance.stable(Config::new)));
 
         public static final Config MIDDLE_INACTIVE = new Config(
                 UniformIntProvider.create(16, 24),
                 ConstantIntProvider.create(8),
-                BlockStateProvider.of(ErErBlocks.SHIMMER_CORE),
-                BlockStateProvider.of(ErErBlocks.SHIMMER_PILLAR)
+                ConstantIntProvider.create(INACTIVE_STATUE)
+        );
+
+        public static final Config LARGE_INACTIVE = new Config(
+                UniformIntProvider.create(32, 60),
+                ConstantIntProvider.create(12),
+                ConstantIntProvider.create(INACTIVE_STATUE)
         );
     }
 }

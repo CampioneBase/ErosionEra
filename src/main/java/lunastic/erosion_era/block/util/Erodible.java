@@ -1,10 +1,8 @@
 package lunastic.erosion_era.block.util;
 
-import lunastic.erosion_era.init.ErErProperties;
+import lunastic.erosion_era.init.Properties;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 
@@ -12,7 +10,7 @@ import java.util.function.ToIntFunction;
 
 public interface Erodible {
 
-    IntProperty ENERGY = ErErProperties.EROSION_ENERGY;
+    IntProperty ENERGY = Properties.EROSION_ENERGY;
 
     int ENERGY_MAX = 1000;
 

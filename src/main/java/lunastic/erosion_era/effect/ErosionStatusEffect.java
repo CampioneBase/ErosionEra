@@ -1,17 +1,11 @@
 package lunastic.erosion_era.effect;
 
-import lunastic.erosion_era.ErosionEraMod;
-import lunastic.erosion_era.init.ErErDamageSources;
-import lunastic.erosion_era.init.ErErStatusEffects;
+import lunastic.erosion_era.init.DamageSources;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 
 import java.util.UUID;
 
@@ -45,7 +39,7 @@ public class ErosionStatusEffect extends StatusEffect {
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
         // ErosionEraMod.LOGGER.info(entity.getArmorItems()); // [1 air, 1 air, 1 air, 1 air]
-        entity.damage(ErErDamageSources.EROSION, 1f + 0.5f * amplifier);
+        entity.damage(DamageSources.EROSION, 1f + 0.5f * amplifier);
     }
 
     @Override

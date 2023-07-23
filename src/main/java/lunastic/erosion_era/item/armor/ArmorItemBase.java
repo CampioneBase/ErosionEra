@@ -1,6 +1,6 @@
 package lunastic.erosion_era.item.armor;
 
-import lunastic.erosion_era.init.ErErGroups;
+import lunastic.erosion_era.init.ItemGroups;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
@@ -25,7 +25,7 @@ public class ArmorItemBase extends ArmorItem {
     }
 
     public ArmorItemBase(ArmorMaterial material, EquipmentSlot slot){
-        this(material, slot, new FabricItemSettings().group(ErErGroups.ARMOR));
+        this(material, slot, new FabricItemSettings().group(ItemGroups.ARMOR));
 
     }
 

@@ -1,6 +1,5 @@
 package lunastic.erosion_era.recipe;
 
-import lunastic.erosion_era.init.ErErItems;
 import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;

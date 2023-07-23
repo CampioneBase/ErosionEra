@@ -1,6 +1,6 @@
 package lunastic.erosion_era.item.armor.material;
 
-import lunastic.erosion_era.init.ErErItems;
+import lunastic.erosion_era.init.Items;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
@@ -14,9 +14,9 @@ import java.util.function.Supplier;
 
 public enum ErosionEraArmorMaterials implements ArmorMaterial {
 
-    BASIC_MATERIAL("basic", 5, new int[]{1, 2, 3, 1}, 15,
+    BASIC_MATERIAL("util", 5, new int[]{1, 2, 3, 1}, 15,
             SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0F, 0F,
-            () -> Ingredient.ofItems(ErErItems.EROSION_DEBRIS))
+            () -> Ingredient.ofItems(Items.EROSION_DEBRIS))
     ;
 
     // 所有盔甲的基础耐久数值 {头, 胸甲, 腿甲, 鞋}

@@ -1,12 +1,10 @@
 package lunastic.erosion_era.block.eroded;
 
-import lunastic.erosion_era.init.ErErBlocks;
+import lunastic.erosion_era.init.Blocks;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
@@ -31,7 +29,7 @@ import net.minecraft.world.chunk.light.ChunkLightProvider;
 public class ErodedGrassBlock extends SpreadableBlock {
     public ErodedGrassBlock() {
         super(FabricBlockSettings
-                .copyOf(Blocks.GRASS_BLOCK)
+                .copyOf(net.minecraft.block.Blocks.GRASS_BLOCK)
         );
         // 使用草方块的纹理，添加侵蚀颜色
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> 8368696, this);
@@ -43,7 +41,7 @@ public class ErodedGrassBlock extends SpreadableBlock {
         BlockPos blockPos = pos.up(); // 上方方块位置
         BlockState blockState = worldView.getBlockState(blockPos);
         // 上方方块有积雪且层数为1
-        if (blockState.isOf(Blocks.SNOW) && blockState.get(SnowBlock.LAYERS) == 1) {
+        if (blockState.isOf(net.minecraft.block.Blocks.SNOW) && blockState.get(SnowBlock.LAYERS) == 1) {
             return true;
         }
         if (blockState.getFluidState().getLevel() == 8) {
@@ -57,7 +55,7 @@ public class ErodedGrassBlock extends SpreadableBlock {
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (!ErodedGrassBlock.canSurvive(state, world, pos)) {
-            world.setBlockState(pos, ErErBlocks.ERODED_DIRT.getDefaultState());
+            world.setBlockState(pos, Blocks.ERODED_DIRT.getDefaultState());
         }
     }
 
