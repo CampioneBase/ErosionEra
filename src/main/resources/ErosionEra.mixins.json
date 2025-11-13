@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "campionebase.erosionera.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "erosionera.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
