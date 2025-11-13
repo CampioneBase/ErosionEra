@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ErosionEra {
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger(ErosionEra.class);
-    public static final String MODID = "erosion_era";
+    public static final String MODID = "erosionera";
 
 
     public ErosionEra(FMLJavaModLoadingContext context) {
