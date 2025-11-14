@@ -1,6 +1,6 @@
 package campionebase.erosionera.init;
 
-import campionebase.erosionera.client.model.ErodedWolfModel;
+import campionebase.erosionera.client.model.ModelErodedWolf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ErErModels {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ErodedWolfModel.LAYER_LOCATION, ErodedWolfModel::createBodyLayer);
+        event.registerLayerDefinition(ModelErodedWolf.LAYER_LOCATION, ModelErodedWolf::createBodyLayer);
     }
 }

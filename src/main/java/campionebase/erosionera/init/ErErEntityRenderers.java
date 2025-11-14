@@ -12,6 +12,7 @@ public class ErErEntityRenderers {
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ErErEntities.ERODED_WOLF.get(), ErodedWolfRenderer::new);
+        event.registerEntityRenderer(ErErEntities.ERODED_WOLF_Master.get(), ErodedWolfMasterRenderer::new);
     }
 
 }

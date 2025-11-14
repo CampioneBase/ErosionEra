@@ -1,6 +1,6 @@
 package campionebase.erosionera.client.renderer;
 
-import campionebase.erosionera.client.model.ErodedWolfModel;
+import campionebase.erosionera.client.model.ModelErodedWolf;
 import campionebase.erosionera.client.model.animations.ErodedWolfAnimation;
 import campionebase.erosionera.entity.ErodedWolf;
 
@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.HierarchicalModel;
 
-public class ErodedWolfRenderer extends MobRenderer<ErodedWolf, ErodedWolfModel<ErodedWolf>> {
+public class ErodedWolfRenderer extends MobRenderer<ErodedWolf, ModelErodedWolf<ErodedWolf>> {
     public ErodedWolfRenderer(EntityRendererProvider.Context context) {
-        super(context, new AnimatedModel(context.bakeLayer(ErodedWolfModel.LAYER_LOCATION)), 0.5f);
+        super(context, new AnimatedModel(context.bakeLayer(ModelErodedWolf.LAYER_LOCATION)), 0.5f);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class ErodedWolfRenderer extends MobRenderer<ErodedWolf, ErodedWolfModel<
         return ResourceLocation.parse("erosionera:textures/entity/eroded_wolf.png");
     }
 
-    private static final class AnimatedModel extends ErodedWolfModel<ErodedWolf> {
+    private static final class AnimatedModel extends ModelErodedWolf<ErodedWolf> {
         private final ModelPart root;
         private final HierarchicalModel animator = new HierarchicalModel<ErodedWolf>() {
             @Override
