@@ -1,5 +1,6 @@
 package campionebase.erosionera.entity;
 
+import campionebase.erosionera.init.ErErAttributes;
 import campionebase.erosionera.init.ErErEntities;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -63,7 +64,7 @@ public class ErodedWolfMaster extends Monster {
 
     @Override
     public MobType getMobType() {
-        return MobType.UNDEFINED;
+        return ErErEntities.ERODED;
     }
 
     @Override
@@ -113,6 +114,7 @@ public class ErodedWolfMaster extends Monster {
         builder = builder.add(Attributes.FOLLOW_RANGE, 16);
         builder = builder.add(Attributes.KNOCKBACK_RESISTANCE, 0.3);
         builder = builder.add(Attributes.ATTACK_KNOCKBACK, 1);
+        builder = builder.add(ErErAttributes.EROSION_LEVEL.get(), 2);
         return builder;
     }
 

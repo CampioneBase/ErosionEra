@@ -1,9 +1,6 @@
 package campionebase.erosionera;
 
-import campionebase.erosionera.init.ErErBlocks;
-import campionebase.erosionera.init.ErErEntities;
-import campionebase.erosionera.init.ErErItems;
-import campionebase.erosionera.init.ErErTabs;
+import campionebase.erosionera.init.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,6 +31,7 @@ public class ErosionEra {
         ErErItems.REGISTRY.register(bus);
         ErErEntities.REGISTRY.register(bus);
         ErErTabs.REGISTRY.register(bus);
+        ErErAttributes.REGISTRY.register(bus);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

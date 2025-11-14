@@ -1,5 +1,6 @@
 package campionebase.erosionera.entity;
 
+import campionebase.erosionera.init.ErErAttributes;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraftforge.registries.ForgeRegistries;
 import campionebase.erosionera.init.ErErEntities;
@@ -56,7 +57,7 @@ public class ErodedWolf extends Monster {
 
     @Override
     public MobType getMobType() {
-        return MobType.UNDEFINED;
+        return ErErEntities.ERODED;
     }
 
     @Override
@@ -70,14 +71,15 @@ public class ErodedWolf extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.MAX_HEALTH, 16)
-                .add(Attributes.ARMOR, 3)
-                .add(Attributes.ATTACK_DAMAGE, 3)
-                .add(Attributes.FOLLOW_RANGE, 16)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.1)
-                .add(Attributes.ATTACK_KNOCKBACK, 0.2);
-
+        AttributeSupplier.Builder builder = Mob.createMobAttributes();
+        builder = builder.add(Attributes.MOVEMENT_SPEED, 0.3);
+        builder = builder.add(Attributes.MAX_HEALTH, 16);
+        builder = builder.add(Attributes.ARMOR, 3);
+        builder = builder.add(Attributes.ATTACK_DAMAGE, 3);
+        builder = builder.add(Attributes.FOLLOW_RANGE, 16);
+        builder = builder.add(Attributes.KNOCKBACK_RESISTANCE, 0.1);
+        builder = builder.add(Attributes.ATTACK_KNOCKBACK, 0.2);
+        builder = builder.add(ErErAttributes.EROSION_LEVEL.get(), 1);
+        return builder;
     }
 }

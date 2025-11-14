@@ -1,5 +1,7 @@
 {
   "entity.erosionera.eroded_wolf": "受侵蚀的狼",
   "entity.erosionera.eroded_wolf_master": "受侵蚀的狼主",
-  "item.erosionera.eroded_wolf_spawn_egg": "受侵蚀的狼蛋"
+  "item.erosionera.eroded_wolf_spawn_egg": "受侵蚀的狼蛋",
+  "attribute.erosion_era.erosion_value": "侵蚀度",
+  "attribute.erosion_era.erosion_level": "侵蚀等级"
 }
