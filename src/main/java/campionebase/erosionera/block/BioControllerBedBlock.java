@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -121,11 +122,13 @@ public class BioControllerBedBlock extends HorizontalDirectionalBlock {
                                           @NotNull InteractionHand hand,
                                           @NotNull BlockHitResult hitResult)
     {
-        if (level.isClientSide()) return InteractionResult.CONSUME;
+        //if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (blockState.getValue(OCCUPIED)) return InteractionResult.PASS;
-        player.setSleepingPos(pos);
-        player.setPose(Pose.SLEEPING);
+        if (player.isPassenger()) player.stopRiding();
+        player.setPose(Pose.SITTING);
+        player.setPos((double)pos.getX() + 0.5D, (double)pos.getY() + 0.6875D, (double)pos.getZ() + 0.5D);
+        player.setDeltaMovement(Vec3.ZERO);
         level.setBlock(pos, blockState.setValue(OCCUPIED, true), Block.UPDATE_ALL);
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 }
