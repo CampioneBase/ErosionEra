@@ -1,10 +1,14 @@
 package campionebase.erosionera.data;
 
 import campionebase.erosionera.ErosionEra;
+import campionebase.erosionera.data.blockstate.BioCameraBlockStateProvider;
+import campionebase.erosionera.data.blockstate.BioConnectorBlockStateProvider;
 import campionebase.erosionera.data.blockstate.HorizontalBlockStateProvider;
+import campionebase.erosionera.data.blockstate.NormalBlockStateProvider;
 import campionebase.erosionera.data.lang.MultiLanguageProvider;
 import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.data.model.block.BedBlockModelProvider;
+import campionebase.erosionera.data.model.block.SimpleBlockModelProvider;
 import campionebase.erosionera.data.model.item.NormalItemModelProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -29,10 +33,14 @@ public class DataProviderEvent {
         CompletableFuture<HolderLookup.Provider> registries = event.getLookupProvider();
         // 生成方块模型
         generator.addProvider(event.includeClient(), new BedBlockModelProvider(output, helper));
+        generator.addProvider(event.includeClient(), new SimpleBlockModelProvider(output, helper));
         // 生成物品模型
         generator.addProvider(event.includeClient(), new NormalItemModelProvider(output, helper));
         // 生成方块状态
         generator.addProvider(event.includeServer(), new HorizontalBlockStateProvider(output, helper));
+        generator.addProvider(event.includeServer(), new NormalBlockStateProvider(output, helper));
+        generator.addProvider(event.includeServer(), new BioConnectorBlockStateProvider(output, helper));
+        generator.addProvider(event.includeServer(), new BioCameraBlockStateProvider(output, helper));
         // 生成翻译文件
         generator.addProvider(event.includeClient(), new MultiLanguageProvider(output, Translation.Language.ZH_CN.locale));
     }

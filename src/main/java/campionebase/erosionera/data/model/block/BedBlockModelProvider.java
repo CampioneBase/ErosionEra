@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.BlockModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class BedBlockModelProvider extends BlockModelProvider {
     public BedBlockModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -50,5 +51,10 @@ public class BedBlockModelProvider extends BlockModelProvider {
                     .face(Direction.WEST).uvs(0, 8, 16, 16).texture("#side_left").end()
                     .face(Direction.EAST).uvs(0, 8, 16, 16).texture("#side_right").end()
                 .end();
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return super.getName() + "(Bed)";
     }
 }

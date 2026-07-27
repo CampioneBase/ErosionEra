@@ -13,17 +13,11 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -32,7 +26,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BioControllerBedBlock extends HorizontalDirectionalBlock {
+public class BioControllerBedBlock extends BioMachineryBlock {
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<BedPart> BED_PART = BlockStateProperties.BED_PART;
     public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
 
@@ -47,6 +42,15 @@ public class BioControllerBedBlock extends HorizontalDirectionalBlock {
         );
         this.registerDefaultState(this.stateDefinition.any().setValue(BED_PART, BedPart.FOOT).setValue(OCCUPIED, Boolean.FALSE));
     }
+
+    public @NotNull BlockState rotate(BlockState blockState, Rotation rotation) {
+        return blockState.setValue(FACING, rotation.rotate(blockState.getValue(FACING)));
+    }
+
+    public @NotNull BlockState mirror(BlockState blockState, Mirror mirror) {
+        return blockState.rotate(mirror.getRotation(blockState.getValue(FACING)));
+    }
+
 
     private BlockPos getNeighbourPos(BlockState blockState, BlockPos pos){
         Direction facing = blockState.getValue(FACING);
@@ -74,7 +78,7 @@ public class BioControllerBedBlock extends HorizontalDirectionalBlock {
         BlockPos blockPos = context.getClickedPos().relative(facing);
         Level level = context.getLevel();
         if (level.getBlockState(blockPos).canBeReplaced(context) && level.getWorldBorder().isWithinBounds(blockPos))
-            return defaultBlockState()
+            return this.defaultBlockState()
                     .setValue(FACING, facing)
                     .setValue(BED_PART, BedPart.FOOT)
                     .setValue(OCCUPIED, false);
@@ -128,7 +132,7 @@ public class BioControllerBedBlock extends HorizontalDirectionalBlock {
         player.setPose(Pose.SITTING);
         player.setPos((double)pos.getX() + 0.5D, (double)pos.getY() + 0.6875D, (double)pos.getZ() + 0.5D);
         player.setDeltaMovement(Vec3.ZERO);
-        level.setBlock(pos, blockState.setValue(OCCUPIED, true), Block.UPDATE_ALL);
+        //level.setBlock(pos, blockState.setValue(OCCUPIED, true), Block.UPDATE_ALL);
         return InteractionResult.SUCCESS;
     }
 }

@@ -1,7 +1,7 @@
 package campionebase.erosionera.data.model.item;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.init.ErErItems;
+import campionebase.erosionera.registry.ErErItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -17,7 +17,15 @@ public class NormalItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        simpleItem(ErErItems.BIOMETAL);
+        simpleItem(ErErItems.BIO_METAL);
+
+        copyItem(ErErItems.BIO_WIRE, "chain");
+    }
+
+    private ItemModelBuilder copyItem(final RegistryObject<Item> registryObject, String copied){
+        String name = registryObject.getId().getPath();
+        return withExistingParent(name, mcLoc("item/generated"))
+                .texture("layer0", mcLoc("item/" + copied));
     }
 
     private ItemModelBuilder simpleItem(final RegistryObject<Item> registryObject){

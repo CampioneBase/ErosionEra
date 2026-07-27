@@ -1,8 +1,7 @@
 package campionebase.erosionera;
 
-import campionebase.erosionera.init.ErErBlocks;
-import campionebase.erosionera.init.ErErItems;
-import campionebase.erosionera.init.ErErTabs;
+import campionebase.erosionera.registry.*;
+import campionebase.erosionera.network.BioMachineryNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,11 +21,11 @@ import java.util.stream.Collectors;
 @Mod(ErosionEra.MODID)
 public class ErosionEra {
     public static final String MODID = "erosionera";
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger(ErosionEra.class);
 
     public ErosionEra(final FMLJavaModLoadingContext context) {
         this.init(context);
-//        context.getModEventBus().addListener(this::setup);
+        context.getModEventBus().addListener(this::setup);
 //        context.getModEventBus().addListener(this::enqueueIMC);
 //        context.getModEventBus().addListener(this::processIMC);
         MinecraftForge.EVENT_BUS.register(this);
@@ -35,12 +34,14 @@ public class ErosionEra {
     private void init(final FMLJavaModLoadingContext context){
         IEventBus bus = context.getModEventBus();
         ErErBlocks.REGISTRY.register(bus);
+        ErErBlockEntities.REGISTRY.register(bus);
         ErErItems.REGISTRY.register(bus);
         ErErTabs.REGISTRY.register(bus);
+        ErErMenuTypes.REGISTRY.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-
+        BioMachineryNetwork.register();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

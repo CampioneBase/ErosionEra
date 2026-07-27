@@ -2,7 +2,7 @@ package campionebase.erosionera.data.blockstate;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.block.BioControllerBedBlock;
-import campionebase.erosionera.init.ErErBlocks;
+import campionebase.erosionera.registry.ErErBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class HorizontalBlockStateProvider extends BlockStateProvider {
 
@@ -42,5 +43,10 @@ public class HorizontalBlockStateProvider extends BlockStateProvider {
                     .rotationY(yRot)
                     .build();
         });
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return super.getName() + "(Horizontal)";
     }
 }
