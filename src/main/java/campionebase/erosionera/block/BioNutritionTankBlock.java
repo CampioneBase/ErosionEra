@@ -1,6 +1,6 @@
 package campionebase.erosionera.block;
 
-import campionebase.erosionera.block.entity.BioNutritionTankBlockEntity;
+import campionebase.erosionera.blockentity.BioNutritionTankBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;

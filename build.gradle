@@ -65,6 +65,23 @@ minecraft {
             }
         }
 
+        client1 {
+            // Inherit main class and userdev launch args from the default client run
+            parent null, 'client'
+
+            args '--username', 'Player1'
+        }
+
+        client2 {
+            workingDirectory project.file('run2')
+
+            // Inherit main class and userdev launch args from the default client run
+            parent null, 'client'
+
+            // Second client uses its own working directory and login name
+            args '--username', 'Player2'
+        }
+
         server {
             workingDirectory project.file('run')
 

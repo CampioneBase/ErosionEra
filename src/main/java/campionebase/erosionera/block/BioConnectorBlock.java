@@ -1,7 +1,7 @@
 package campionebase.erosionera.block;
 
-import campionebase.erosionera.block.entity.AbstractBioConnectorBlockEntity;
-import campionebase.erosionera.block.entity.BioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.BioConnectorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;

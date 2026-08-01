@@ -1,13 +1,6 @@
 package campionebase.erosionera.block;
 
-import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.api.IBioCamera;
-import campionebase.erosionera.api.IBioMachine;
-import campionebase.erosionera.block.entity.BioControllerBlockEntity;
-import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.BioNetHelper;
-import campionebase.erosionera.network.packet.BioNetConnectedBlocksPacket;
-import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
+import campionebase.erosionera.blockentity.BioControllerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,4 +1,4 @@
-package campionebase.erosionera.block.entity;
+package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioMachine;
@@ -23,7 +23,7 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     }
 
     @Override
-    public Vec3 getCameraPos() {
+    public Vec3 getCameraPosition(float yaw, float pitch) {
         return this.getBlockPos().getCenter();
     }
 }

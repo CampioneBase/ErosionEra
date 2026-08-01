@@ -1,4 +1,4 @@
-package campionebase.erosionera.block.entity;
+package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.registry.ErErBlockEntities;
 import campionebase.erosionera.inventory.BioControllerMenu;
@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BioControllerBlockEntity extends BioMachineBlockEntity implements MenuProvider {
-
 
     public BioControllerBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_CONTROLLER.get(), pos, blockState);

@@ -1,4 +1,4 @@
-package campionebase.erosionera.block.entity;
+package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.api.IBioMachine;
 import net.minecraft.core.BlockPos;

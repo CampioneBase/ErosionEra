@@ -1,6 +1,7 @@
 package campionebase.erosionera.client.event;
 
 import campionebase.erosionera.ErosionEra;
+import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.mixin.CameraAccessor;
 import net.minecraft.client.Camera;
@@ -27,15 +28,12 @@ public class BioCameraEvent {
 
         BlockPos cameraPos = menu.getCameraPos();
         if (cameraPos == null) return;
+        if (!(mc.player.level().getBlockEntity(cameraPos) instanceof IBioCamera bioCamera)) return;
+
         Camera camera = event.getCamera();
-
-        double x = cameraPos.getX() + 0.5;
-        double y = cameraPos.getY() + 0.5;
-        double z = cameraPos.getZ() + 0.5;
-        ((CameraAccessor) camera).invokeSetPosition(x, y, z);
-
         float yaw = menu.cameraYaw;
         float pitch = menu.cameraPitch;
+        ((CameraAccessor) camera).invokeSetPosition(bioCamera.getCameraPosition(yaw, pitch));
         event.setYaw(yaw);
         event.setPitch(pitch);
     }
