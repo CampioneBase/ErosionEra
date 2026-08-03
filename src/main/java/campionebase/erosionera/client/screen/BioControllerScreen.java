@@ -1,5 +1,6 @@
 package campionebase.erosionera.client.screen;
 
+import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioMachineryNetwork;
 import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
@@ -53,7 +54,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         int lineHeight = 10;
 
         // 先绘制所有条目（倒着画，从下往上）
-        List<BlockPos> cameras = this.menu.getCameras();
+        List<BioControllerMenu.CameraInfo> cameras = this.menu.getCameras();
         int selected = this.menu.getSelectedIndex();
 
         // 主视角条目（索引 -1）
@@ -63,9 +64,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
         // 摄像机条目（从上往下，顺序与列表一致，但绘制从底部往上累加，所以倒序遍历）
         for (int i = cameras.size() - 1; i >= 0; i--) {
-            BlockPos pos = cameras.get(i);
-            String prefix = (selected == i) ? "* " : "";
-            String display = prefix + "Camera[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]";
+            BioControllerMenu.CameraInfo info = cameras.get(i);
+            String prefix = (selected == i) ? "-> " : "";
+            String display = prefix + info.camera().getName().getString();
             graphics.drawString(this.font, display, x, y - lineHeight, 0xAAAAAA, false);
             y -= lineHeight;
         }
@@ -126,7 +127,8 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         GLFW.glfwSetCursorPos(this.windowHandle,
                 this.minecraft.getWindow().getScreenWidth() * 0.5,
                 this.minecraft.getWindow().getScreenHeight() * 0.5);
-        if (this.menu.getCameraPos() == null) return;
+        IBioCamera camera = this.menu.getCamera();
+        if (camera == null) return;
 
         double dx = mouseX - this.minecraft.getWindow().getGuiScaledWidth() * 0.5;
         double dy = mouseY - this.minecraft.getWindow().getGuiScaledHeight() * 0.5;
@@ -136,19 +138,6 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.menu.cameraYaw += (float) (dx * scale * sens);
         this.menu.cameraPitch += (float) (dy * scale * sens);
 
-        Direction facing = this.menu.getCameraFacing();
-        if (facing != null){
-            if (facing == Direction.UP) {
-                // 上半球
-                this.menu.cameraPitch = Mth.clamp(this.menu.cameraPitch, -90.0F, 0.0F);
-            } else if (facing == Direction.DOWN) {
-                // 下半球
-                this.menu.cameraPitch = Mth.clamp(this.menu.cameraPitch, 0.0F, 90.0F);
-            } else {
-                // 意外的方向 锁定在水平方向以示警告
-                this.menu.cameraPitch = Mth.clamp(this.menu.cameraPitch, 0F, 0F);
-            }
-        }
+        this.menu.cameraPitch = Mth.clamp(this.menu.cameraPitch, camera.getMinPitch(), camera.getMaxPitch());
     }
-
 }

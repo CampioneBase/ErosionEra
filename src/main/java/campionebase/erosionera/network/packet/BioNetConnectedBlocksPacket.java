@@ -1,6 +1,6 @@
 package campionebase.erosionera.network.packet;
 
-import campionebase.erosionera.block.entity.BioControllerBlockEntity;
+import campionebase.erosionera.blockentity.BioControllerBlockEntity;
 import campionebase.erosionera.network.BioMachineryNetwork;
 import campionebase.erosionera.network.BioNetData;
 import net.minecraft.core.BlockPos;

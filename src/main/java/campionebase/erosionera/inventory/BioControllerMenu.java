@@ -1,10 +1,13 @@
 package campionebase.erosionera.inventory;
 
+import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.block.BioCameraBlock;
+import campionebase.erosionera.block.BioControllerBlock;
+import campionebase.erosionera.network.BioMachineryNetwork;
+import campionebase.erosionera.network.packet.OccupyBioCameraPacket;
 import campionebase.erosionera.registry.ErErBlocks;
 import campionebase.erosionera.registry.ErErMenuTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,21 +19,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BioControllerMenu extends AbstractContainerMenu {
     private final BlockPos controllerPos;
     private final Level level;
-    private final List<BlockPos> cameras = new ArrayList<>();
+    private final List<CameraInfo> cameras = new ArrayList<>();
+
+    public record CameraInfo(
+            @NotNull IBioCamera camera,
+            @Nullable String username
+    ){}
     // -1 表示“主视角”，0+ 表示摄像机列表索引
     private int selectedIndex = -1;
+    // 当前摄像机（核心事实）
+    private @Nullable IBioCamera currentCamera = null;
 
     public float cameraYaw = 0.0F;
     public float cameraPitch = 0.0F;
-    @Nullable
-    public BlockPos cameraPos = null;
 
     public BioControllerMenu(int windowId, Inventory inventory, FriendlyByteBuf buf){
         this(windowId, buf.readBlockPos(), inventory.player.level());
@@ -53,44 +59,76 @@ public class BioControllerMenu extends AbstractContainerMenu {
                 player.distanceToSqr(this.controllerPos.getCenter()) <= 64.0;
     }
 
-    public void updateCameraList(Set<BlockPos> cameras){
+    public void refreshCameraOccupation(Map<@NotNull IBioCamera, @Nullable String> cameraOccupation){
         this.cameras.clear();
-        this.cameras.addAll(cameras);
-        if (this.selectedIndex >= cameras.size()) {
-            this.selectedIndex = -1;
+        cameraOccupation.forEach((k, v) -> this.cameras.add(new CameraInfo(k, v)));
+        this.cameras.sort(Comparator.comparing(a -> a.camera.getBlockPos()));
+        this.select(this.currentCamera); // 刷新索引
+    }
+
+    private int indexOf(@Nullable IBioCamera camera){
+        if (camera == null) return -1;
+        for (int i = 0; i < this.cameras.size(); i ++){
+            if (this.cameras.get(i).camera.equals(camera)) return i;
         }
+        return -1;
+    }
+
+    private void select(@Nullable IBioCamera camera) {
+        if (Objects.equals(this.currentCamera, camera)) return;
+        this.selectedIndex = this.indexOf(camera);
+        // 选定的摄像机不存在于服务端返回的可用摄像机列表，表示服务端已经处理过摄像机占用数据
+        this.currentCamera = this.selectedIndex == -1 ? null : camera;
+        this.resetViewDirection();
     }
 
     public void selectNext() {
         int max = this.cameras.size() - 1;
         if (this.selectedIndex >= max) {
-            this.select(-1);
+            this.requestSelecting(-1);
         } else {
-            this.select(this.selectedIndex + 1);
+            this.requestSelecting(this.selectedIndex + 1);
         }
     }
 
     public void selectPrev() {
         int max = this.cameras.size() - 1;
         if (this.selectedIndex <= -1) {
-            this.select(max);
+            this.requestSelecting(max);
         } else {
-            this.select(this.selectedIndex - 1);
+            this.requestSelecting(this.selectedIndex - 1);
         }
     }
 
-    private void select(int index){
+    private void requestSelecting(int index){
+        if (this.selectedIndex == index) return;
         index = Mth.clamp(index, -1, this.cameras.size() - 1);
-        this.selectedIndex = index;
-        if (index == -1) {
-            this.cameraPos = null;
-        } else {
-            this.cameraPos = this.cameras.get(index);
-            this.resetViewDirection();
+        BlockPos requestPos = index == -1 ? null : this.cameras.get(index).camera.getBlockPos();
+        // 向服务端发送占用请求
+        if (this.level.isClientSide){
+            BioMachineryNetwork.INSTANCE.sendToServer(new OccupyBioCameraPacket.Request(
+                    this.currentCamera == null ? null : this.currentCamera.getBlockPos(),
+                    requestPos,
+                    this.controllerPos
+            ));
         }
     }
 
-    public List<BlockPos> getCameras() {
+    public void respondSelecting(OccupyBioCameraPacket.ResultState state, @Nullable BlockPos cameraPos) {
+        if (cameraPos == null) {
+            this.select(null);
+            return;
+        }
+        // 一般来说，返回的摄像机坐标就是客户端选择的坐标且在服务端通过验证的
+        // 这要是不一致，就是客户端和服务端一起犯病
+        if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
+            this.select(camera);
+        } else {
+            this.select(null);
+        }
+    }
+
+    public List<CameraInfo> getCameras() {
         return this.cameras;
     }
 
@@ -103,37 +141,26 @@ public class BioControllerMenu extends AbstractContainerMenu {
     }
 
     private void resetViewDirection(){
-        if (this.cameraPos == null) return;
+        if (this.currentCamera == null) return;
         if (this.level.isClientSide){
-            BlockState state = this.level.getBlockState(this.cameraPos);
-            if (state.hasProperty(BioCameraBlock.FACING)) {
-                Direction facing = state.getValue(BioCameraBlock.FACING);
-                // 默认水平看向 Z 正方向（yaw=0）
-                this.cameraYaw = 0.0F;
-                if (facing == Direction.UP) {
-                    this.cameraPitch = -30.0F; // 正上方
-                } else if (facing == Direction.DOWN) {
-                    this.cameraPitch = 30.0F;  // 正下方
-                }
-            }
+            // 默认水平看向 Z 正方向（yaw=0）
+            this.cameraYaw = 0.0F;
+            this.cameraPitch = this.currentCamera.getDefaultPitch();
         }
     }
 
     @Nullable
-    public BlockPos getCameraPos(){
-        return this.cameraPos;
-    }
-
-    @Nullable
-    public Direction getCameraFacing(){
-        if (this.cameraPos == null || !this.level.isClientSide) return null;
-        BlockState blockState = this.level.getBlockState(this.cameraPos);
-        if (blockState.hasProperty(BioCameraBlock.FACING))
-            return blockState.getValue(BioCameraBlock.FACING);
-        return null;
+    public IBioCamera getCamera(){
+        return this.currentCamera;
     }
 
     public void exit() {
-        this.select(-1);
+        this.requestSelecting(-1);
+        BlockState controllerState = this.level.getBlockState(this.getBlockPos());
+        if (controllerState.hasProperty(BioControllerBlock.OCCUPIED)){
+            this.level.setBlock(this.controllerPos,
+                    controllerState.setValue(BioControllerBlock.OCCUPIED, false),
+                    BioCameraBlock.UPDATE_ALL);
+        }
     }
 }

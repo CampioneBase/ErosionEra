@@ -1,6 +1,6 @@
 package campionebase.erosionera.client.renderer.entity.block;
 
-import campionebase.erosionera.block.entity.BioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.BioConnectorBlockEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

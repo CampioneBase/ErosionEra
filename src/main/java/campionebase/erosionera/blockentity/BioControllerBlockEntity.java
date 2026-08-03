@@ -1,5 +1,6 @@
 package campionebase.erosionera.blockentity;
 
+import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import net.minecraft.core.BlockPos;
@@ -12,15 +13,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BioControllerBlockEntity extends BioMachineBlockEntity implements MenuProvider {
+public class BioControllerBlockEntity extends BioMachineBlockEntity implements MenuProvider, IBioController {
+
+    @Nullable
+    private Player owner;
 
     public BioControllerBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_CONTROLLER.get(), pos, blockState);
     }
 
     @Override
-    public boolean isCore() {
-        return true;
+    public @Nullable Player getUser() {
+        return this.owner;
     }
 
     @Override
@@ -31,6 +35,7 @@ public class BioControllerBlockEntity extends BioMachineBlockEntity implements M
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory inventory, @NotNull Player player) {
+        this.owner = player;
         return new BioControllerMenu(windowId, this.getBlockPos(), this.level);
     }
 }

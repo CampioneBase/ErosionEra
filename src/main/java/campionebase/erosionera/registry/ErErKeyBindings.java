@@ -28,7 +28,7 @@ public class ErErKeyBindings {
             getKeyId("prev_bio_camera"),
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_A,
+            GLFW.GLFW_KEY_Q,
             KEY_CATEGORY_BM
     );
     @Translation.ZH_CN("下一个摄像机")
@@ -36,7 +36,23 @@ public class ErErKeyBindings {
             getKeyId("next_bio_camera"),
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_D,
+            GLFW.GLFW_KEY_E,
+            KEY_CATEGORY_BM
+    );
+    @Translation.ZH_CN("活体控制 上")
+    public static final KeyMapping BIO_CONTROL_UP = new KeyMapping(
+            getKeyId("bio_control_up"),
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_W,
+            KEY_CATEGORY_BM
+    );
+    @Translation.ZH_CN("活体控制 下")
+    public static final KeyMapping BIO_CONTROL_DOWN = new KeyMapping(
+            getKeyId("bio_control_down"),
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_S,
             KEY_CATEGORY_BM
     );
 
@@ -47,5 +63,7 @@ public class ErErKeyBindings {
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(ErErKeyBindings.PREV_BIO_CAMERA_KEY);
         event.register(ErErKeyBindings.NEXT_BIO_CAMERA_KEY);
+        event.register(ErErKeyBindings.BIO_CONTROL_UP);
+        event.register(ErErKeyBindings.BIO_CONTROL_DOWN);
     }
 }

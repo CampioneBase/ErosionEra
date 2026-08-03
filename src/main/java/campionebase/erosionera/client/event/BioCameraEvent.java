@@ -26,9 +26,8 @@ public class BioCameraEvent {
         if (player == null) return;
         if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
 
-        BlockPos cameraPos = menu.getCameraPos();
-        if (cameraPos == null) return;
-        if (!(mc.player.level().getBlockEntity(cameraPos) instanceof IBioCamera bioCamera)) return;
+        IBioCamera bioCamera = menu.getCamera();
+        if (bioCamera == null) return;
 
         Camera camera = event.getCamera();
         float yaw = menu.cameraYaw;
@@ -44,7 +43,7 @@ public class BioCameraEvent {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) return;
-        if (player.containerMenu instanceof BioControllerMenu menu && menu.getCameraPos() != null) {
+        if (player.containerMenu instanceof BioControllerMenu menu && menu.getCamera() != null) {
             event.setCanceled(true);
         }
     }

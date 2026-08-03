@@ -1,10 +1,10 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.block.entity.BioCameraBlockEntity;
-import campionebase.erosionera.block.entity.BioConnectorBlockEntity;
-import campionebase.erosionera.block.entity.BioControllerBlockEntity;
-import campionebase.erosionera.block.entity.BioNutritionTankBlockEntity;
+import campionebase.erosionera.blockentity.BioCameraBlockEntity;
+import campionebase.erosionera.blockentity.BioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.BioControllerBlockEntity;
+import campionebase.erosionera.blockentity.BioNutritionTankBlockEntity;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.Util;
 import net.minecraft.util.datafix.fixes.References;

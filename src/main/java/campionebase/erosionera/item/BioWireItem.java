@@ -1,6 +1,6 @@
 package campionebase.erosionera.item;
 
-import campionebase.erosionera.block.entity.AbstractBioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import campionebase.erosionera.client.event.Observable;
 import campionebase.erosionera.network.BioNetData;
 import net.minecraft.ChatFormatting;
@@ -117,15 +117,6 @@ public class BioWireItem extends Item implements Observable.Item {
 
     private int getDistance(Vec3i p1, Vec3i p2){
         return (int)Math.floor(Math.sqrt(p1.distSqr(p2)));
-    }
-
-    private void select2Points(ServerLevel level, BlockPos a, BlockPos b){
-        BioNetData data = BioNetData.get(level);
-        if (data.isConnected(a, b)){
-            data.disconnect(a, b);
-        } else {
-            data.connect(a, b);
-        }
     }
 
     @Override

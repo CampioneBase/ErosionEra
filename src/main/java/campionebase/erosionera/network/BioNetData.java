@@ -204,9 +204,34 @@ public class BioNetData extends SavedData {
      * @param b 第二个节点坐标
      * @return 如果 {@code a} 和 {@code b} 之间存在直接的边，则返回 {@code true}；否则返回 {@code false}
      */
-    public boolean isConnected(@NotNull BlockPos a, @NotNull BlockPos b){
+    public boolean isDirectlyConnected(@NotNull BlockPos a, @NotNull BlockPos b){
         return (this.graph.containsKey(a) && this.graph.get(a).contains(b)) ||
                 (this.graph.containsKey(b) && this.graph.get(b).contains(a));
+    }
+
+    /**
+     * 检测两点是否在拓扑图上相连
+     */
+    public boolean isTopologicallyConnected(@NotNull BlockPos a, @NotNull BlockPos b){
+        /* 使用缓存快速查询
+        if (a.equals(b)) return true;
+        if (this.isDirectlyConnected(a, b)) return true;
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        queue.add(a);
+        visited.add(a);
+        while (!queue.isEmpty()) {
+            BlockPos node = queue.poll();
+            for (BlockPos neighbor : this.graph.getOrDefault(node, Collections.emptySet())) {
+                if (b.equals(neighbor)) return true;
+                if (visited.contains(neighbor)) continue;
+                queue.add(neighbor);
+                visited.add(neighbor);
+            }
+        }
+        return false;
+        */
+        return this.node2Net.get(a).equals(this.node2Net.get(b));
     }
 
     /**

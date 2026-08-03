@@ -2,12 +2,16 @@ package campionebase.erosionera.network;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.network.packet.BioNetConnectedBlocksPacket;
+import campionebase.erosionera.network.packet.OccupyBioCameraPacket;
 import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BioMachineryNetwork {
+    public static final Logger LOGGER = LogManager.getLogger(BioMachineryNetwork.class);
     private static final String PROTOCOL_VERSION = "1.0";
     private static int PACKET_ID = 0;
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
@@ -39,5 +43,16 @@ public class BioMachineryNetwork {
                 UpdateBioCameraListPacket.Response::encode,
                 UpdateBioCameraListPacket.Response::decode,
                 UpdateBioCameraListPacket.Response::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                OccupyBioCameraPacket.Request.class,
+                OccupyBioCameraPacket.Request::encode,
+                OccupyBioCameraPacket.Request::decode,
+                OccupyBioCameraPacket.Request::handle);
+        INSTANCE.registerMessage(PACKET_ID++,
+                OccupyBioCameraPacket.Response.class,
+                OccupyBioCameraPacket.Response::encode,
+                OccupyBioCameraPacket.Response::decode,
+                OccupyBioCameraPacket.Response::handle);
     }
 }

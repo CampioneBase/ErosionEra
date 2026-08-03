@@ -121,7 +121,7 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
             BlockPos a = this.getBlockPos();
             BlockPos b = target.getBlockPos();
             BioNetData data = BioNetData.get(serverLevel);
-            if (data.isConnected(a, b)){
+            if (data.isDirectlyConnected(a, b)){
                 data.disconnect(a, b);
                 this.OnDisconnected(target);
                 target.OnDisconnected(this);
