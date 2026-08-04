@@ -2,11 +2,9 @@ package campionebase.erosionera.network.packet;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
+import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.inventory.BioControllerMenu;
-import campionebase.erosionera.network.BioCameraManager;
-import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.BioNetData;
-import campionebase.erosionera.network.BioNetHelper;
+import campionebase.erosionera.network.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -16,11 +14,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 // 控制器对摄像机
 public class OccupyBioCameraPacket {
@@ -65,21 +64,23 @@ public class OccupyBioCameraPacket {
                 BlockPos controllerPos = packet.controller;
                 if (newPos != null){
                     // 方块有效性检验
-                    if (level.getBlockEntity(newPos) instanceof IBioCamera camera &&
-                            level.getBlockEntity(controllerPos) instanceof IBioController controller &&
+                    if (level.getBlockEntity(newPos) instanceof IBioCamera &&
+                            level.getBlockEntity(controllerPos) instanceof IBioController &&
                             // 连通性检验
                             BioNetHelper.isConnected(level, newPos, controllerPos)
                     ) {
                         // 尝试占用摄像机
                         Player player = BioCameraManager.get(level).tryOccupyCamera(newPos, sender);
                         if (sender.equals(player)){
-                            // 成功占用 回复使用者的UUID
+                            // 成功占用 解除原有占用
+                            BioCameraManager.get(level).releaseCamera(oldPos);
+                            // 回复使用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> sender),
                                     new Response(ResultState.SUCCESS, newPos, player.getUUID())
                             );
-                            // 向同网络内其他玩家广播
-
+                            // 广播更新
+                            broadcastUpdate(level, newPos);
                         } else {
                             // 目标摄像机已经被占用，回复占用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
@@ -100,12 +101,35 @@ public class OccupyBioCameraPacket {
                             PacketDistributor.PLAYER.with(() -> sender),
                             new Response(ResultState.SUCCESS, null, sender.getUUID())
                     );
-                        BioCameraManager.get(level).releaseCamera(oldPos);
+                    // 解除原有占用
+                    BioCameraManager.get(level).releaseCamera(oldPos);
+                    // 广播更新
+                    broadcastUpdate(level, oldPos);
                 }
             });
             context.setPacketHandled(true);
         }
+
+        private static void broadcastUpdate(ServerLevel level, BlockPos cameraPos){
+            Map<BlockPos, String> cameraOccupations = new HashMap<>();
+            BioNetHelper
+                    .findAllConnectedByConnector(level, cameraPos)
+                    .forEach(machine -> {
+                        if (!(machine instanceof IBioController controller) || !(controller.getUser() instanceof ServerPlayer serverPlayer)) return;
+                        BioNetHelper.findAllConnectedByConnector(level, controller.getBlockPos())
+                                .forEach(terminal -> {
+                                    if (!(terminal instanceof IBioCamera camera)) return;
+                                    CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(camera.getBlockPos());
+                                    cameraOccupations.put(camera.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
+                                });
+                        BioMachineryNetwork.INSTANCE.send(
+                                PacketDistributor.PLAYER.with(() -> serverPlayer),
+                                new UpdateBioCameraListPacket.Response(controller.getBlockPos(), cameraOccupations)
+                        );
+            });
+        }
     }
+
     /**
      * 服务端回应客户端占用请求
      * @param resultState 回应状态：{@code SUCCESS | OCCUPIED | INVALID}
@@ -131,15 +155,17 @@ public class OccupyBioCameraPacket {
             NetworkEvent.Context context = contextSupplier.get();
             context.enqueueWork(() -> {
                 LocalPlayer player = Minecraft.getInstance().player;
-                if (player == null) return;
+                if (player == null || !(player.containerMenu instanceof BioControllerMenu menu)) return;
+                BlockPos pos = packet.camera;
                 switch (packet.resultState){
                     case SUCCESS -> {
                         // 成功占用. 理论上返回的玩家 ID 与客户端玩家 ID 一致
                         if (player.getUUID().equals(packet.userId)){
                             // 剩下交由 Menu 内部验证
-                            if (player.containerMenu instanceof BioControllerMenu menu){
-                                menu.respondSelecting(ResultState.SUCCESS, packet.camera);
-                            }
+                            BioMachineryNetwork.LOGGER.debug(
+                                    "Occupy bio-camera successfully at " + (pos == null ? "self" : pos.toShortString())
+                            );
+                            menu.respondSelecting(ResultState.SUCCESS, pos);
                         }
                         else {
                             // 当作 OCCUPIED 处理
@@ -147,11 +173,26 @@ public class OccupyBioCameraPacket {
                                     "Unexpected packet in responding to occupying bio-camera: " +
                                             "responding with SUCCESS state attaching different player UUID from sender"
                             );
+                            if (pos == null) {
+                                BioMachineryNetwork.LOGGER.warn(
+                                        "Unexpected packet in responding to occupying bio-camera: " +
+                                                "responding with OCCUPIED state attaching NULL camera position"
+                                );
+                            } else {
+                                menu.respondSelecting(ResultState.OCCUPIED, pos);
+                            }
                         }
-
                     }
                     case OCCUPIED -> {
                         // 已被占用
+                        if (pos == null) {
+                            BioMachineryNetwork.LOGGER.warn(
+                                    "Unexpected packet in responding to occupying bio-camera: " +
+                                            "responding with OCCUPIED state attaching NULL camera position"
+                            );
+                        } else {
+                            menu.respondSelecting(ResultState.OCCUPIED, pos);
+                        }
                     }
                     case INVALID -> {
                         // 不可用
@@ -159,6 +200,14 @@ public class OccupyBioCameraPacket {
                                 "Unexpected packet in responding to occupying bio-camera: " +
                                         "responding with INVALID state attaching player UUID"
                         );
+                        if (pos == null) {
+                            BioMachineryNetwork.LOGGER.warn(
+                                    "Unexpected packet in responding to occupying bio-camera: " +
+                                            "responding with OCCUPIED state attaching NULL camera position"
+                            );
+                        } else {
+                            menu.respondSelecting(ResultState.INVALID, pos);
+                        }
                     }
                 }
             });

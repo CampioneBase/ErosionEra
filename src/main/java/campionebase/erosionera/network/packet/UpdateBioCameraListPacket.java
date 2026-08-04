@@ -48,8 +48,8 @@ public class UpdateBioCameraListPacket{
                         .stream()
                         .filter(machine -> machine instanceof IBioCamera)
                         .forEach(machine -> {
-                            CameraOccupation controller = BioCameraManager.get(level).getCameraOwner(machine.getBlockPos());
-                            cameraOccupations.put(machine.getBlockPos(), controller == null ? null : controller.getPlayerName());
+                            CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(machine.getBlockPos());
+                            cameraOccupations.put(machine.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
                         });
 
                 BioMachineryNetwork.INSTANCE.send(

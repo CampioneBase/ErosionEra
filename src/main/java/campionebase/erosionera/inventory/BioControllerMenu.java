@@ -115,18 +115,45 @@ public class BioControllerMenu extends AbstractContainerMenu {
     }
 
     public void respondSelecting(OccupyBioCameraPacket.ResultState state, @Nullable BlockPos cameraPos) {
-        if (cameraPos == null) {
-            this.select(null);
-            return;
-        }
-        // 一般来说，返回的摄像机坐标就是客户端选择的坐标且在服务端通过验证的
-        // 这要是不一致，就是客户端和服务端一起犯病
-        if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
-            this.select(camera);
-        } else {
-            this.select(null);
+        switch (state){
+            case SUCCESS -> {
+                if (cameraPos == null) {
+                    this.select(null);
+                    return;
+                }
+                // 一般来说，返回的摄像机坐标就是客户端选择的坐标且在服务端通过验证的
+                // 这要是不一致，就是客户端和服务端一起犯病
+                if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
+                    this.select(camera);
+                } else {
+                    this.select(null);
+                }
+            }
+            case OCCUPIED -> {
+                if (cameraPos == null) return;
+                // 添加额外信息
+                if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
+                    int index = this.indexOf(camera);
+                    if (index >= -1) {
+                        this.cameras.set(index, new CameraInfo(camera, "*Occupied*"));
+                    }
+                }
+            }
+            case INVALID -> {
+                if (cameraPos == null) return;
+                // 添加额外信息
+                if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
+                    int index = this.indexOf(camera);
+                    if (index >= -1) {
+                        this.cameras.set(index, new CameraInfo(camera, "*Invalid*"));
+                    }
+                }
+            }
         }
     }
+
+
+
 
     public List<CameraInfo> getCameras() {
         return this.cameras;

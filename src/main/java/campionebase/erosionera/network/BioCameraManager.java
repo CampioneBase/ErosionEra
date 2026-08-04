@@ -5,6 +5,8 @@ import campionebase.erosionera.api.IBioController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BioCameraManager {
+    public static final Logger LOGGER = LogManager.getLogger(BioCameraManager.class);
+
     public static final Map<ServerLevel, BioCameraManager> INSTANCES = new ConcurrentHashMap<>();
     public static BioCameraManager get(ServerLevel level){
         return INSTANCES.getOrDefault(level, new BioCameraManager(level));
@@ -32,7 +36,7 @@ public class BioCameraManager {
         if (this.cameraOccupations.containsKey(camera)) {
             UUID ownerId = this.cameraOccupations.get(camera).getPlayerUUID();
             Player owner = this.level.getPlayerByUUID(ownerId);
-            // 玩家不存在
+            // 占用的玩家存在，则直接返回
             if (owner != null) return owner;
         }
         this.occupyCamera(camera, player);
@@ -40,11 +44,14 @@ public class BioCameraManager {
     }
 
     private void occupyCamera(BlockPos camera, Player player){
+        LOGGER.debug("Player: {} occupy bio-camera[{}]", player.getName().getString(), camera.toShortString());
         this.cameraOccupations.put(camera, new CameraOccupation(player));
     }
 
     /** 释放摄像机 */
     public void releaseCamera(BlockPos camera){
+        if (camera == null) return;
+        LOGGER.debug("bio-camera[{}] released", camera.toShortString());
         this.cameraOccupations.remove(camera);
     }
 
