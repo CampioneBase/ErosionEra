@@ -85,14 +85,14 @@ public class OccupyBioCameraPacket {
                             // 目标摄像机已经被占用，回复占用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> sender),
-                                    new Response(ResultState.OCCUPIED, oldPos, player.getUUID())
+                                    new Response(ResultState.OCCUPIED, newPos, player.getUUID())
                             );
                         }
                     } else {
                         // 检验不通过 返回不可用
                         BioMachineryNetwork.INSTANCE.send(
                                 PacketDistributor.PLAYER.with(() -> sender),
-                                new Response(ResultState.INVALID, oldPos, null)
+                                new Response(ResultState.INVALID, newPos, null)
                         );
                     }
                 } else {

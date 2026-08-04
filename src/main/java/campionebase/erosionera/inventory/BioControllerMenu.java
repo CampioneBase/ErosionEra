@@ -134,7 +134,7 @@ public class BioControllerMenu extends AbstractContainerMenu {
                 // 添加额外信息
                 if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera){
                     int index = this.indexOf(camera);
-                    if (index >= -1) {
+                    if (index >= 0) {
                         this.cameras.set(index, new CameraInfo(camera, "*Occupied*"));
                     }
                 }

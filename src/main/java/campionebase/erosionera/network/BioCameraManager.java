@@ -19,7 +19,7 @@ public class BioCameraManager {
 
     public static final Map<ServerLevel, BioCameraManager> INSTANCES = new ConcurrentHashMap<>();
     public static BioCameraManager get(ServerLevel level){
-        return INSTANCES.getOrDefault(level, new BioCameraManager(level));
+        return INSTANCES.computeIfAbsent(level, BioCameraManager::new);
     }
     private final ServerLevel level;
     /** 摄像机 -> 摄像机占用情况 */
