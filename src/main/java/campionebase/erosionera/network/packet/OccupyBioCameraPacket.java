@@ -2,7 +2,6 @@ package campionebase.erosionera.network.packet;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
-import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.*;
 import net.minecraft.client.Minecraft;
@@ -14,12 +13,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 // 控制器对摄像机
 public class OccupyBioCameraPacket {
@@ -80,7 +77,7 @@ public class OccupyBioCameraPacket {
                                     new Response(ResultState.SUCCESS, newPos, player.getUUID())
                             );
                             // 广播更新
-                            broadcastUpdate(level, newPos);
+                            BioCameraManager.get(level).broadcastCameraListUpdate(newPos);
                         } else {
                             // 目标摄像机已经被占用，回复占用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
@@ -104,29 +101,10 @@ public class OccupyBioCameraPacket {
                     // 解除原有占用
                     BioCameraManager.get(level).releaseCamera(oldPos);
                     // 广播更新
-                    broadcastUpdate(level, oldPos);
+                    BioCameraManager.get(level).broadcastCameraListUpdate(oldPos);
                 }
             });
             context.setPacketHandled(true);
-        }
-
-        private static void broadcastUpdate(ServerLevel level, BlockPos cameraPos){
-            Map<BlockPos, String> cameraOccupations = new HashMap<>();
-            BioNetHelper
-                    .findAllConnectedByConnector(level, cameraPos)
-                    .forEach(machine -> {
-                        if (!(machine instanceof IBioController controller) || !(controller.getUser() instanceof ServerPlayer serverPlayer)) return;
-                        BioNetHelper.findAllConnectedByConnector(level, controller.getBlockPos())
-                                .forEach(terminal -> {
-                                    if (!(terminal instanceof IBioCamera camera)) return;
-                                    CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(camera.getBlockPos());
-                                    cameraOccupations.put(camera.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
-                                });
-                        BioMachineryNetwork.INSTANCE.send(
-                                PacketDistributor.PLAYER.with(() -> serverPlayer),
-                                new UpdateBioCameraListPacket.Response(controller.getBlockPos(), cameraOccupations)
-                        );
-            });
         }
     }
 

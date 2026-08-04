@@ -1,6 +1,6 @@
 package campionebase.erosionera.client.renderer.entity.block;
 
-import campionebase.erosionera.blockentity.BioConnectorBlockEntity;
+import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -14,7 +14,7 @@ import org.joml.Matrix4f;
 
 import java.util.Set;
 
-public class BioWireRender<T extends BioConnectorBlockEntity> implements BlockEntityRenderer<T> {
+public class BioWireRender<T extends AbstractBioConnectorBlockEntity> implements BlockEntityRenderer<T> {
     public BioWireRender(BlockEntityRendererProvider.Context context) {
     }
 
@@ -60,7 +60,7 @@ public class BioWireRender<T extends BioConnectorBlockEntity> implements BlockEn
     }
 
     @Override
-    public boolean shouldRenderOffScreen(@NotNull BioConnectorBlockEntity blockEntity) {
+    public boolean shouldRenderOffScreen(@NotNull AbstractBioConnectorBlockEntity blockEntity) {
         return true;
     }
 }

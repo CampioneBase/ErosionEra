@@ -58,17 +58,19 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         int selected = this.menu.getSelectedIndex();
 
         // 主视角条目（索引 -1）
-        String mainEntry = (selected == -1) ? "* Main View" : "Main View";
-        graphics.drawString(this.font, mainEntry, x, y - lineHeight, 0xFFFFFF, false);
-        y -= lineHeight;
+        graphics.drawString(this.font, (selected == -1) ? "-> Main View" : "Main View",
+                x, y - lineHeight,
+                (selected == -1) ? 0xffffffff : 0xffaaaaaa, false);
+        y -= lineHeight + 5;
 
         // 摄像机条目（从上往下，顺序与列表一致，但绘制从底部往上累加，所以倒序遍历）
         for (int i = cameras.size() - 1; i >= 0; i--) {
             BioControllerMenu.CameraInfo info = cameras.get(i);
-            String prefix = (selected == i) ? "-> " : "";
-            String display = prefix + info.camera().getName().getString();
-            graphics.drawString(this.font, display, x, y - lineHeight, 0xAAAAAA, false);
-            y -= lineHeight;
+            String display = (selected == i) ? "-> " : info.username() == null ? "" : "[" + info.username() + "] ";
+            graphics.drawString(this.font, display + info.camera().getName().getString(),
+                    x, y - lineHeight,
+                    (selected == i) ? 0xffffffff : 0xffaaaaaa, false);
+            y -= lineHeight + 2;
         }
     }
 

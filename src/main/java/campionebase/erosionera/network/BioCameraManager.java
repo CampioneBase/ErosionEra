@@ -1,21 +1,41 @@
 package campionebase.erosionera.network;
 
+import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
+import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Mod.EventBusSubscriber(modid = ErosionEra.MODID)
 public class BioCameraManager {
     public static final Logger LOGGER = LogManager.getLogger(BioCameraManager.class);
+    /** 服务端检测间隔 */
+    public static final int CHECK_TICK_INTERVAL = 20;
+    /** 客户端更新间隔 */
+    public static final int UPDATE_TICK_INTERVAL = 60;
+    /** 服务端保留最大时间 */
+    public static final int RETAIN_MAX_TICK = UPDATE_TICK_INTERVAL * 5;
 
     public static final Map<ServerLevel, BioCameraManager> INSTANCES = new ConcurrentHashMap<>();
     public static BioCameraManager get(ServerLevel level){
@@ -24,6 +44,7 @@ public class BioCameraManager {
     private final ServerLevel level;
     /** 摄像机 -> 摄像机占用情况 */
     private final Map<BlockPos, CameraOccupation> cameraOccupations = new ConcurrentHashMap<>();
+    private long lastHealthCheckTime = 0L;
 
     public BioCameraManager(ServerLevel level) {
         this.level = level;
@@ -45,7 +66,7 @@ public class BioCameraManager {
 
     private void occupyCamera(BlockPos camera, Player player){
         LOGGER.debug("Player: {} occupy bio-camera[{}]", player.getName().getString(), camera.toShortString());
-        this.cameraOccupations.put(camera, new CameraOccupation(player));
+        this.cameraOccupations.put(camera, new CameraOccupation(player, this.tickCount));
     }
 
     /** 释放摄像机 */
@@ -62,5 +83,86 @@ public class BioCameraManager {
     @Nullable
     public CameraOccupation getCameraOwner(BlockPos camera){
         return this.cameraOccupations.get(camera);
+    }
+
+    /** 由占用者刷新摄像机健康状态与视角方向 */
+    public boolean touchCamera(BlockPos camera, UUID ownerId, float yaw, float pitch){
+        CameraOccupation occupation = this.cameraOccupations.get(camera);
+        if (occupation == null || !occupation.getPlayerUUID().equals(ownerId)) return false;
+        occupation.yaw = yaw;
+        occupation.pitch = pitch;
+        occupation.timestamp = this.tickCount;
+        return true;
+    }
+
+    /** 释放指定玩家占用的全部摄像机 */
+    public @NotNull Set<BlockPos> releaseAllByOwner(UUID ownerId){
+        Set<BlockPos> released = new HashSet<>();
+        this.cameraOccupations.forEach((pos, occupation) -> {
+            if (ownerId.equals(occupation.getPlayerUUID())) released.add(pos);
+        });
+        released.forEach(this.cameraOccupations::remove);
+        return released;
+    }
+
+    public long getLastHealthCheckTime(){
+        return this.lastHealthCheckTime;
+    }
+
+    public void markHealthCheck(){
+        this.lastHealthCheckTime = System.currentTimeMillis();
+    }
+
+    /** 通知与摄像机同网络的所有控制器使用者刷新摄像机列表 */
+    public void broadcastCameraListUpdate(@Nullable BlockPos cameraPos){
+        if (cameraPos == null) return;
+        BioNetHelper
+                .findAllConnectedByConnector(this.level, cameraPos)
+                .forEach(machine -> {
+                    Map<BlockPos, String> cameraOccupations = new HashMap<>();
+                    if (!(machine instanceof IBioController controller) || !(controller.getUser() instanceof ServerPlayer serverPlayer)) return;
+                    BioNetHelper.findAllConnectedByConnector(this.level, controller.getBlockPos())
+                            .forEach(terminal -> {
+                                if (!(terminal instanceof IBioCamera camera)) return;
+                                CameraOccupation occupation = this.getCameraOwner(camera.getBlockPos());
+                                cameraOccupations.put(camera.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
+                            });
+                    BioMachineryNetwork.INSTANCE.send(
+                            PacketDistributor.PLAYER.with(() -> serverPlayer),
+                            new UpdateBioCameraListPacket.Response(controller.getBlockPos(), cameraOccupations)
+                    );
+                });
+    }
+
+    /** 在占用摄像机的视角半球上生成方向指示粒子 */
+    public void spawnDirectionParticles(){
+        this.cameraOccupations.forEach((pos, occupation) -> {
+            if (!(this.level.getBlockEntity(pos) instanceof IBioCamera)) return;
+            float yaw = occupation.yaw * Mth.DEG_TO_RAD;
+            float pitch = occupation.pitch * Mth.DEG_TO_RAD;
+            double dx = -Math.sin(yaw) * Math.cos(pitch);
+            double dy = -Math.sin(pitch);
+            double dz = Math.cos(yaw) * Math.cos(pitch);
+            Vec3 center = pos.getCenter();
+            this.level.sendParticles(ParticleTypes.END_ROD,
+                    center.x + dx * 0.5,
+                    center.y + dy * 0.5,
+                    center.z + dz * 0.5,
+                    1, 0.0D, 0.0D, 0.0D, 0.0D);
+        });
+    }
+
+    @SubscribeEvent
+    public static void OnServerTick(TickEvent.LevelTickEvent event){
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel serverLevel)) return;
+        get(serverLevel).tick();
+    }
+
+    private int tickCount = 0;
+    private void tick(){
+        if (this.tickCount++ % CHECK_TICK_INTERVAL == 0) {
+
+        }
     }
 }

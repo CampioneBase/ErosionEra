@@ -11,5 +11,6 @@ public class ErErEntityRenders {
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ErErBlockEntities.BIO_CONNECTOR.get(), BioWireRender::new);
+        event.registerBlockEntityRenderer(ErErBlockEntities.BIO_CAMERA.get(), BioWireRender::new);
     }
 }

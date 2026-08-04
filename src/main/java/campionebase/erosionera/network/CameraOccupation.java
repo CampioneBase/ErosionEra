@@ -9,14 +9,14 @@ public class CameraOccupation {
     private final String playerName;
     public float yaw;
     public float pitch;
-    private long lastUpdateTime;
+    public int timestamp;
 
-    public CameraOccupation(Player player){
+    public CameraOccupation(Player player, int tick){
         this.playerName = player.getName().getString();
         this.playerUUID = player.getUUID();
         this.yaw = 0f;
         this.pitch = 0f;
-        this.lastUpdateTime = System.currentTimeMillis();
+        this.timestamp = tick;
     }
 
     public UUID getPlayerUUID() {
@@ -25,13 +25,5 @@ public class CameraOccupation {
 
     public String getPlayerName() {
         return this.playerName;
-    }
-
-    public long getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void touch(){
-        this.lastUpdateTime = System.currentTimeMillis();
     }
 }

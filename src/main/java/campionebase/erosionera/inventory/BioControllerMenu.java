@@ -83,20 +83,26 @@ public class BioControllerMenu extends AbstractContainerMenu {
     }
 
     public void selectNext() {
-        int max = this.cameras.size() - 1;
-        if (this.selectedIndex >= max) {
-            this.requestSelecting(-1);
-        } else {
-            this.requestSelecting(this.selectedIndex + 1);
+        int index = this.selectedIndex;
+        while (true) {
+            index ++;
+            if (index > this.cameras.size() - 1) index = -1;
+            if (index == -1 || this.cameras.get(index).username == null) {
+                this.requestSelecting(index);
+                return;
+            }
         }
     }
 
     public void selectPrev() {
-        int max = this.cameras.size() - 1;
-        if (this.selectedIndex <= -1) {
-            this.requestSelecting(max);
-        } else {
-            this.requestSelecting(this.selectedIndex - 1);
+        int index = this.selectedIndex;
+        while (true) {
+            index --;
+            if (index < -1) index = this.cameras.size() -1;
+            if (index == -1 || this.cameras.get(index).username == null){
+                this.requestSelecting(index);
+                return;
+            }
         }
     }
 
@@ -151,9 +157,6 @@ public class BioControllerMenu extends AbstractContainerMenu {
             }
         }
     }
-
-
-
 
     public List<CameraInfo> getCameras() {
         return this.cameras;

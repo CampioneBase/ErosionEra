@@ -1,6 +1,7 @@
 package campionebase.erosionera.network;
 
 import campionebase.erosionera.ErosionEra;
+import campionebase.erosionera.network.packet.BioCameraHeartbeatPacket;
 import campionebase.erosionera.network.packet.BioNetConnectedBlocksPacket;
 import campionebase.erosionera.network.packet.OccupyBioCameraPacket;
 import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
@@ -54,5 +55,11 @@ public class BioMachineryNetwork {
                 OccupyBioCameraPacket.Response::encode,
                 OccupyBioCameraPacket.Response::decode,
                 OccupyBioCameraPacket.Response::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                BioCameraHeartbeatPacket.Request.class,
+                BioCameraHeartbeatPacket.Request::encode,
+                BioCameraHeartbeatPacket.Request::decode,
+                BioCameraHeartbeatPacket.Request::handle);
     }
 }
