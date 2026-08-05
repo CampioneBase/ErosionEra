@@ -23,8 +23,12 @@ public interface IBioCamera extends IBioMachine{
         return 0.0f;
     }
 
+    default float getDefaultYaw(){
+        return 0.0f;
+    }
+
     // 根据视角朝向获取摄像机实际位置
     Vec3 getCameraPosition(float yaw, float pitch);
 
-    Component getName();
+    String getName();
 }

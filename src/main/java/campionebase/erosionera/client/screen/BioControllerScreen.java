@@ -67,7 +67,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         for (int i = cameras.size() - 1; i >= 0; i--) {
             BioControllerMenu.CameraInfo info = cameras.get(i);
             String display = (selected == i) ? "-> " : info.username() == null ? "" : "[" + info.username() + "] ";
-            graphics.drawString(this.font, display + info.camera().getName().getString(),
+            graphics.drawString(this.font, display + info.camera().getName(),
                     x, y - lineHeight,
                     (selected == i) ? 0xffffffff : 0xffaaaaaa, false);
             y -= lineHeight + 2;

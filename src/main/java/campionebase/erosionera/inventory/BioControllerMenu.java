@@ -75,11 +75,11 @@ public class BioControllerMenu extends AbstractContainerMenu {
     }
 
     private void select(@Nullable IBioCamera camera) {
-        if (Objects.equals(this.currentCamera, camera)) return;
+        boolean flag = Objects.equals(this.currentCamera, camera);
         this.selectedIndex = this.indexOf(camera);
         // 选定的摄像机不存在于服务端返回的可用摄像机列表，表示服务端已经处理过摄像机占用数据
         this.currentCamera = this.selectedIndex == -1 ? null : camera;
-        this.resetViewDirection();
+        if (!flag) this.resetViewDirection();
     }
 
     public void selectNext() {
@@ -173,8 +173,7 @@ public class BioControllerMenu extends AbstractContainerMenu {
     private void resetViewDirection(){
         if (this.currentCamera == null) return;
         if (this.level.isClientSide){
-            // 默认水平看向 Z 正方向（yaw=0）
-            this.cameraYaw = 0.0F;
+            this.cameraYaw = this.currentCamera.getDefaultYaw();
             this.cameraPitch = this.currentCamera.getDefaultPitch();
         }
     }
