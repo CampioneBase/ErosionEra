@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,5 +47,19 @@ public class BioCameraEvent {
         if (player.containerMenu instanceof BioControllerMenu menu && menu.getCamera() != null) {
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRenderNameTag(RenderNameTagEvent event){
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null) return;
+
+        if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
+        IBioCamera bioCamera = menu.getCamera();
+        if (bioCamera == null) return;
+
+        Camera camera = mc.gameRenderer.getMainCamera();
+        ((CameraAccessor) camera).invokeSetRotation(menu.cameraYaw, menu.cameraPitch);
     }
 }

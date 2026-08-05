@@ -11,4 +11,7 @@ public interface CameraAccessor {
 
     @Invoker("setPosition")
     void invokeSetPosition(Vec3 position);
+
+    @Invoker("setRotation")
+    void invokeSetRotation(float yam, float pitch);
 }
