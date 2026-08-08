@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class BioNetConnectedBlocksPacket {
+public class BioNetConnectingPacket {
 
     public static record Request(BlockPos pos){
         public static void encode(Request packet, FriendlyByteBuf buf) {

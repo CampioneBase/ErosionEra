@@ -1,10 +1,7 @@
 package campionebase.erosionera.network;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.network.packet.BioCameraNamingPacket;
-import campionebase.erosionera.network.packet.BioNetConnectedBlocksPacket;
-import campionebase.erosionera.network.packet.OccupyBioCameraPacket;
-import campionebase.erosionera.network.packet.UpdateBioCameraListPacket;
+import campionebase.erosionera.network.packet.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -24,42 +21,60 @@ public class BioMachineryNetwork {
 
     public static void register(){
         INSTANCE.registerMessage(PACKET_ID++,
-                BioNetConnectedBlocksPacket.Request.class,
-                BioNetConnectedBlocksPacket.Request::encode,
-                BioNetConnectedBlocksPacket.Request::decode,
-                BioNetConnectedBlocksPacket.Request::handle);
+                BioNetConnectingPacket.Request.class,
+                BioNetConnectingPacket.Request::encode,
+                BioNetConnectingPacket.Request::decode,
+                BioNetConnectingPacket.Request::handle);
         INSTANCE.registerMessage(PACKET_ID++,
-                BioNetConnectedBlocksPacket.Response.class,
-                BioNetConnectedBlocksPacket.Response::encode,
-                BioNetConnectedBlocksPacket.Response::decode,
-                BioNetConnectedBlocksPacket.Response::handle);
+                BioNetConnectingPacket.Response.class,
+                BioNetConnectingPacket.Response::encode,
+                BioNetConnectingPacket.Response::decode,
+                BioNetConnectingPacket.Response::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
-                UpdateBioCameraListPacket.Request.class,
-                UpdateBioCameraListPacket.Request::encode,
-                UpdateBioCameraListPacket.Request::decode,
-                UpdateBioCameraListPacket.Request::handle);
+                BioCameraListPacket.Request.class,
+                BioCameraListPacket.Request::encode,
+                BioCameraListPacket.Request::decode,
+                BioCameraListPacket.Request::handle);
         INSTANCE.registerMessage(PACKET_ID++,
-                UpdateBioCameraListPacket.Response.class,
-                UpdateBioCameraListPacket.Response::encode,
-                UpdateBioCameraListPacket.Response::decode,
-                UpdateBioCameraListPacket.Response::handle);
+                BioCameraListPacket.Response.class,
+                BioCameraListPacket.Response::encode,
+                BioCameraListPacket.Response::decode,
+                BioCameraListPacket.Response::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
-                OccupyBioCameraPacket.Request.class,
-                OccupyBioCameraPacket.Request::encode,
-                OccupyBioCameraPacket.Request::decode,
-                OccupyBioCameraPacket.Request::handle);
+                BioCameraOccupationPacket.Request.class,
+                BioCameraOccupationPacket.Request::encode,
+                BioCameraOccupationPacket.Request::decode,
+                BioCameraOccupationPacket.Request::handle);
         INSTANCE.registerMessage(PACKET_ID++,
-                OccupyBioCameraPacket.Response.class,
-                OccupyBioCameraPacket.Response::encode,
-                OccupyBioCameraPacket.Response::decode,
-                OccupyBioCameraPacket.Response::handle);
+                BioCameraOccupationPacket.Response.class,
+                BioCameraOccupationPacket.Response::encode,
+                BioCameraOccupationPacket.Response::decode,
+                BioCameraOccupationPacket.Response::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
                 BioCameraNamingPacket.class,
                 BioCameraNamingPacket::encode,
                 BioCameraNamingPacket::decode,
                 BioCameraNamingPacket::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                BioCameraActionPacket.class,
+                BioCameraActionPacket::encode,
+                BioCameraActionPacket::decode,
+                BioCameraActionPacket::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                BioCameraAlivePacket.class,
+                BioCameraAlivePacket::encode,
+                BioCameraAlivePacket::decode,
+                BioCameraAlivePacket::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                BioControllerReleasePacket.class,
+                BioControllerReleasePacket::encode,
+                BioControllerReleasePacket::decode,
+                BioControllerReleasePacket::handle);
     }
 }

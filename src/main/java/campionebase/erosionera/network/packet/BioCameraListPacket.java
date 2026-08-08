@@ -1,12 +1,10 @@
 package campionebase.erosionera.network.packet;
 
 import campionebase.erosionera.api.IBioCamera;
-import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioCameraManager;
 import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.BioNetHelper;
-import campionebase.erosionera.network.CameraOccupation;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -14,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class UpdateBioCameraListPacket{
+public class BioCameraListPacket {
 
     public static record Request(BlockPos controller){
         public static void encode(Request packet, FriendlyByteBuf buf) {
@@ -43,12 +40,12 @@ public class UpdateBioCameraListPacket{
                 if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
                 if (!menu.getBlockPos().equals(packet.controller)) return;
                 Map<BlockPos, String> cameraOccupations = new HashMap<>();
-                BioNetHelper
+                BioMachineryService
                         .findAllConnectedByConnector(player.serverLevel(), packet.controller)
                         .stream()
                         .filter(machine -> machine instanceof IBioCamera)
                         .forEach(machine -> {
-                            CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(machine.getBlockPos());
+                            BioCameraManager.CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(machine.getBlockPos());
                             cameraOccupations.put(machine.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
                         });
 
@@ -66,7 +63,7 @@ public class UpdateBioCameraListPacket{
             buf.writeMap(
                     packet.cameraOccupations,
                     FriendlyByteBuf::writeBlockPos,
-                    (buf1, pos) -> buf1.writeNullable(pos, FriendlyByteBuf::writeUtf)
+                    (buf1, str) -> buf1.writeNullable(str, FriendlyByteBuf::writeUtf)
             );
         }
 

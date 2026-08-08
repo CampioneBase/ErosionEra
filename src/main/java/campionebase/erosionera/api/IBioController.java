@@ -12,4 +12,6 @@ public interface IBioController extends IBioMachine {
     }
     @Nullable
     Player getUser();
+
+    void onReleased();
 }

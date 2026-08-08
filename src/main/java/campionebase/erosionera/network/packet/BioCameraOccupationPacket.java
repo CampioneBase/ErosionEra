@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 // 控制器对摄像机
-public class OccupyBioCameraPacket {
+public class BioCameraOccupationPacket {
     public enum ResultState{
         /** 成功占用 */
         SUCCESS,
@@ -64,7 +64,7 @@ public class OccupyBioCameraPacket {
                     if (level.getBlockEntity(newPos) instanceof IBioCamera &&
                             level.getBlockEntity(controllerPos) instanceof IBioController &&
                             // 连通性检验
-                            BioNetHelper.isConnected(level, newPos, controllerPos)
+                            BioMachineryService.isConnected(level, newPos, controllerPos)
                     ) {
                         // 尝试占用摄像机
                         Player player = BioCameraManager.get(level).tryOccupyCamera(newPos, sender);
@@ -77,7 +77,7 @@ public class OccupyBioCameraPacket {
                                     new Response(ResultState.SUCCESS, newPos, player.getUUID())
                             );
                             // 广播更新
-                            BioCameraManager.get(level).broadcastCameraListUpdate(newPos);
+                            BioMachineryService.broadcastBioCameraList(level, newPos);
                         } else {
                             // 目标摄像机已经被占用，回复占用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
@@ -101,7 +101,7 @@ public class OccupyBioCameraPacket {
                     // 解除原有占用
                     BioCameraManager.get(level).releaseCamera(oldPos);
                     // 广播更新
-                    BioCameraManager.get(level).broadcastCameraListUpdate(oldPos);
+                    BioMachineryService.broadcastBioCameraList(level, oldPos);
                 }
             });
             context.setPacketHandled(true);

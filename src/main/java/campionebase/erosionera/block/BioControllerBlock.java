@@ -58,7 +58,7 @@ public class BioControllerBlock extends BioMachineryBlock implements EntityBlock
         if (!(level.getBlockEntity(pos) instanceof BioControllerBlockEntity controller))
             return InteractionResult.PASS;
 
-        if (blockState.getValue(OCCUPIED) && false) {
+        if (controller.getUser() != null) {
             player.displayClientMessage(Component.literal("Bio Controller Occupied"), true);
         } else {
             level.setBlock(pos, blockState.setValue(OCCUPIED, true), UPDATE_ALL);

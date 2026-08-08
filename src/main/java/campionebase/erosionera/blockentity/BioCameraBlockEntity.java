@@ -3,6 +3,7 @@ package campionebase.erosionera.blockentity;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.block.BioCameraBlock;
+import campionebase.erosionera.network.BioCameraManager;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,6 +82,13 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level instanceof ServerLevel serverLevel)
+        BioCameraManager.get(serverLevel).releaseCamera(this.getBlockPos());
     }
 
     public void setName(String name){

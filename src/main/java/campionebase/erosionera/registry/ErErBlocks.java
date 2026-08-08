@@ -22,4 +22,6 @@ public class ErErBlocks {
     public static final RegistryObject<Block> BIO_NUTRITION_TANK = REGISTRY.register("bio_nutrition_tank", BioNutritionTankBlock::new);
     @Translation.ZH_CN("活体摄像头")
     public static final RegistryObject<Block> BIO_CAMERA = REGISTRY.register("bio_camera", BioCameraBlock::new);
+    @Translation.ZH_CN("活体红石")
+    public static final RegistryObject<Block> BIO_REDSTONE = REGISTRY.register("bio_redstone", BioRedstoneBlock::new);
 }

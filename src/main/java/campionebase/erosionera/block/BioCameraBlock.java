@@ -3,9 +3,11 @@ package campionebase.erosionera.block;
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import campionebase.erosionera.client.screen.BioCameraNamingScreen;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -102,10 +104,12 @@ public class BioCameraBlock extends Block implements EntityBlock {
         Direction facing = blockState.getValue(FACING);
         BlockPos oppositePos = pos.relative(facing.getOpposite());
         if (!level.getBlockState(oppositePos).isFaceSturdy(level, neighborPos, facing, SupportType.CENTER)) {
-            if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector) {
-                connector.removeNode();
-            }
             level.destroyBlock(pos, true);
+            if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector) {
+                if (level instanceof ServerLevel serverLevel) {
+                    BioMachineryService.removedNode(serverLevel, connector);
+                }
+            }
         }
         super.neighborChanged(blockState, level, pos, neighborBlock, neighborPos, movedByPiston);
     }
@@ -135,4 +139,6 @@ public class BioCameraBlock extends Block implements EntityBlock {
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState blockState) {
         return new BioCameraBlockEntity(pos, blockState);
     }
+
+
 }

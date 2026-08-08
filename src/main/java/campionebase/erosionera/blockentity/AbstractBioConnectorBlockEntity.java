@@ -3,6 +3,7 @@ package campionebase.erosionera.blockentity;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.network.BioNetData;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -38,7 +39,7 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
         return this.neighbors;
     }
 
-    protected void updateNeighbors(){
+    public void updateNeighbors(){
         if (this.level instanceof ServerLevel serverLevel){
             this.neighbors.clear();
             this.neighbors.addAll(BioNetData.get(serverLevel).getNeighbors(this.getBlockPos()));
@@ -99,45 +100,10 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
         if (event.getLevel() instanceof ServerLevel level){
             BlockPos pos = event.getPos();
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector){
-                connector.removeNode();
+                BioMachineryService.removedNode(level, connector);
             }
         }
     }
-
-    public void removeNode(){
-        if (this.level instanceof ServerLevel serverLevel){
-            Set<BlockPos> neighbors = BioNetData.get(serverLevel).remove(this.getBlockPos());
-            // 更新邻居
-            neighbors.forEach(neighbor -> {
-                if (this.level.getBlockEntity(neighbor) instanceof AbstractBioConnectorBlockEntity connector){
-                    connector.updateNeighbors();
-                }
-            });
-        }
-    }
-
-    public final void connectTo(AbstractBioConnectorBlockEntity target){
-        if (this.level instanceof ServerLevel serverLevel){
-            BlockPos a = this.getBlockPos();
-            BlockPos b = target.getBlockPos();
-            BioNetData data = BioNetData.get(serverLevel);
-            if (data.isDirectlyConnected(a, b)){
-                data.disconnect(a, b);
-                this.OnDisconnected(target);
-                target.OnDisconnected(this);
-            } else {
-                data.connect(a, b);
-                this.OnConnected(target);
-                target.OnConnected(this);
-            }
-            // todo 局部更新写入回调
-            this.updateNeighbors();
-            target.updateNeighbors();
-        }
-    }
-
-    protected void OnConnected(AbstractBioConnectorBlockEntity other){ }
-    protected void OnDisconnected(AbstractBioConnectorBlockEntity other){ }
 
     public abstract @Nullable IBioMachine getMachinery();
 }

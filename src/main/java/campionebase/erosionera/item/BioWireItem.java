@@ -2,7 +2,7 @@ package campionebase.erosionera.item;
 
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import campionebase.erosionera.client.event.Observable;
-import campionebase.erosionera.network.BioNetData;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -94,9 +94,13 @@ public class BioWireItem extends Item implements Observable.Item {
             if (context.getLevel() instanceof ServerLevel server){
                 BlockEntity parent = server.getBlockEntity(pos0);
                 if (parent instanceof AbstractBioConnectorBlockEntity bioParent) {
-                    bioParent.connectTo(secondLinked);
-                    player.displayClientMessage(Component.literal(String.format( "Select two positions. From:%d,%d,%d To:%d,%d,%d",
-                            pos0.getX(), pos0.getY(), pos0.getZ(), pos.getX(), pos.getY(), pos.getZ())), true);
+                    if (BioMachineryService.tryConnectNodes(server, bioParent, secondLinked)){
+                        player.displayClientMessage(Component.literal(String.format( "Connect two positions. From:%d,%d,%d To:%d,%d,%d",
+                                pos0.getX(), pos0.getY(), pos0.getZ(), pos.getX(), pos.getY(), pos.getZ())), true);
+                    } else {
+                        player.displayClientMessage(Component.literal(String.format( "Disconnect two positions. From:%d,%d,%d To:%d,%d,%d",
+                                pos0.getX(), pos0.getY(), pos0.getZ(), pos.getX(), pos.getY(), pos.getZ())), true);
+                    }
                 }
             }
             // 去除选择点

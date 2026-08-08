@@ -31,4 +31,6 @@ public interface IBioCamera extends IBioMachine{
     Vec3 getCameraPosition(float yaw, float pitch);
 
     String getName();
+
+
 }

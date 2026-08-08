@@ -1,13 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.blockentity.BioCameraBlockEntity;
-import campionebase.erosionera.blockentity.BioConnectorBlockEntity;
-import campionebase.erosionera.blockentity.BioControllerBlockEntity;
-import campionebase.erosionera.blockentity.BioNutritionTankBlockEntity;
-import com.mojang.datafixers.types.Type;
-import net.minecraft.Util;
-import net.minecraft.util.datafix.fixes.References;
+import campionebase.erosionera.blockentity.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -39,12 +33,17 @@ public class ErErBlockEntities {
             BioCameraBlockEntity::new
     );
 
+    public static final RegistryObject<BlockEntityType<BioRedstoneBlockEntity>> BIO_REDSTONE = register(
+            "bio_redstone",
+            ErErBlocks.BIO_REDSTONE,
+            BioRedstoneBlockEntity::new
+    );
+
     private static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> register(
             String name,
             RegistryObject<Block> block,
             BlockEntityType.BlockEntitySupplier<T> supplier
     ) {
-        Type<?> type = Util.fetchChoiceType(References.BLOCK_ENTITY, name);
-        return REGISTRY.register(name, () -> BlockEntityType.Builder.of(supplier, block.get()).build(type));
+        return REGISTRY.register(name, () -> BlockEntityType.Builder.of(supplier, block.get()).build(null));
     }
 }
