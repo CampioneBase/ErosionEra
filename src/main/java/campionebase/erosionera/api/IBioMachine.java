@@ -6,8 +6,8 @@ public interface IBioMachine {
     boolean isCore();
     BlockPos getBlockPos();
 
-    default boolean equals(IBioMachine camera){
-        if (camera == null) return false;
-        return this.getBlockPos().equals(camera.getBlockPos());
+    default boolean equals(IBioMachine machine){
+        if (machine == null) return false;
+        return this.getBlockPos().equals(machine.getBlockPos());
     }
 }

@@ -22,6 +22,7 @@ public class ErErItems {
 
     public static final RegistryObject<Item> BIO_CONTROLLER = block(ErErBlocks.BIO_CONTROLLER);
     public static final RegistryObject<Item> BIO_CONNECTOR = block(ErErBlocks.BIO_CONNECTOR);
+    public static final RegistryObject<Item> BIO_NODE = block(ErErBlocks.BIO_NODE);
     public static final RegistryObject<Item> BIO_NUTRITION_TANK = block(ErErBlocks.BIO_NUTRITION_TANK);
     public static final RegistryObject<Item> BIO_CAMERA = block(ErErBlocks.BIO_CAMERA);
     public static final RegistryObject<Item> BIO_REDSTONE = block(ErErBlocks.BIO_REDSTONE);

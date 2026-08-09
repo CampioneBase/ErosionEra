@@ -12,6 +12,8 @@ import campionebase.erosionera.network.packet.BioCameraAlivePacket;
 import campionebase.erosionera.network.packet.BioCameraListPacket;
 import campionebase.erosionera.registry.ErErKeyBindings;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -95,13 +97,17 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         if (camera == null) return;
         BlockHitResult result = BioCameraHelper.pickBlock(this.level, camera.getBlockPos(), this.menu.cameraYaw, this.menu.cameraPitch);
         if (result.getType() == HitResult.Type.MISS) return;
-        BlockState blockState = level.getBlockState(result.getBlockPos());
+        BlockState blockState = this.level.getBlockState(result.getBlockPos());
         if (!(blockState.getBlock() instanceof IBioObservable.BlockSource observable)) return;
-        String info = observable.getInfo(blockState).getString();
+        List<Component> lines = observable.getInfo(blockState);
 
         int x = this.width / 2 + 15;
         int y = this.height / 2 + 5;
-        graphics.drawString(this.font, info, x, y, 0xffffffff, false);
+        for (Component line : lines) {
+            if (line.getString().equals("empty")) continue; // Component.EMPTY
+            graphics.drawString(this.font, line, x, y, 0xffcccccc, false);
+            y += this.font.lineHeight;
+        }
     }
 
     @Override
@@ -125,14 +131,12 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
         this.tickCount ++;
         if (this.tickCount % BioCameraManager.UPDATE_TICK_INTERVAL == 0){
-            BioMachineryNetwork.LOGGER.debug("[Health] Send bio-camera[{}]`s beat", camera.getBlockPos());
+            BioMachineryNetwork.LOGGER.trace("[Health] Send bio-camera[{}]`s beat", camera.getBlockPos());
             BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraAlivePacket(
                     camera.getBlockPos(),
                     this.menu.cameraYaw, this.menu.cameraPitch)
             );
         }
-
-
     }
 
     @Override

@@ -90,7 +90,7 @@ public class BioCameraManager {
         occupation.yaw = yaw;
         occupation.pitch = pitch;
         occupation.timestamp = this.tickCount;
-        LOGGER.debug("[Health] Occupation renew. Pos:{} UserId:{}", camera.toShortString(), ownerId.toString());
+        LOGGER.trace("[Health] Occupation renew. Pos:{} UserId:{}", camera.toShortString(), ownerId.toString());
         return true;
     }
 

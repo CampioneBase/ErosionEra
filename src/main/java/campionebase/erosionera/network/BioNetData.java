@@ -245,6 +245,7 @@ public class BioNetData extends SavedData {
      * @param b 第二个节点坐标
      */
     public void connect(@NotNull BlockPos a, @NotNull BlockPos b){
+        if (this.isDirectlyConnected(a, b)) return;
         // 新建边，首次进行连接也会新建节点
         this.graph.computeIfAbsent(a, k -> ConcurrentHashMap.newKeySet()).add(b);
         this.graph.computeIfAbsent(b, k -> ConcurrentHashMap.newKeySet()).add(a);
@@ -295,6 +296,7 @@ public class BioNetData extends SavedData {
      * @param b 第二个节点坐标
      */
     public void disconnect(@NotNull BlockPos a, @NotNull BlockPos b){
+        if (!this.isDirectlyConnected(a, b)) return;
         Set<BlockPos> setA = this.graph.get(a);
         Set<BlockPos> setB = this.graph.get(b);
         if (setA != null) setA.remove(b);

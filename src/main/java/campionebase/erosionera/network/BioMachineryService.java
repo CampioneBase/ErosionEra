@@ -1,6 +1,7 @@
 package campionebase.erosionera.network;
 
 import campionebase.erosionera.api.IBioCamera;
+import campionebase.erosionera.api.IBioConnector;
 import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
@@ -22,8 +23,8 @@ public class BioMachineryService {
                 .getAllConnectedBlocks(pos)
                 .stream()
                 .map(level::getBlockEntity)
-                .filter(blockEntity -> blockEntity instanceof AbstractBioConnectorBlockEntity)
-                .map(connector -> ((AbstractBioConnectorBlockEntity) connector).getMachinery())
+                .filter(blockEntity -> blockEntity instanceof IBioConnector)
+                .map(connector -> ((IBioConnector) connector).getMachine())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
@@ -33,38 +34,38 @@ public class BioMachineryService {
                 .stream()
                 .flatMap(connector -> BioNetData.get(level).getAllConnectedBlocks(connector.getBlockPos()).stream())
                 .map(level::getBlockEntity)
-                .filter(blockEntity -> blockEntity instanceof AbstractBioConnectorBlockEntity)
-                .map(connector -> ((AbstractBioConnectorBlockEntity) connector).getMachinery())
+                .filter(blockEntity -> blockEntity instanceof IBioConnector)
+                .map(connector -> ((IBioConnector) connector).getMachine())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
     /** 寻找到周围与之相连的连接器 */
-    public static @NotNull Set<AbstractBioConnectorBlockEntity> findAllSurroundConnector(@NotNull ServerLevel level, @NotNull BlockPos pos){
+    public static @NotNull Set<IBioConnector> findAllSurroundConnector(@NotNull ServerLevel level, @NotNull BlockPos pos){
         // 如果的目标本身就是一个连接器（通常是指带功能的连接器），则返回自身
-        if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector) return Set.of(connector);
+        if (level.getBlockEntity(pos) instanceof IBioConnector connector) return Set.of(connector);
         // 从邻居方块开始查询
-        Set<AbstractBioConnectorBlockEntity> result = new HashSet<>();
+        Set<IBioConnector> result = new HashSet<>();
         for (Direction direction: Direction.values()) {
             BlockPos neighbor = pos.relative(direction);
-            if (level.getBlockEntity(neighbor) instanceof AbstractBioConnectorBlockEntity connector &&
-                    connector.getMachinery() != null &&
-                    pos.equals(connector.getMachinery().getBlockPos())
+            if (level.getBlockEntity(neighbor) instanceof IBioConnector connector &&
+                    connector.getMachine() != null &&
+                    pos.equals(connector.getMachine().getBlockPos())
             ) result.add(connector);
         }
         return result;
     }
-
+    /** 检测两点是否连通 */
     public static boolean isConnected(@NotNull ServerLevel level, @NotNull BlockPos a, @NotNull BlockPos b){
-        Set<AbstractBioConnectorBlockEntity> connectors_a = findAllSurroundConnector(level, a);
-        Set<AbstractBioConnectorBlockEntity> connectors_b = findAllSurroundConnector(level, b);
-        for (AbstractBioConnectorBlockEntity connector_a: connectors_a) {
-            for (AbstractBioConnectorBlockEntity connector_b: connectors_b) {
+        Set<IBioConnector> connectors_a = findAllSurroundConnector(level, a);
+        Set<IBioConnector> connectors_b = findAllSurroundConnector(level, b);
+        for (IBioConnector connector_a: connectors_a) {
+            for (IBioConnector connector_b: connectors_b) {
                 if (BioNetData.get(level).isTopologicallyConnected(connector_a.getBlockPos(), connector_b.getBlockPos())) return true;
             }
         }
         return false;
     }
-
+    /** 向节点所在网络内正在使用控制器的玩家广播摄像机列表 */
     public static void broadcastBioCameraList(@NotNull ServerLevel level, @NotNull BlockPos node){
         BioMachineryService
                 .findAllConnectedByConnector(level, node)
@@ -84,39 +85,58 @@ public class BioMachineryService {
                 });
     }
 
-    public static boolean tryConnectNodes(@NotNull ServerLevel level,
-                                          @NotNull AbstractBioConnectorBlockEntity source,
-                                          @NotNull AbstractBioConnectorBlockEntity target)
+    /** 改变两个节点间连接状态 */
+    public static boolean changeConnection(@NotNull ServerLevel level,
+                                           @NotNull AbstractBioConnectorBlockEntity source,
+                                           @NotNull AbstractBioConnectorBlockEntity target)
     {
         boolean isConnected = false;
         BlockPos a = source.getBlockPos();
         BlockPos b = target.getBlockPos();
         BioNetData data = BioNetData.get(level);
         if (data.isDirectlyConnected(a, b)){
-            data.disconnect(a, b);
-            // 即时更新
-            broadcastBioCameraList(level, target.getBlockPos());
-            if (!BioNetData.get(level).isTopologicallyConnected(a, b)){
-                broadcastBioCameraList(level, source.getBlockPos());
-            }
+            disconnectNodes(level, source.getBlockPos(), target.getBlockPos());
         } else {
-            data.connect(a, b);
-            // 连通了当然只要测一次
-            broadcastBioCameraList(level, target.getBlockPos());
+            connectNodes(level, source.getBlockPos(), target.getBlockPos());
             isConnected = true;
         }
-        source.updateNeighbors();
-        target.updateNeighbors();
+        source.updateNeighborPosSet();
+        target.updateNeighborPosSet();
         return isConnected;
     }
 
-    public static void removedNode(@NotNull ServerLevel level, @NotNull AbstractBioConnectorBlockEntity connector){
+    /** 连接 */
+    public static void connectNodes(@NotNull ServerLevel level,
+                                    @NotNull BlockPos a,
+                                    @NotNull BlockPos b)
+    {
+        BioNetData.get(level).connect(a, b);
+        broadcastBioCameraList(level, b);
+    }
+
+    /** 断开 */
+    public static void disconnectNodes(@NotNull ServerLevel level,
+                                       @NotNull BlockPos a,
+                                       @NotNull BlockPos b)
+    {
+        BioNetData.get(level).disconnect(a, b);
+        broadcastBioCameraList(level, b);
+        if (!BioNetData.get(level).isTopologicallyConnected(a, b)){
+            broadcastBioCameraList(level, a);
+        }
+    }
+    /** 移除网络节点 */
+    public static void removeNode(@NotNull ServerLevel level, @NotNull IBioConnector connector){
         // 根据邻居节点更新列表
-        BioNetData.get(level).remove(connector.getBlockPos()).forEach(pos -> {
+        removeNode(level, connector.getBlockPos());
+    }
+    /** 移除 */
+    public static void removeNode(@NotNull ServerLevel level, @NotNull BlockPos node){
+        BioNetData.get(level).remove(node).forEach(pos -> {
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity neighbor){
-                neighbor.updateNeighbors();
-                broadcastBioCameraList(level, pos);
+                neighbor.updateNeighborPosSet();
             }
+            broadcastBioCameraList(level, pos);
         });
     }
 }

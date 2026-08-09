@@ -27,6 +27,11 @@ public class ErErBlockEntities {
             ErErBlocks.BIO_CONNECTOR,
             BioConnectorBlockEntity::new
     );
+    public static final RegistryObject<BlockEntityType<BioNodeBlockEntity>> BIO_NODE = register(
+            "bio_node",
+            ErErBlocks.BIO_CONNECTOR,
+            BioNodeBlockEntity::new
+    );
     public static final RegistryObject<BlockEntityType<BioCameraBlockEntity>> BIO_CAMERA = register(
             "bio_camera",
             ErErBlocks.BIO_CAMERA,

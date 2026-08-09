@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BioWireItem extends Item implements Observable.Item {
+public class BioWireItem extends Item implements Observable.ItemSource {
     public static final String TAG_SELECTION_POS = "selection_pos";
     public static final String TAG_SELECTION_LEVEL = "selection_level";
     public static final int MAX_LINKING_DISTANCE = 32;
@@ -94,7 +94,7 @@ public class BioWireItem extends Item implements Observable.Item {
             if (context.getLevel() instanceof ServerLevel server){
                 BlockEntity parent = server.getBlockEntity(pos0);
                 if (parent instanceof AbstractBioConnectorBlockEntity bioParent) {
-                    if (BioMachineryService.tryConnectNodes(server, bioParent, secondLinked)){
+                    if (BioMachineryService.changeConnection(server, bioParent, secondLinked)){
                         player.displayClientMessage(Component.literal(String.format( "Connect two positions. From:%d,%d,%d To:%d,%d,%d",
                                 pos0.getX(), pos0.getY(), pos0.getZ(), pos.getX(), pos.getY(), pos.getZ())), true);
                     } else {

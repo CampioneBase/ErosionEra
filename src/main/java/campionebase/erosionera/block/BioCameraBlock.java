@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BioCameraBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.VERTICAL);
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final VoxelShape SHAPE_UP = Shapes.or(
             Block.box(0, 0, 0, 16, 4,16),
             Block.box(5, 4, 5, 11, 10, 11)
@@ -82,7 +83,7 @@ public class BioCameraBlock extends Block implements EntityBlock {
             }
         }
         // 是否为 Y 轴方向
-        if (!FACING.getPossibleValues().contains(clickedFace)) return null;
+        if (clickedFace.getAxis() != Direction.Axis.Y) return null;
 
         // 正常放置逻辑
         BlockPos targetPos = context.getClickedPos().relative(clickedFace.getOpposite());
@@ -107,7 +108,7 @@ public class BioCameraBlock extends Block implements EntityBlock {
             level.destroyBlock(pos, true);
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector) {
                 if (level instanceof ServerLevel serverLevel) {
-                    BioMachineryService.removedNode(serverLevel, connector);
+                    BioMachineryService.removeNode(serverLevel, connector);
                 }
             }
         }
@@ -139,6 +140,4 @@ public class BioCameraBlock extends Block implements EntityBlock {
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState blockState) {
         return new BioCameraBlockEntity(pos, blockState);
     }
-
-
 }

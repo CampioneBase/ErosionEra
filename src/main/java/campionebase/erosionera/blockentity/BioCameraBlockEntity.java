@@ -30,7 +30,7 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     }
 
     @Override
-    public IBioMachine getMachinery() {
+    public IBioMachine getMachine() {
         return this;
     }
 

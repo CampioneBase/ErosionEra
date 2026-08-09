@@ -37,26 +37,26 @@ public class InGameHUD {
                 // 物品掉落物
                 if (entity instanceof ItemEntity itemEntity){
                     ItemStack itemStack = itemEntity.getItem();
-                    if (itemStack.getItem() instanceof Observable.Item observed){
+                    if (itemStack.getItem() instanceof Observable.ItemSource observed){
                         showInfo(graphics, observed.getInfo(player, itemStack), w / 2 + 45, h / 2 - 10);
                     }
                 }
                 // 其他实体
-                else if (entity instanceof Observable observed){
-                    showInfo(graphics, observed.getInfo(player), w / 2 + 45, h / 2 - 10);
+                else if (entity instanceof Observable.EntitySource observed){
+                    showInfo(graphics, observed.getInfo(player, entity), w / 2 + 45, h / 2 - 10);
                 }
             }
             case BLOCK -> {
                 BlockPos pos = ((BlockHitResult) result).getBlockPos();
                 BlockEntity blockEntity = player.level().getBlockEntity(pos);
                 // 方块实体
-                if (blockEntity instanceof Observable observed){
-                    showInfo(graphics, observed.getInfo(player), w / 2 + 45, h / 2 - 10);
+                if (blockEntity instanceof Observable.BlockEntitySource observed){
+                    showInfo(graphics, observed.getInfo(player, blockEntity), w / 2 + 45, h / 2 - 10);
                 }
             }
         }
         ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!itemInHand.isEmpty() && itemInHand.getItem() instanceof Observable.Item observed){
+        if (!itemInHand.isEmpty() && itemInHand.getItem() instanceof Observable.ItemSource observed){
             showInfo(graphics, observed.getInfo(player, itemInHand), w / 2 - 145, h / 2 - 10);
         }
     }

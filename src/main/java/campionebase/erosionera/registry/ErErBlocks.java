@@ -18,6 +18,8 @@ public class ErErBlocks {
     public static final RegistryObject<Block> BIO_CONTROLLER_BED = REGISTRY.register("bio_controller_bed", BioControllerBedBlock::new);
     @Translation.ZH_CN("活体连接器")
     public static final RegistryObject<Block> BIO_CONNECTOR = REGISTRY.register("bio_connector", BioConnectorBlock::new);
+    @Translation.ZH_CN("活体节点")
+    public static final RegistryObject<Block> BIO_NODE = REGISTRY.register("bio_node", BioNodeBlock::new);
     @Translation.ZH_CN("活体营养容器")
     public static final RegistryObject<Block> BIO_NUTRITION_TANK = REGISTRY.register("bio_nutrition_tank", BioNutritionTankBlock::new);
     @Translation.ZH_CN("活体摄像头")

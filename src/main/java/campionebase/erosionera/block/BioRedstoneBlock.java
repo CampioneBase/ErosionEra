@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class BioRedstoneBlock extends Block implements EntityBlock, IBioObservable.BlockSource {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
@@ -53,8 +55,8 @@ public class BioRedstoneBlock extends Block implements EntityBlock, IBioObservab
     }
 
     @Override
-    public Component getInfo(BlockState source) {
-        if (!source.hasProperty(POWER)) return Component.empty();
-        return Component.literal("Power: " + source.getValue(POWER));
+    public @NotNull List<Component> getInfo(BlockState source) {
+        if (!source.hasProperty(POWER)) return List.of();
+        return List.of(Component.literal("Power: " + source.getValue(POWER)));
     }
 }

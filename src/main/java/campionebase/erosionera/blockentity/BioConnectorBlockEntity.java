@@ -11,7 +11,7 @@ public class BioConnectorBlockEntity extends AbstractBioConnectorBlockEntity{
         super(ErErBlockEntities.BIO_CONNECTOR.get(), pos, blockState);
     }
 
-    public IBioMachine getMachinery() {
+    public IBioMachine getMachine() {
         BlockPos pos = this.getBlockPos().relative(this.getBlockState().getValue(BioConnectorBlock.FACING).getOpposite());
         if (this.level == null) return null;
         return this.level.getBlockEntity(pos) instanceof IBioMachine machinery ? machinery : null;

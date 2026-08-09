@@ -22,6 +22,7 @@ public class ErErTabs {
                 data.accept(ErErItems.BIO_METAL.get());
                 data.accept(ErErItems.BIO_CONTROLLER_BED.get());
                 data.accept(ErErItems.BIO_CONTROLLER.get());
+                data.accept(ErErItems.BIO_NODE.get());
                 data.accept(ErErItems.BIO_WIRE.get());
                 data.accept(ErErItems.BIO_CONNECTOR.get());
                 data.accept(ErErItems.BIO_NUTRITION_TANK.get());

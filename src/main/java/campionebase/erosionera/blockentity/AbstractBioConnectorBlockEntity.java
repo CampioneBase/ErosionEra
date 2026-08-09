@@ -1,7 +1,7 @@
 package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.IBioConnector;
 import campionebase.erosionera.network.BioNetData;
 import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = ErosionEra.MODID)
-public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
+public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implements IBioConnector {
     private static final String TAG_NEIGHBORS_POS = "tag_neighbors";
 
     private final Set<BlockPos> neighbors = ConcurrentHashMap.newKeySet();
@@ -39,7 +39,8 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
         return this.neighbors;
     }
 
-    public void updateNeighbors(){
+    /** 更新邻居集合 */
+    public void updateNeighborPosSet(){
         if (this.level instanceof ServerLevel serverLevel){
             this.neighbors.clear();
             this.neighbors.addAll(BioNetData.get(serverLevel).getNeighbors(this.getBlockPos()));
@@ -71,7 +72,7 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
-        this.updateNeighbors();
+        this.updateNeighborPosSet();
     }
 
     @Nullable
@@ -100,10 +101,8 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity {
         if (event.getLevel() instanceof ServerLevel level){
             BlockPos pos = event.getPos();
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector){
-                BioMachineryService.removedNode(level, connector);
+                BioMachineryService.removeNode(level, connector);
             }
         }
     }
-
-    public abstract @Nullable IBioMachine getMachinery();
 }

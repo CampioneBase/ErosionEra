@@ -5,6 +5,7 @@ import campionebase.erosionera.api.IBioControllable;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioCameraHelper;
 import campionebase.erosionera.network.BioCameraManager;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -45,7 +46,8 @@ public record BioCameraActionPacket(BlockPos camera, IBioControllable.ControlAct
 
             BlockHitResult result = BioCameraHelper.pickBlock(level, packet.camera, packet.yaw, packet.pitch);
             if (result.getType() == HitResult.Type.MISS) return;
-
+            // 检查目标是否与摄像机连通
+            if (!BioMachineryService.isConnected(level, packet.camera, result.getBlockPos())) return;
             if (level.getBlockEntity(result.getBlockPos()) instanceof IBioControllable target) {
                 target.onControlledAction(sender, packet.action);
             }

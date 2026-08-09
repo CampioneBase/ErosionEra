@@ -129,12 +129,12 @@ public class BioConnectorBlock extends Block implements EntityBlock {
         Direction facing = blockState.getValue(FACING);
         BlockPos oppositePos = pos.relative(facing.getOpposite());
         if (!level.getBlockState(oppositePos).isFaceSturdy(level, neighborPos, facing, SupportType.CENTER)) {
-            level.destroyBlock(pos, true);
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector) {
                 if (level instanceof ServerLevel serverLevel) {
-                    BioMachineryService.removedNode(serverLevel, connector);
+                    BioMachineryService.removeNode(serverLevel, connector);
                 }
             }
+            level.destroyBlock(pos, true);
         }
         super.neighborChanged(blockState, level, pos, neighborBlock, neighborPos, movedByPiston);
     }
