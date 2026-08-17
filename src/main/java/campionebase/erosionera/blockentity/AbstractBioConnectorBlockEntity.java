@@ -14,6 +14,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.extensions.IForgeBlockEntity;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -28,14 +36,14 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(modid = ErosionEra.MODID)
 public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implements IBioConnector {
     private static final String TAG_NEIGHBORS_POS = "tag_neighbors";
-
+    @NotNull
     private final Set<BlockPos> neighbors = ConcurrentHashMap.newKeySet();
 
     public AbstractBioConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
 
-    public Set<BlockPos> getNeighbors(){
+    public @NotNull Set<BlockPos> getNeighbors(){
         return this.neighbors;
     }
 
@@ -75,9 +83,8 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implem
         this.updateNeighborPosSet();
     }
 
-    @Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
@@ -96,13 +103,16 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implem
         }
     }
     */
-    @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event){
-        if (event.getLevel() instanceof ServerLevel level){
-            BlockPos pos = event.getPos();
-            if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity connector){
-                BioMachineryService.removeNode(level, connector);
-            }
-        }
+
+    /** 获取导线端点偏移量 */
+    @NotNull
+    public Vec3 getWirePos(BlockPos neighborPos){
+        return this.getBlockPos().getCenter();
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        // 剔除判断下沉到渲染器
+        return INFINITE_EXTENT_AABB;
     }
 }
