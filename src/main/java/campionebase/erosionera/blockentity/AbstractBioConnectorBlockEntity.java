@@ -1,9 +1,7 @@
 package campionebase.erosionera.blockentity;
 
-import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioConnector;
 import campionebase.erosionera.network.BioNetData;
-import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -14,26 +12,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.extensions.IForgeBlockEntity;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Mod.EventBusSubscriber(modid = ErosionEra.MODID)
 public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implements IBioConnector {
     private static final String TAG_NEIGHBORS_POS = "tag_neighbors";
     @NotNull
@@ -52,6 +39,7 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implem
         if (this.level instanceof ServerLevel serverLevel){
             this.neighbors.clear();
             this.neighbors.addAll(BioNetData.get(serverLevel).getNeighbors(this.getBlockPos()));
+            this.clearCache();
             this.setChanged();
             this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
         }
@@ -75,6 +63,7 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implem
                             .collect(Collectors.toSet())
             );
         }
+        this.clearCache();
     }
 
     @Override
@@ -88,21 +77,25 @@ public abstract class AbstractBioConnectorBlockEntity extends BlockEntity implem
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    /* 由于 setRemoved 会在关闭世界时存档保存之前触发，所以改用 Forge 事件处理
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        if (this.level instanceof ServerLevel serverLevel){
-            // 更新邻居
-            Set<BlockPos> neighbors = BioNetData.get(serverLevel).remove(this.getBlockPos());
-            neighbors.forEach(neighbor -> {
-                if (this.level.getBlockEntity(neighbor) instanceof AbstractBioConnectorBlockEntity connector){
-                    connector.updateNeighbors();
-                }
-            });
-        }
+    public static class CachedWireSegments {
+        public Vec3[] points;
+        public int[] lights;
+        public boolean isValid = false;
     }
-    */
+
+    private final Map<BlockPos, CachedWireSegments> renderCache = new ConcurrentHashMap<>();
+
+    public @Nullable CachedWireSegments getCachedWireSegments(BlockPos neighbor){
+        return this.renderCache.get(neighbor);
+    }
+
+    public void putCachedSegment(BlockPos neighbor, CachedWireSegments segment) {
+        this.renderCache.put(neighbor, segment);
+    }
+
+    public void clearCache(){
+        this.renderCache.clear();
+    }
 
     /** 获取导线端点偏移量 */
     @NotNull
