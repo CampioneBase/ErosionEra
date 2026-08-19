@@ -3,7 +3,6 @@ package campionebase.erosionera.network;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
-import campionebase.erosionera.network.packet.BioCameraListPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -15,13 +14,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,22 +46,24 @@ public class BioCameraManager {
     }
 
     /** 尝试占用摄像机 */
-    @NotNull
+    @Nullable
     public Player tryOccupyCamera(@NotNull BlockPos camera,
-                                  @NotNull Player player){
+                                  @NotNull IBioController controller){
         if (this.cameraOccupations.containsKey(camera)) {
             UUID ownerId = this.cameraOccupations.get(camera).getPlayerUUID();
             Player owner = this.level.getPlayerByUUID(ownerId);
             // 占用的玩家存在，则直接返回
             if (owner != null) return owner;
         }
-        this.occupyCamera(camera, player);
-        return player;
+        Player user = controller.getUser();
+        if (user == null) return null;
+        this._occupyCamera(camera, user, controller);
+        return user;
     }
 
-    private void occupyCamera(BlockPos camera, Player player){
+    private void _occupyCamera(BlockPos camera, Player player, IBioController controller){
         LOGGER.debug("Player: {} occupy bio-camera[{}]", player.getName().getString(), camera.toShortString());
-        this.cameraOccupations.put(camera, new CameraOccupation(player, this.tickCount));
+        this.cameraOccupations.put(camera, new CameraOccupation(player, controller.getBlockPos(), this.tickCount));
     }
 
     /** 释放摄像机 */
@@ -151,13 +150,15 @@ public class BioCameraManager {
     public static class CameraOccupation {
         private final UUID playerUUID;
         private final String playerName;
+        private final BlockPos controller;
         public float yaw;
         public float pitch;
         private int timestamp;
 
-        public CameraOccupation(Player player, int tick){
+        public CameraOccupation(Player player, BlockPos controller, int tick){
             this.playerName = player.getName().getString();
             this.playerUUID = player.getUUID();
+            this.controller = controller;
             this.yaw = 0f;
             this.pitch = 0f;
             this.timestamp = tick;
@@ -169,6 +170,10 @@ public class BioCameraManager {
 
         public String getPlayerName() {
             return this.playerName;
+        }
+
+        public BlockPos getController() {
+            return this.controller;
         }
     }
 

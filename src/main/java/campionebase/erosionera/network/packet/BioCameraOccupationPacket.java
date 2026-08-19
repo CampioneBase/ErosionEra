@@ -1,5 +1,6 @@
 package campionebase.erosionera.network.packet;
 
+import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.inventory.BioControllerMenu;
@@ -62,19 +63,26 @@ public class BioCameraOccupationPacket {
                 if (newPos != null){
                     // 方块有效性检验
                     if (level.getBlockEntity(newPos) instanceof IBioCamera &&
-                            level.getBlockEntity(controllerPos) instanceof IBioController &&
+                            level.getBlockEntity(controllerPos) instanceof IBioController controller &&
                             // 连通性检验
                             BioMachineryService.isConnected(level, newPos, controllerPos)
                     ) {
                         // 尝试占用摄像机
-                        Player player = BioCameraManager.get(level).tryOccupyCamera(newPos, sender);
-                        if (sender.equals(player)){
+                        Player user = BioCameraManager.get(level).tryOccupyCamera(newPos, controller);
+                        if (user == null) {
+                            BioMachineryNetwork.LOGGER.warn(
+                                    "Preventing {} from occupying a camera: controller[{}] is not used.",
+                                    sender.getName().getString(), controller.getBlockPos().toShortString()
+                            );
+                            return;
+                        }
+                        if (sender.equals(user)){
                             // 成功占用 解除原有占用
                             BioCameraManager.get(level).releaseCamera(oldPos);
                             // 回复使用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> sender),
-                                    new Response(ResultState.SUCCESS, newPos, player.getUUID())
+                                    new Response(ResultState.SUCCESS, newPos, user.getUUID())
                             );
                             // 广播更新
                             BioMachineryService.broadcastBioCameraList(level, newPos);
@@ -82,7 +90,7 @@ public class BioCameraOccupationPacket {
                             // 目标摄像机已经被占用，回复占用者的UUID
                             BioMachineryNetwork.INSTANCE.send(
                                     PacketDistributor.PLAYER.with(() -> sender),
-                                    new Response(ResultState.OCCUPIED, newPos, player.getUUID())
+                                    new Response(ResultState.OCCUPIED, newPos, user.getUUID())
                             );
                         }
                     } else {

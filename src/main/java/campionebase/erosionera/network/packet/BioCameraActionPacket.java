@@ -2,9 +2,11 @@ package campionebase.erosionera.network.packet;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioControllable;
+import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioCameraHelper;
 import campionebase.erosionera.network.BioCameraManager;
+import campionebase.erosionera.network.BioMachineryNetwork;
 import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,8 +48,18 @@ public record BioCameraActionPacket(BlockPos camera, IBioControllable.ControlAct
 
             BlockHitResult result = BioCameraHelper.pickBlock(level, packet.camera, packet.yaw, packet.pitch);
             if (result.getType() == HitResult.Type.MISS) return;
-            // 检查目标是否与摄像机连通
-            if (!BioMachineryService.isConnected(level, packet.camera, result.getBlockPos())) return;
+            // 检查目标是否与摄像机的控制器连通
+            BioCameraManager.CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(packet.camera);
+            if (occupation == null || !occupation.getPlayerUUID().equals(sender.getUUID())) {
+                BioMachineryNetwork.LOGGER.warn(
+                        "Preventing {} from doing camera action: camera[{}] is not used or player is not current operator.",
+                        sender.getName().getString(), packet.camera
+                );
+                return;
+            }
+            // 检查控制器是否与目标连通
+            if (!(level.getBlockEntity(occupation.getController()) instanceof IBioController controller)) return;
+            if (!BioMachineryService.isConnected(level, controller.getBlockPos(), result.getBlockPos())) return;
             if (level.getBlockEntity(result.getBlockPos()) instanceof IBioControllable target) {
                 target.onControlledAction(sender, packet.action);
             }
