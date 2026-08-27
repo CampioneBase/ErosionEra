@@ -1,6 +1,6 @@
 package campionebase.erosionera.registry;
 
-import campionebase.erosionera.client.renderer.entity.block.BioWireRender;
+import campionebase.erosionera.client.renderer.blockentity.BioWireRender;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

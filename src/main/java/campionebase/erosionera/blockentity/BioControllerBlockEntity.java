@@ -1,13 +1,17 @@
 package campionebase.erosionera.blockentity;
 
+import campionebase.erosionera.api.IBioControllable;
 import campionebase.erosionera.api.IBioController;
-import campionebase.erosionera.block.BioCameraBlock;
 import campionebase.erosionera.block.BioControllerBlock;
+import campionebase.erosionera.network.BioMachineryService;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,6 +24,9 @@ public class BioControllerBlockEntity extends BioMachineBlockEntity implements M
 
     @Nullable
     private Player owner; // 服务端数据
+
+    @Nullable
+    private Entity target;
 
     public BioControllerBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_CONTROLLER.get(), pos, blockState);
@@ -39,6 +46,13 @@ public class BioControllerBlockEntity extends BioMachineBlockEntity implements M
                     this.getBlockState().setValue(BioControllerBlock.OCCUPIED, false),
                     Block.UPDATE_ALL);
             this.setChanged();
+        }
+    }
+
+    @Override
+    public void control(IBioControllable target, Action action) {
+        if (this.level instanceof ServerLevel && this.owner instanceof ServerPlayer player) {
+            target.onControlledAction(player, action);
         }
     }
 

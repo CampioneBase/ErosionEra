@@ -52,12 +52,16 @@ public class BioCameraOccupationPacket {
 
         public static void handle(Request packet, Supplier<NetworkEvent.Context> contextSupplier) {
             NetworkEvent.Context context = contextSupplier.get();
+            ServerPlayer sender = context.getSender();
+            if (sender == null) return;
+            BlockPos newPos = packet.newCamera;
+            BlockPos oldPos = packet.oldCamera;
+            if (Objects.equals(oldPos, newPos)) {
+                // 没变化。基本属于正常流程会出现的情况，不会发出警告也不会向主线程添加任务
+                context.setPacketHandled(true);
+                return;
+            }
             context.enqueueWork(() -> {
-                BlockPos newPos = packet.newCamera;
-                BlockPos oldPos = packet.oldCamera;
-                if (Objects.equals(oldPos, newPos)) return; // 没变化
-                ServerPlayer sender = context.getSender();
-                if (sender == null) return;
                 ServerLevel level = sender.serverLevel();
                 BlockPos controllerPos = packet.controller;
                 if (newPos != null){
@@ -71,8 +75,8 @@ public class BioCameraOccupationPacket {
                         Player user = BioCameraManager.get(level).tryOccupyCamera(newPos, controller);
                         if (user == null) {
                             BioMachineryNetwork.LOGGER.warn(
-                                    "Preventing {} from occupying a camera: controller[{}] is not used.",
-                                    sender.getName().getString(), controller.getBlockPos().toShortString()
+                                    "Preventing {} from occupying a camera: user not found.",
+                                    sender.getName().getString()
                             );
                             return;
                         }
@@ -139,9 +143,9 @@ public class BioCameraOccupationPacket {
 
         public static void handle(Response packet, Supplier<NetworkEvent.Context> contextSupplier) {
             NetworkEvent.Context context = contextSupplier.get();
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || !(player.containerMenu instanceof BioControllerMenu menu)) return;
             context.enqueueWork(() -> {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (player == null || !(player.containerMenu instanceof BioControllerMenu menu)) return;
                 BlockPos pos = packet.camera;
                 switch (packet.resultState){
                     case SUCCESS -> {

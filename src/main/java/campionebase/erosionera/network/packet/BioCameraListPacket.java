@@ -33,15 +33,15 @@ public class BioCameraListPacket {
 
         public static void handle(Request packet, Supplier<NetworkEvent.Context> contextSupplier) {
             NetworkEvent.Context context = contextSupplier.get();
+            ServerPlayer sender = context.getSender();
+            if (sender == null) return;
             context.enqueueWork(() -> {
-                ServerPlayer player = context.getSender();
-                if (player == null) return;
-                ServerLevel level = player.serverLevel();
-                if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
+                ServerLevel level = sender.serverLevel();
+                if (!(sender.containerMenu instanceof BioControllerMenu menu)) return;
                 if (!menu.getBlockPos().equals(packet.controller)) return;
                 Map<BlockPos, String> cameraOccupations = new HashMap<>();
                 BioMachineryService
-                        .findAllConnectedByConnector(player.serverLevel(), packet.controller)
+                        .findAllConnectedByConnector(sender.serverLevel(), packet.controller)
                         .stream()
                         .filter(machine -> machine instanceof IBioCamera)
                         .forEach(machine -> {
@@ -50,7 +50,7 @@ public class BioCameraListPacket {
                         });
 
                 BioMachineryNetwork.INSTANCE.send(
-                        PacketDistributor.PLAYER.with(() -> player),
+                        PacketDistributor.PLAYER.with(() -> sender),
                         new Response(packet.controller, cameraOccupations));
             });
             context.setPacketHandled(true);

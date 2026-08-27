@@ -1,4 +1,4 @@
-package campionebase.erosionera.client.renderer.entity.block;
+package campionebase.erosionera.client.renderer.blockentity;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;

@@ -3,6 +3,7 @@ package campionebase.erosionera.client.screen;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioControllable;
+import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.api.IBioObservable;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioCameraHelper;
@@ -12,20 +13,22 @@ import campionebase.erosionera.network.packet.BioCameraAlivePacket;
 import campionebase.erosionera.network.packet.BioCameraListPacket;
 import campionebase.erosionera.registry.ErErKeyBindings;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderHighlightEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -95,18 +98,23 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private void renderTarget(GuiGraphics graphics){
         IBioCamera camera = this.menu.getCamera();
         if (camera == null) return;
-        BlockHitResult result = BioCameraHelper.pickBlock(this.level, camera.getBlockPos(), this.menu.cameraYaw, this.menu.cameraPitch);
-        if (result.getType() == HitResult.Type.MISS) return;
-        BlockState blockState = this.level.getBlockState(result.getBlockPos());
-        if (!(blockState.getBlock() instanceof IBioObservable.BlockSource observable)) return;
-        List<Component> lines = observable.getInfo(blockState);
-
+//        BlockHitResult result = BioCameraHelper.pickBlock(this.level, camera, this.menu.cameraYaw, this.menu.cameraPitch);
+//        if (result.getType() == HitResult.Type.MISS) return;
+        HitResult result = BioCameraHelper.pick(this.level, camera, this.menu.cameraYaw, this.menu.cameraPitch);
         int x = this.width / 2 + 15;
         int y = this.height / 2 + 5;
-        for (Component line : lines) {
-            if (line.getString().equals("empty")) continue; // Component.EMPTY
-            graphics.drawString(this.font, line, x, y, 0xffcccccc, false);
-            y += this.font.lineHeight;
+        if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult blockHitResult) {
+            BlockState blockState = this.level.getBlockState(blockHitResult.getBlockPos());
+            if (!(blockState.getBlock() instanceof IBioObservable.BlockSource observable)) return;
+            List<Component> lines = observable.getInfo(blockState);
+            for (Component line : lines) {
+                if (line.getString().equals("empty")) continue; // Component.EMPTY
+                graphics.drawString(this.font, line, x, y, 0xffcccccc, false);
+                y += this.font.lineHeight;
+            }
+        }
+        if (result.getType() == HitResult.Type.ENTITY && result instanceof EntityHitResult entityHitResult){
+            graphics.drawString(this.font, entityHitResult.getEntity().getName(), x, y, 0xffcccccc, false);
         }
     }
 
@@ -141,9 +149,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     @Override
     public void removed() {
-        if (this.minecraft != null) {
-            this.releaseMouse();
-        }
+        this.releaseMouse();
         this.menu.exit();
         super.removed();
     }
@@ -173,10 +179,16 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
             return true;
         }
         if (keyCode == ErErKeyBindings.BIO_CONTROL_UP.getKey().getValue()) {
-            this.menu.action(IBioControllable.ControlAction.INCREMENT);
+            this.menu.action(IBioController.Action.INCREMENT);
+            return true;
         }
         if (keyCode == ErErKeyBindings.BIO_CONTROL_DOWN.getKey().getValue()) {
-            this.menu.action(IBioControllable.ControlAction.DECREMENT);
+            this.menu.action(IBioController.Action.DECREMENT);
+            return true;
+        }
+        if (keyCode == ErErKeyBindings.BIO_CONTROL_MARK.getKey().getValue()) {
+            this.menu.action(IBioController.Action.MARK);
+            return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }

@@ -118,7 +118,7 @@ public class BioCameraManager {
             get(level).cameraOccupations.forEach((pos, cameraOccupation) -> {
                 if (player.getUUID().equals(cameraOccupation.playerUUID)){
                     get(level).releaseCamera(pos);
-                    LOGGER.info("[Health] Release camera[{}]: Disconnected", pos.toShortString());
+                    LOGGER.info("[Health] Release camera[{}]: User disconnected", pos.toShortString());
                 }
             });
         }

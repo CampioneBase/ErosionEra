@@ -13,6 +13,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,6 +28,8 @@ public class BioControllerMenu extends AbstractContainerMenu {
     private final BlockPos controllerPos;
     private final Level level;
     private final List<CameraInfo> cameras = new ArrayList<>();
+    @Nullable
+    private Entity target;
 
     public record CameraInfo(
             @NotNull IBioCamera camera,
@@ -168,7 +171,7 @@ public class BioControllerMenu extends AbstractContainerMenu {
         }
     }
 
-    public void action(IBioControllable.ControlAction action){
+    public void action(IBioController.Action action){
         if (this.currentCamera != null){
             if (this.level instanceof ClientLevel){
                 BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraActionPacket(
@@ -194,6 +197,14 @@ public class BioControllerMenu extends AbstractContainerMenu {
     @Nullable
     public IBioCamera getCamera(){
         return this.currentCamera;
+    }
+
+    public void setTarget(@Nullable Entity target) {
+        this.target = target;
+    }
+
+    public @Nullable Entity getTarget() {
+        return target;
     }
 
     public void exit() {

@@ -1,6 +1,7 @@
 package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.api.IBioControllable;
+import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.block.BioRedstoneBlock;
 import campionebase.erosionera.registry.ErErBlockEntities;
@@ -20,15 +21,15 @@ public class BioRedstoneBlockEntity extends BlockEntity implements IBioMachine, 
     }
 
     @Override
-    public void onControlledAction(ServerPlayer player, ControlAction action) {
+    public void onControlledAction(ServerPlayer player, IBioController.Action action) {
         if (this.level == null || this.level.isClientSide) return;
 
         BlockState blockState = this.getBlockState();
         int power = blockState.getValue(BioRedstoneBlock.POWER);
 
-        if (action == ControlAction.INCREMENT && power < 15){
+        if (action == IBioController.Action.INCREMENT && power < 15){
             power += 1;
-        } else if (action == ControlAction.DECREMENT && power > 0){
+        } else if (action == IBioController.Action.DECREMENT && power > 0){
             power -= 1;
         } else {
             return;

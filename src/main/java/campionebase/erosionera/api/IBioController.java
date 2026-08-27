@@ -3,9 +3,16 @@ package campionebase.erosionera.api;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 public interface IBioController extends IBioMachine {
+    enum Action{
+        INCREMENT,
+        DECREMENT,
+        ATTACK,
+        USE,
+        MARK
+    }
+
+
     @Override
     default boolean isCore() {
         return true;
@@ -14,4 +21,6 @@ public interface IBioController extends IBioMachine {
     Player getUser();
 
     void onReleased();
+
+    void control(IBioControllable target, Action action);
 }

@@ -2,6 +2,7 @@ package campionebase.erosionera.network.packet;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.network.BioCameraManager;
+import campionebase.erosionera.network.BioMachineryNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -27,13 +28,17 @@ public record BioCameraAlivePacket(BlockPos camera, float yaw, float pitch) {
 
     public static void handle(BioCameraAlivePacket packet, Supplier<NetworkEvent.Context> contextSupplier){
         NetworkEvent.Context context = contextSupplier.get();
+        ServerPlayer sender = context.getSender();
+        if (sender == null) return;
         context.enqueueWork(() -> {
-            ServerPlayer sender = context.getSender();
-            if (sender == null) return;
             ServerLevel level = sender.serverLevel();
-
-            if (!(level.getBlockEntity(packet.camera) instanceof IBioCamera)) return;
-
+            if (!(level.getBlockEntity(packet.camera) instanceof IBioCamera)) {
+                BioMachineryNetwork.LOGGER.warn(
+                        "Preventing {} from keeping bio-camera[{}] alive: bio-camera invalid",
+                        sender.getName(), packet.camera.toShortString()
+                );
+                return;
+            }
             BioCameraManager.get(level).tryRenewCamera(packet.camera, sender.getUUID(), packet.yaw, packet.pitch);
         });
         context.setPacketHandled(true);

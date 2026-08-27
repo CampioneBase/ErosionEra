@@ -55,6 +55,14 @@ public class ErErKeyBindings {
             GLFW.GLFW_KEY_S,
             KEY_CATEGORY_BM
     );
+    @Translation.ZH_CN("活体控制 标记")
+    public static final KeyMapping BIO_CONTROL_MARK = new KeyMapping(
+            getKeyId("bio_control_mark"),
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_F,
+            KEY_CATEGORY_BM
+    );
 
     private static String getKeyId(String name){
         return ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, name).toLanguageKey("key");
@@ -65,5 +73,6 @@ public class ErErKeyBindings {
         event.register(ErErKeyBindings.NEXT_BIO_CAMERA_KEY);
         event.register(ErErKeyBindings.BIO_CONTROL_UP);
         event.register(ErErKeyBindings.BIO_CONTROL_DOWN);
+        event.register(ErErKeyBindings.BIO_CONTROL_MARK);
     }
 }

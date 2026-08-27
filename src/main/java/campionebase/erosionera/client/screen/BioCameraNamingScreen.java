@@ -83,7 +83,7 @@ public class BioCameraNamingScreen extends Screen {
     }
 
     private void reset(){
-        this.nameField.setValue(camera.getDefaultName());
+        this.nameField.setValue(this.camera.getDefaultName());
     }
 
     @Override
