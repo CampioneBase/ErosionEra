@@ -33,12 +33,14 @@ public class ErosionEra {
 
     private void init(final FMLJavaModLoadingContext context){
         IEventBus bus = context.getModEventBus();
-        ErErEntities.REGISTRY.register(bus);
-        ErErBlocks.REGISTRY.register(bus);
-        ErErBlockEntities.REGISTRY.register(bus);
-        ErErItems.REGISTRY.register(bus);
-        ErErTabs.REGISTRY.register(bus);
-        ErErMenuTypes.REGISTRY.register(bus);
+        ErErEntities.REGISTER.register(bus);
+        ErErBlocks.REGISTER.register(bus);
+        ErErBlockEntities.REGISTER.register(bus);
+        ErErItems.REGISTER.register(bus);
+        ErErTabs.REGISTER.register(bus);
+        ErErMenuTypes.REGISTER.register(bus);
+
+        BioMachineTypes.REGISTER.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

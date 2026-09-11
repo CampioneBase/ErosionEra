@@ -1,14 +1,16 @@
 package campionebase.erosionera.api;
 
+import campionebase.erosionera.registry.BioMachineTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
-// 目前的设计 摄像机类 还是无法摆脱
+// 目前的设计 摄像机类 还是无法摆脱方块
 public interface IBioCamera extends IBioMachine{
 
     @Override
-    default boolean isCore(){
-        return false;
+    default @NotNull BioMachineType<IBioCamera> getMachineType(){
+        return BioMachineTypes.CAMERA.get();
     }
 
     default float getMaxPitch() {

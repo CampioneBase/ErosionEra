@@ -12,14 +12,15 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Translation(key = "item")
 public class ErErItems {
-    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(Registries.ITEM, ErosionEra.MODID);
+    public static final DeferredRegister<Item> REGISTER = DeferredRegister.create(Registries.ITEM, ErosionEra.MODID);
     @Translation.ZH_CN("活体金属")
-    public static final RegistryObject<Item> BIO_METAL = REGISTRY.register("bio_metal", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> BIO_METAL = REGISTER.register("bio_metal", () -> new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> BIO_CONTROLLER_BED = block(ErErBlocks.BIO_CONTROLLER_BED);
     @Translation.ZH_CN("活体管道")
-    public static final RegistryObject<Item> BIO_WIRE = REGISTRY.register("bio_wire", BioWireItem::new);
+    public static final RegistryObject<Item> BIO_WIRE = REGISTER.register("bio_wire", BioWireItem::new);
 
+    public static final RegistryObject<Item> BIU_CORE = block(ErErBlocks.BIO_CORE);
     public static final RegistryObject<Item> BIO_CONTROLLER = block(ErErBlocks.BIO_CONTROLLER);
     public static final RegistryObject<Item> BIO_CONNECTOR = block(ErErBlocks.BIO_CONNECTOR);
     public static final RegistryObject<Item> BIO_NODE = block(ErErBlocks.BIO_NODE);
@@ -32,6 +33,6 @@ public class ErErItems {
     }
 
     private static RegistryObject<Item> block(RegistryObject<Block> block, Item.Properties properties) {
-        return REGISTRY.register(block.getId().getPath(), () -> new BlockItem(block.get(), properties));
+        return REGISTER.register(block.getId().getPath(), () -> new BlockItem(block.get(), properties));
     }
 }

@@ -68,7 +68,10 @@ public class BioCameraManager {
 
     /** 释放摄像机 */
     public void releaseCamera(BlockPos camera){
-        if (camera == null) return;
+        if (camera == null) {
+            LOGGER.warn("release main view ?");
+            return;
+        }
         LOGGER.debug("bio-camera[{}] released", camera.toShortString());
         this.cameraOccupations.remove(camera);
     }

@@ -1,5 +1,6 @@
 package campionebase.erosionera.blockentity;
 
+import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.IBioControllable;
 import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.api.IBioMachine;
@@ -9,15 +10,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class BioRedstoneBlockEntity extends BlockEntity implements IBioMachine, IBioControllable {
     public BioRedstoneBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_REDSTONE.get(), pos, blockState);
-    }
-
-    @Override
-    public boolean isCore() {
-        return false;
     }
 
     @Override
@@ -37,5 +34,10 @@ public class BioRedstoneBlockEntity extends BlockEntity implements IBioMachine, 
 
         this.level.setBlock(worldPosition, blockState.setValue(BioRedstoneBlock.POWER, power), 3);
         this.level.updateNeighborsAt(worldPosition, blockState.getBlock());
+    }
+
+    @Override
+    public @NotNull BioMachineType<? extends IBioMachine> getMachineType() {
+        return BioMachineType.EMPTY;
     }
 }

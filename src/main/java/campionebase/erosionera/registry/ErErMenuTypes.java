@@ -9,8 +9,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ErErMenuTypes {
-    public static final DeferredRegister<MenuType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ErosionEra.MODID);
+    public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ErosionEra.MODID);
 
     public static final RegistryObject<MenuType<BioControllerMenu>> BIO_CONTROLLER_MENU =
-            REGISTRY.register("bio_controller", () -> IForgeMenuType.create(BioControllerMenu::new));
+            REGISTER.register("bio_controller", () -> IForgeMenuType.create(BioControllerMenu::new));
 }

@@ -33,8 +33,7 @@ public class BioNetData extends SavedData {
      */
     public static BioNetData get(ServerLevel level){
         return level.getDataStorage().computeIfAbsent(
-                BioNetData::load, BioNetData::new,
-                level.dimension().location().toDebugFileName() + "_bio_net"
+                BioNetData::load, BioNetData::new, "erosionera_bio_net"
         );
     }
 

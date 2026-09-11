@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implements IBioCamera {
     public static final String TAG_NAME = "CustomName";
+    public static final String TAG_OCCUPIER = "Occupier";
     @Nullable
     private String customName;
 
@@ -32,6 +33,20 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     @Override
     public IBioMachine getMachine() {
         return this;
+    }
+
+    @Override
+    public CompoundTag getCustomData() {
+        CompoundTag tag = IBioCamera.super.getCustomData();
+        if (this.level instanceof ServerLevel serverLevel){
+            BioCameraManager.CameraOccupation occupation = BioCameraManager.get(serverLevel).getCameraOwner(this.getBlockPos());
+            if (occupation != null) {
+                String name = occupation.getPlayerName();
+                if (name != null && !name.isEmpty()) tag.putString(TAG_OCCUPIER, name);
+            }
+            tag.putString(TAG_NAME, this.getName());
+        }
+        return tag;
     }
 
     // UP: 上半球 -90 ~ 0

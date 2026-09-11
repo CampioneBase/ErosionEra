@@ -32,15 +32,15 @@ public class BioMachineryNetwork {
                 BioNetConnectingPacket.Response::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
-                BioCameraListPacket.Request.class,
-                BioCameraListPacket.Request::encode,
-                BioCameraListPacket.Request::decode,
-                BioCameraListPacket.Request::handle);
+                BioMachineListPacket.Request.class,
+                BioMachineListPacket.Request::encode,
+                BioMachineListPacket.Request::decode,
+                BioMachineListPacket.Request::handle);
         INSTANCE.registerMessage(PACKET_ID++,
-                BioCameraListPacket.Response.class,
-                BioCameraListPacket.Response::encode,
-                BioCameraListPacket.Response::decode,
-                BioCameraListPacket.Response::handle);
+                BioMachineListPacket.Response.class,
+                BioMachineListPacket.Response::encode,
+                BioMachineListPacket.Response::decode,
+                BioMachineListPacket.Response::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
                 BioCameraOccupationPacket.Request.class,
@@ -66,6 +66,12 @@ public class BioMachineryNetwork {
                 BioCameraActionPacket::handle);
 
         INSTANCE.registerMessage(PACKET_ID++,
+                BioCameraPickPacket.class,
+                BioCameraPickPacket::encode,
+                BioCameraPickPacket::decode,
+                BioCameraPickPacket::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
                 BioCameraAlivePacket.class,
                 BioCameraAlivePacket::encode,
                 BioCameraAlivePacket::decode,
@@ -76,5 +82,11 @@ public class BioMachineryNetwork {
                 BioControllerReleasePacket::encode,
                 BioControllerReleasePacket::decode,
                 BioControllerReleasePacket::handle);
+
+        INSTANCE.registerMessage(PACKET_ID++,
+                BioMachineUpdatePacket.class,
+                BioMachineUpdatePacket::encode,
+                BioMachineUpdatePacket::decode,
+                BioMachineUpdatePacket::handle);
     }
 }

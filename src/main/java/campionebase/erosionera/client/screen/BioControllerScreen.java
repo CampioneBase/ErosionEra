@@ -1,39 +1,35 @@
 package campionebase.erosionera.client.screen;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.api.IBioCamera;
-import campionebase.erosionera.api.IBioControllable;
-import campionebase.erosionera.api.IBioController;
-import campionebase.erosionera.api.IBioObservable;
+import campionebase.erosionera.api.*;
+import campionebase.erosionera.client.gui.panel.AbstractBioMachinePanel;
+import campionebase.erosionera.client.gui.panel.BioMachinePanels;
+import campionebase.erosionera.client.gui.panel.CameraControllerPanel;
 import campionebase.erosionera.inventory.BioControllerMenu;
-import campionebase.erosionera.network.BioCameraHelper;
 import campionebase.erosionera.network.BioCameraManager;
 import campionebase.erosionera.network.BioMachineryNetwork;
 import campionebase.erosionera.network.packet.BioCameraAlivePacket;
-import campionebase.erosionera.network.packet.BioCameraListPacket;
+import campionebase.erosionera.network.packet.BioCameraOccupationPacket;
+import campionebase.erosionera.network.packet.BioMachineListPacket;
+import campionebase.erosionera.registry.BioMachineTypes;
 import campionebase.erosionera.registry.ErErKeyBindings;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
+import java.util.*;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(
@@ -41,6 +37,10 @@ import java.util.List;
         modid = ErosionEra.MODID
 )
 public class BioControllerScreen extends Screen implements MenuAccess<BioControllerMenu> {
+
+    private final SortedMap<BioMachineType<?>, AbstractBioMachinePanel<?>> panels = new TreeMap<>();
+    private final CameraControllerPanel controller;
+
     private final BioControllerMenu menu;
     private final Level level;
     private long windowHandle;
@@ -48,6 +48,23 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         super(title);
         this.menu = menu;
         this.level = inventory.player.level();
+        this.controller = new CameraControllerPanel(this.level, menu);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.panels.put(BioMachineTypes.CAMERA.get(), this.controller); // 必有面板
+        this.refreshPanels();
+        if (this.minecraft != null) {
+            IBioCore core = this.menu.getCore();
+            if (core == null) return;
+            // 向服务器请求数据
+            BioMachineryNetwork.INSTANCE.sendToServer(new BioMachineListPacket.Request(core.getBlockPos()));
+            this.windowHandle = this.minecraft.getWindow().getWindow();
+            //this.minecraft.mouseHandler.grabMouse();
+            this.grabMouse();
+        }
     }
 
     @Override
@@ -62,72 +79,68 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.updatePanels();
         // 绘制一层深色背景，遮挡游戏世界（类似工作台背景效果）
-        if (this.menu.getSelectedIndex() == -1)
+        if (this.controller.getSelectedIndex() == -1)
             graphics.fill(0, 0, this.width, this.height, 0xC0101010);
-        this.renderCameraList(graphics);
-        this.renderTarget(graphics);
+        this.renderPanels(graphics, mouseX, mouseY);
     }
 
-    private void renderCameraList(GuiGraphics graphics) {
-        int x = 10;
-        int y = this.height - 20; // 从底部往上绘制
-        int lineHeight = 10;
-
-        // 先绘制所有条目（倒着画，从下往上）
-        List<BioControllerMenu.CameraInfo> cameras = this.menu.getCameras();
-        int selected = this.menu.getSelectedIndex();
-
-        // 主视角条目（索引 -1）
-        graphics.drawString(this.font, (selected == -1) ? "-> Main View" : "Main View",
-                x, y - lineHeight,
-                (selected == -1) ? 0xffffffff : 0xffaaaaaa, false);
-        y -= lineHeight + 5;
-
-        // 摄像机条目（从上往下，顺序与列表一致，但绘制从底部往上累加，所以倒序遍历）
-        for (int i = cameras.size() - 1; i >= 0; i--) {
-            BioControllerMenu.CameraInfo info = cameras.get(i);
-            String display = (selected == i) ? "-> " : info.username() == null ? "" : "[" + info.username() + "] ";
-            graphics.drawString(this.font, display + info.camera().getName(),
-                    x, y - lineHeight,
-                    (selected == i) ? 0xffffffff : 0xffaaaaaa, false);
-            y -= lineHeight + 2;
-        }
+    private void updatePanels(){
+        this.menu.drainUpdateQueue(update -> {
+            AbstractBioMachinePanel<?> panel = this.panels.get(update.type());
+            if (panel == null) return;
+            panel.handleUpdate(update);
+        });
     }
 
-    private void renderTarget(GuiGraphics graphics){
-        IBioCamera camera = this.menu.getCamera();
-        if (camera == null) return;
-//        BlockHitResult result = BioCameraHelper.pickBlock(this.level, camera, this.menu.cameraYaw, this.menu.cameraPitch);
-//        if (result.getType() == HitResult.Type.MISS) return;
-        HitResult result = BioCameraHelper.pick(this.level, camera, this.menu.cameraYaw, this.menu.cameraPitch);
-        int x = this.width / 2 + 15;
-        int y = this.height / 2 + 5;
-        if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult blockHitResult) {
-            BlockState blockState = this.level.getBlockState(blockHitResult.getBlockPos());
-            if (!(blockState.getBlock() instanceof IBioObservable.BlockSource observable)) return;
-            List<Component> lines = observable.getInfo(blockState);
-            for (Component line : lines) {
-                if (line.getString().equals("empty")) continue; // Component.EMPTY
-                graphics.drawString(this.font, line, x, y, 0xffcccccc, false);
-                y += this.font.lineHeight;
+    private void renderPanels(GuiGraphics graphics, int mouseX, int mouseY){
+        this.panels.values().forEach(panel -> {
+            if (!panel.isVisible()) return;
+            panel.render(graphics, mouseX, mouseY);
+        });
+    }
+
+    private void refreshPanels(){
+        if (this.level == null) return;
+        this.panels.values().forEach(AbstractBioMachinePanel::clear);
+        // 从menu里拉取列表同步 - 将机械按照类型分类 - 通过类型创建对应面板
+        Set<BioMachineData> dataSet = this.menu.getDataSet();
+        Map<AbstractBioMachinePanel<?>, List<BioMachineData>> cache = new LinkedHashMap<>();
+
+        dataSet.forEach(data -> {
+            if (!(this.level.getBlockEntity(data.pos()) instanceof IBioMachine machine)) return;
+            BioMachineType<?> type = machine.getMachineType();
+            AbstractBioMachinePanel<?> panel = this.panels.get(type);
+            if (panel == null) {
+                panel = BioMachinePanels.createPanel(type, this.level);
+                if (panel == null) return;
+                this.panels.put(type, panel);
+            }
+            cache.computeIfAbsent(panel, ignored -> new LinkedList<>()).add(data);
+        });
+        cache.forEach(AbstractBioMachinePanel::refreshData);
+    }
+
+    public void onCameraOccupationResponse(BioCameraOccupationPacket.ResultState state, @Nullable BlockPos cameraPos){
+        switch (state) {
+            case SUCCESS -> {
+                if (cameraPos == null) {
+                    this.controller.confirmSelecting(null);
+                    return;
+                }
+                if (this.level.getBlockEntity(cameraPos) instanceof IBioCamera camera) {
+                    this.controller.confirmSelecting(camera);
+                }
+            }
+            case OCCUPIED -> {
+
+            }
+            case INVALID -> {
+
             }
         }
-        if (result.getType() == HitResult.Type.ENTITY && result instanceof EntityHitResult entityHitResult){
-            graphics.drawString(this.font, entityHitResult.getEntity().getName(), x, y, 0xffcccccc, false);
-        }
-    }
 
-    @Override
-    protected void init() {
-        super.init();
-        if (this.minecraft != null) {
-            // 向服务器请求数据
-            BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraListPacket.Request(this.menu.getBlockPos()));
-            this.windowHandle = this.minecraft.getWindow().getWindow();
-            //this.minecraft.mouseHandler.grabMouse();
-            this.grabMouse();
-        }
     }
 
     private int tickCount = 0;
@@ -171,11 +184,11 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == ErErKeyBindings.PREV_BIO_CAMERA_KEY.getKey().getValue()){
-            this.menu.selectPrev();
+            this.controller.selectPrev();
             return true;
         }
         if (keyCode == ErErKeyBindings.NEXT_BIO_CAMERA_KEY.getKey().getValue()){
-            this.menu.selectNext();
+            this.controller.selectNext();
             return true;
         }
         if (keyCode == ErErKeyBindings.BIO_CONTROL_UP.getKey().getValue()) {
@@ -218,10 +231,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int keyCode) {
-        if (keyCode == GLFW.GLFW_MOUSE_BUTTON_LEFT){
-
-        } else if (keyCode == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-
+        if (keyCode == GLFW.GLFW_MOUSE_BUTTON_LEFT || keyCode == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            this.menu.requestPick(keyCode == GLFW.GLFW_MOUSE_BUTTON_RIGHT);
+            return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, keyCode);

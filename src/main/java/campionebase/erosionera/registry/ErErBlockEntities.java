@@ -10,8 +10,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ErErBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ErosionEra.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ErosionEra.MODID);
 
+    public static final RegistryObject<BlockEntityType<BioCoreBlockEntity>> BIO_CORE = register(
+            "bio_core",
+            ErErBlocks.BIO_CORE,
+            BioCoreBlockEntity::new
+    );
     public static final RegistryObject<BlockEntityType<BioNutritionTankBlockEntity>> BIO_NUTRITION_TANK = register(
             "bio_nutrition_tank",
             ErErBlocks.BIO_NUTRITION_TANK,
@@ -49,6 +54,6 @@ public class ErErBlockEntities {
             RegistryObject<Block> block,
             BlockEntityType.BlockEntitySupplier<T> supplier
     ) {
-        return REGISTRY.register(name, () -> BlockEntityType.Builder.of(supplier, block.get()).build(null));
+        return REGISTER.register(name, () -> BlockEntityType.Builder.of(supplier, block.get()).build(null));
     }
 }

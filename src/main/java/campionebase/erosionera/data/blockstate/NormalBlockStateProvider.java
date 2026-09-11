@@ -17,6 +17,7 @@ public class NormalBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        simpleBlock(ErErBlocks.BIO_CORE);
         simpleBlock(ErErBlocks.BIO_CONTROLLER);
         simpleBlock(ErErBlocks.BIO_NUTRITION_TANK);
         simpleBlock(ErErBlocks.BIO_REDSTONE);

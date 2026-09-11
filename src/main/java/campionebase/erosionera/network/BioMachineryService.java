@@ -1,21 +1,25 @@
 package campionebase.erosionera.network;
 
-import campionebase.erosionera.api.IBioCamera;
-import campionebase.erosionera.api.IBioConnector;
-import campionebase.erosionera.api.IBioController;
-import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.*;
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
-import campionebase.erosionera.network.packet.BioCameraListPacket;
+import campionebase.erosionera.network.packet.BioMachineListPacket;
+import campionebase.erosionera.network.packet.BioMachineUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * 活体机械服务层逻辑
+ */
 public class BioMachineryService {
     /** 寻找所有和此位置方块相连的 Bio Machine */
     public static @NotNull Set<IBioMachine> findAllConnectedFromConnector(@NotNull ServerLevel level, @NotNull BlockPos pos){
@@ -28,8 +32,13 @@ public class BioMachineryService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
-    /** 通过连接器寻找到相连的 Bio Machine */
+
+    /** 通过连接器寻找到相连的 Bio Machine （不包含自身） */
     public static @NotNull Set<IBioMachine> findAllConnectedByConnector(@NotNull ServerLevel level, @NotNull BlockPos pos){
+        return findAllConnectedByConnector(level, pos, false);
+    }
+    /** 通过连接器寻找到相连的 Bio Machine */
+    public static @NotNull Set<IBioMachine> findAllConnectedByConnector(@NotNull ServerLevel level, @NotNull BlockPos pos, boolean containSelf){
         return findAllSurroundConnector(level, pos)
                 .stream()
                 .flatMap(connector -> BioNetData.get(level).getAllConnectedBlocks(connector.getBlockPos()).stream())
@@ -37,6 +46,8 @@ public class BioMachineryService {
                 .filter(blockEntity -> blockEntity instanceof IBioConnector)
                 .map(connector -> ((IBioConnector) connector).getMachine())
                 .filter(Objects::nonNull)
+                // 是否剔除自身
+                .filter(machine -> containSelf || !machine.getBlockPos().equals(pos))
                 .collect(Collectors.toSet());
     }
     /** 寻找到周围与之相连的连接器 */
@@ -54,6 +65,44 @@ public class BioMachineryService {
         }
         return result;
     }
+
+    /** 向节点所在网络内正在使用控制器的玩家广播列表更新 */
+    public static void broadcastBioMachineListUpdate(@NotNull ServerLevel level, @NotNull BlockPos node){
+        BioMachineryService
+                .findAllConnectedByConnector(level, node)
+                .forEach(machine -> {
+                    if (!(machine instanceof IBioCore core)) return;
+                    if (core.getController() == null) return;
+                    if (!(core.getController().getUser() instanceof ServerPlayer serverPlayer)) return;
+                    Set<BioMachineData> dataSet = findAllConnectedByConnector(level, core.getBlockPos())
+                            .stream()
+                            .map(BioMachineData::of)
+                            .collect(Collectors.toSet());
+
+                    BioMachineryNetwork.INSTANCE.send(
+                            PacketDistributor.PLAYER.with(() -> serverPlayer),
+                            new BioMachineListPacket.Response(core.getBlockPos(), dataSet)
+                    );
+                });
+    }
+
+    public static void broadcastBioMachineUpdate(
+            @NotNull ServerLevel level,
+            @NotNull BioMachineData data
+    ){
+        BlockPos pos = data.pos();
+        findAllConnectedByConnector(level, pos).forEach(machine -> {
+            if (!(machine instanceof IBioCore core)) return;
+            if (core.getController() == null) return;
+            if (!(core.getController().getUser() instanceof ServerPlayer serverPlayer)) return;
+
+            BioMachineryNetwork.INSTANCE.send(
+                    PacketDistributor.PLAYER.with(() -> serverPlayer),
+                    new BioMachineUpdatePacket(data)
+            );
+        });
+    }
+
     /** 检测两点是否连通 */
     public static boolean isConnected(@NotNull ServerLevel level, @NotNull BlockPos a, @NotNull BlockPos b){
         Set<IBioConnector> connectors_a = findAllSurroundConnector(level, a);
@@ -64,25 +113,6 @@ public class BioMachineryService {
             }
         }
         return false;
-    }
-    /** 向节点所在网络内正在使用控制器的玩家广播摄像机列表 */
-    public static void broadcastBioCameraList(@NotNull ServerLevel level, @NotNull BlockPos node){
-        BioMachineryService
-                .findAllConnectedByConnector(level, node)
-                .forEach(machine -> {
-                    Map<BlockPos, String> cameraOccupations = new HashMap<>();
-                    if (!(machine instanceof IBioController controller) || !(controller.getUser() instanceof ServerPlayer serverPlayer)) return;
-                    BioMachineryService.findAllConnectedByConnector(level, controller.getBlockPos())
-                            .forEach(terminal -> {
-                                if (!(terminal instanceof IBioCamera camera)) return;
-                                BioCameraManager.CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(camera.getBlockPos());
-                                cameraOccupations.put(camera.getBlockPos(), occupation == null ? null : occupation.getPlayerName());
-                            });
-                    BioMachineryNetwork.INSTANCE.send(
-                            PacketDistributor.PLAYER.with(() -> serverPlayer),
-                            new BioCameraListPacket.Response(controller.getBlockPos(), cameraOccupations)
-                    );
-                });
     }
 
     /** 改变两个节点间连接状态 */
@@ -111,7 +141,7 @@ public class BioMachineryService {
                                     @NotNull BlockPos b)
     {
         BioNetData.get(level).connect(a, b);
-        broadcastBioCameraList(level, b);
+        broadcastBioMachineListUpdate(level, b);
     }
 
     /** 断开 */
@@ -120,9 +150,9 @@ public class BioMachineryService {
                                        @NotNull BlockPos b)
     {
         BioNetData.get(level).disconnect(a, b);
-        broadcastBioCameraList(level, b);
+        broadcastBioMachineListUpdate(level, b);
         if (!BioNetData.get(level).isTopologicallyConnected(a, b)){
-            broadcastBioCameraList(level, a);
+            broadcastBioMachineListUpdate(level, a);
         }
     }
     /** 移除网络节点 */
@@ -136,7 +166,7 @@ public class BioMachineryService {
             if (level.getBlockEntity(pos) instanceof AbstractBioConnectorBlockEntity neighbor){
                 neighbor.updateNeighborPosSet();
             }
-            broadcastBioCameraList(level, pos);
+            broadcastBioMachineListUpdate(level, pos);
         });
     }
 }
