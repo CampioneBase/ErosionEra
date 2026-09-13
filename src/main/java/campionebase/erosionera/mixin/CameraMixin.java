@@ -4,7 +4,6 @@ import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,7 +24,7 @@ public class CameraMixin {
         if (player == null) return;
         if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
 
-        IBioCamera cameraPos = menu.getCamera();
+        IBioCamera cameraPos = menu.getMachine();
         cir.setReturnValue(cameraPos != null || this.detached);
     }
 }

@@ -1,7 +1,9 @@
 package campionebase.erosionera.network;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.network.packet.*;
+import campionebase.erosionera.network.packet.c2s.*;
+import campionebase.erosionera.network.packet.s2c.*;
+import campionebase.erosionera.network.packet.rr.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;

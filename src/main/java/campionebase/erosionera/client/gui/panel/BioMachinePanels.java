@@ -27,21 +27,25 @@ public class BioMachinePanels {
 
     @FunctionalInterface
     public interface PanelFactory<M extends IBioMachine> {
-        AbstractBioMachinePanel<M> create(BioMachineType<M> type, Level level);
+        AbstractBioMachinePanel<M> create(BioMachineType<M> type, Screen screen);
     }
 
     public static <M extends IBioMachine> void register(BioMachineType<M> type, PanelFactory<M> factory) {
         FACTORIES.put(type, factory);
     }
 
-    public static <M extends IBioMachine> @Nullable AbstractBioMachinePanel<M> createPanel(BioMachineType<M> type, Level level) {
+    public static boolean hasPanel(BioMachineType<?> type) {
+        return FACTORIES.containsKey(type);
+    }
+
+    public static <M extends IBioMachine> @Nullable AbstractBioMachinePanel<M> createPanel(BioMachineType<M> type, Screen screen) {
         @SuppressWarnings("unchecked")
         PanelFactory<M> factory = (PanelFactory<M>) FACTORIES.get(type);
         if (factory == null) {
             LOGGER.warn("BioMachineType({}) has not panel factory", type.getId().toString());
             return null;
         }
-        return factory.create(type, level);
+        return factory.create(type, screen);
     }
 
     @SubscribeEvent

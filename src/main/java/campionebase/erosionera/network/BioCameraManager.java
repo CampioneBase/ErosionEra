@@ -1,6 +1,7 @@
 package campionebase.erosionera.network;
 
 import campionebase.erosionera.ErosionEra;
+import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioController;
 import net.minecraft.core.BlockPos;
@@ -62,7 +63,7 @@ public class BioCameraManager {
     }
 
     private void _occupyCamera(BlockPos camera, Player player, IBioController controller){
-        LOGGER.debug("Player: {} occupy bio-camera[{}]", player.getName().getString(), camera.toShortString());
+        LOGGER.debug("Player[{}] occupy bio-camera[{}]", player.getName().getString(), camera.toShortString());
         this.cameraOccupations.put(camera, new CameraOccupation(player, controller.getBlockPos(), this.tickCount));
     }
 
@@ -121,6 +122,9 @@ public class BioCameraManager {
             get(level).cameraOccupations.forEach((pos, cameraOccupation) -> {
                 if (player.getUUID().equals(cameraOccupation.playerUUID)){
                     get(level).releaseCamera(pos);
+                    if (level.getBlockEntity(pos) instanceof IBioCamera camera) {
+                        BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(camera));
+                    }
                     LOGGER.info("[Health] Release camera[{}]: User disconnected", pos.toShortString());
                 }
             });
@@ -129,7 +133,7 @@ public class BioCameraManager {
 
     @SubscribeEvent
     public static void OnLevelTick(TickEvent.LevelTickEvent event){
-        if (event.phase != TickEvent.Phase.END) return;
+        if (event.phase != TickEvent.Phase.START) return;
         if (!(event.level instanceof ServerLevel serverLevel)) return;
         get(serverLevel).tick();
     }
@@ -143,7 +147,10 @@ public class BioCameraManager {
                 int tick = this.tickCount - cameraOccupation.timestamp;
                 if (tick > RETAIN_MAX_TICK) {
                     this.releaseCamera(pos);
-                    LOGGER.warn("[Health] Occupation timeout and released. Pos:{} User:{}",
+                    if (level.getBlockEntity(pos) instanceof IBioCamera camera) {
+                        BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(camera));
+                    }
+                    LOGGER.warn("[Health] Camera[{}] occupation{Occupier={}} timeout and released.",
                             pos.toShortString(), cameraOccupation.playerName);
                 }
             });
@@ -177,6 +184,18 @@ public class BioCameraManager {
 
         public BlockPos getController() {
             return this.controller;
+        }
+
+        @Override
+        public String toString() {
+            return "CameraOccupation{" +
+                    "playerUUID='" + playerUUID +
+                    "playerName='" + playerName +
+                    ", controllerPos=[" + controller.toShortString() +
+                    "], yaw=" + yaw +
+                    ", pitch=" + pitch +
+                    ", timestamp=" + timestamp +
+                    '}';
         }
     }
 

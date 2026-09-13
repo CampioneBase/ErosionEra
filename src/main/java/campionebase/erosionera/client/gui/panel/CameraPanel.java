@@ -7,6 +7,7 @@ import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -14,8 +15,8 @@ import net.minecraft.world.level.Level;
 public class CameraPanel extends AbstractBioMachinePanel<IBioCamera> {
     public static final String CURSOR = "-> ";
 
-    public CameraPanel(BioMachineType<IBioCamera> type, Level level) {
-        super(type, level);
+    public CameraPanel(BioMachineType<IBioCamera> type, Screen screen) {
+        super(type, screen);
     }
 
     @Override
@@ -25,7 +26,7 @@ public class CameraPanel extends AbstractBioMachinePanel<IBioCamera> {
 
     @Override
     public void handleUpdate(BioMachineData update) {
-        this.updateData(update, CompoundTag::merge);
+        this.updateData(update, (oldNbt, newNbt) -> newNbt);
     }
 
     @Override
@@ -39,8 +40,9 @@ public class CameraPanel extends AbstractBioMachinePanel<IBioCamera> {
             graphics.drawString(font, CURSOR, pointX, pointY, 0xfffcfcfc);
         }
         graphics.drawString(font, "Main View", pointX + cursorWidth + 4, pointY, 0xfffcfcfc);
+        pointY -= lineHeight + 4;
         // 列表
-        for (int i = 0; i < this.entries.size() - 1; i++) {
+        for (int i = 0; i < this.entries.size(); i++) {
             CompoundTag data = this.entries.get(i).customData();
             if (this.selectedIndex == i){
                 graphics.drawString(font, CURSOR, pointX, pointY, 0xfffcfcfc);

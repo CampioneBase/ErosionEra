@@ -4,7 +4,7 @@ import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.data.lang.TranslationKeys;
 import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.packet.BioCameraNamingPacket;
+import campionebase.erosionera.network.packet.c2s.BioCameraNamingPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;

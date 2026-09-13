@@ -1,17 +1,10 @@
 package campionebase.erosionera.api;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.network.packet.BioControllerCommandPacket;
-import campionebase.erosionera.registry.BioMachineTypes;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 public final class BioMachineType<M extends IBioMachine>
@@ -35,10 +28,6 @@ public final class BioMachineType<M extends IBioMachine>
 
     public String getDescriptionId(){
         return this.id.toLanguageKey(KEY);
-    }
-
-    public void handleCommand(BioControllerCommandPacket packet, IBioMachine machine, ServerLevel level, BlockPos corePos){
-
     }
 
     @Nullable

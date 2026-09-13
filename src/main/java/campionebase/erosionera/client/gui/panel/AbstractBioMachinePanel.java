@@ -4,6 +4,7 @@ import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioMachine;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -20,20 +21,20 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     @FunctionalInterface
     protected interface INBTSolution{
         @NotNull
-        CompoundTag solve(CompoundTag o, CompoundTag n);
+        CompoundTag solve(CompoundTag oldNbt, CompoundTag newNbt);
     }
 
     protected final BioMachineType<M> type;
-    protected final Level level;
+    protected final Screen screen;
     @NotNull
     protected final List<BioMachineData> entries = new LinkedList<>();
     protected int selectedIndex = -1;
 
     public int x, y, width, height;
 
-    public AbstractBioMachinePanel(BioMachineType<M> type, Level level){
+    public AbstractBioMachinePanel(BioMachineType<M> type, Screen screen){
         this.type = type;
-        this.level = level;
+        this.screen = screen;
     }
 
     public void refreshData(List<BioMachineData> dataList){
@@ -46,7 +47,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
         this.entries.sort(Comparator.comparing(BioMachineData::pos));
     }
 
-    public void updateData(BioMachineData data, INBTSolution solution){
+    protected final void updateData(BioMachineData data, INBTSolution solution){
         assert solution != null;
         BioMachineData oldData = this.findData(data.pos());
         if (oldData == null) return;
@@ -59,11 +60,6 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
         );
         this.entries.remove(index);
         this.entries.add(index, newData);
-    }
-
-    public void addData(BioMachineData data){
-        this.entries.add(data);
-        this.sortData();
     }
 
     @Nullable
@@ -83,7 +79,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
         return !this.isEmpty();
     }
 
-    public void handleUpdate(BioMachineData update) {}
+    public abstract void handleUpdate(BioMachineData update);
 
     public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
 
@@ -138,7 +134,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
 
     @Nullable
     public BioMachineData getSelectedEntry(){
-        if (this.selectedIndex > 0 && this.selectedIndex < this.entries.size() - 1){
+        if (this.selectedIndex > 0 && this.selectedIndex < this.entries.size()){
             return this.entries.get(this.selectedIndex);
         }
         return null;

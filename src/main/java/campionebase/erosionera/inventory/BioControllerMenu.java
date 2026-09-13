@@ -2,10 +2,9 @@ package campionebase.erosionera.inventory;
 
 import campionebase.erosionera.api.*;
 import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.packet.BioCameraActionPacket;
-import campionebase.erosionera.network.packet.BioCameraOccupationPacket;
-import campionebase.erosionera.network.packet.BioCameraPickPacket;
-import campionebase.erosionera.network.packet.BioControllerReleasePacket;
+import campionebase.erosionera.network.packet.c2s.BioCameraActionPacket;
+import campionebase.erosionera.network.packet.c2s.BioCameraPickPacket;
+import campionebase.erosionera.network.packet.c2s.BioControllerReleasePacket;
 import campionebase.erosionera.registry.ErErBlocks;
 import campionebase.erosionera.registry.ErErMenuTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -82,6 +81,9 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
     public Set<BioMachineData> getDataSet(){
         return this.dataSet;
     }
+    public int getDataVersion(){
+        return this.dataVersion;
+    }
 
     public void enqueueMessage(BioMachineData data){
         this.updateQueue.add(data);
@@ -100,10 +102,6 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
             this.cameraYaw = this.currentCamera.getDefaultYaw();
             this.cameraPitch = this.currentCamera.getDefaultPitch();
         }
-    }
-
-    public void respondCameraOccupation(BioCameraOccupationPacket.ResultState state, @Nullable BlockPos cameraPos) {
-
     }
 
     public void action(IBioController.Action action){
@@ -134,17 +132,20 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
     }
 
     @Nullable
-    public IBioCamera getCamera(){
+    public IBioCamera getMachine(){
         return this.currentCamera;
     }
 
-    public void setCamera(IBioCamera camera) {
+    public void setMachine(@Nullable IBioCamera camera) {
         this.currentCamera = camera;
+        this.resetViewDirection();
     }
 
     public void exit() {
         if (this.level.isClientSide) {
-            BioMachineryNetwork.INSTANCE.sendToServer(new BioControllerReleasePacket(this.controllerPos));
+            BlockPos cameraPos = this.currentCamera == null ? null : this.currentCamera.getBlockPos();
+            BioMachineryNetwork.INSTANCE.sendToServer(new BioControllerReleasePacket(cameraPos, this.controllerPos));
+            this.setMachine(null);
         } else if (this.level.getBlockEntity(this.controllerPos) instanceof IBioController controller){
             controller.onReleased();
         }

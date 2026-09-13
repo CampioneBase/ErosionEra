@@ -4,17 +4,17 @@ import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioCore;
 import campionebase.erosionera.api.IBioMachineController;
 import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.packet.BioCameraOccupationPacket;
+import campionebase.erosionera.network.packet.rr.BioCameraOccupationPacket;
 import campionebase.erosionera.registry.BioMachineTypes;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class CameraControllerPanel extends CameraPanel{
     private final IBioMachineController<IBioCamera> controller;
 
-    public CameraControllerPanel(Level level, IBioMachineController<IBioCamera> controller) {
-        super(BioMachineTypes.CAMERA.get(), level);
+    public CameraControllerPanel(Screen screen, IBioMachineController<IBioCamera> controller) {
+        super(BioMachineTypes.CAMERA.get(), screen);
         this.controller = controller;
     }
 
@@ -29,7 +29,7 @@ public class CameraControllerPanel extends CameraPanel{
         if (core == null) return;
         // 向服务器请求具体的摄像机占用
         BlockPos oldPos = null, newPos = null;
-        IBioCamera current = this.controller.getCamera();
+        IBioCamera current = this.controller.getMachine();
         if (current != null)
             oldPos = current.getBlockPos();
         if (index > -1 && index < this.entries.size())
@@ -38,7 +38,7 @@ public class CameraControllerPanel extends CameraPanel{
     }
 
     public void confirmSelecting(@Nullable IBioCamera camera){
-        this.controller.setCamera(camera);
+        this.controller.setMachine(camera);
         if (camera == null) {
             super.select(-1);
             return;
@@ -46,6 +46,7 @@ public class CameraControllerPanel extends CameraPanel{
         for (int i = 0; i < this.entries.size(); i++) {
             if (camera.getBlockPos().equals(this.entries.get(i).pos())) {
                 super.select(i);
+                return;
             }
         }
         super.select(-1);

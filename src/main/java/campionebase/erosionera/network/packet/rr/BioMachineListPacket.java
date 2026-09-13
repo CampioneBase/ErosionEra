@@ -1,4 +1,4 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.rr;
 
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.inventory.BioControllerMenu;

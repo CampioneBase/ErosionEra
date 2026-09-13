@@ -1,8 +1,7 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.c2s;
 
-import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.network.BioCameraManager;
-import campionebase.erosionera.network.BioMachineryNetwork;
+import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -11,15 +10,17 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public record BioCameraAlivePacket(BlockPos camera, float yaw, float pitch) {
+public record BioCameraAlivePacket(BlockPos camera, BlockPos controller, float yaw, float pitch) {
     public static void encode(BioCameraAlivePacket packet, FriendlyByteBuf buf){
         buf.writeBlockPos(packet.camera);
+        buf.writeBlockPos(packet.controller);
         buf.writeFloat(packet.yaw);
         buf.writeFloat(packet.pitch);
     }
 
     public static BioCameraAlivePacket decode(FriendlyByteBuf buf){
         return new BioCameraAlivePacket(
+                buf.readBlockPos(),
                 buf.readBlockPos(),
                 buf.readFloat(),
                 buf.readFloat()
@@ -31,14 +32,9 @@ public record BioCameraAlivePacket(BlockPos camera, float yaw, float pitch) {
         ServerPlayer sender = context.getSender();
         if (sender == null) return;
         context.enqueueWork(() -> {
+            String failureText = "Failed to keep occupation alive";
+            if (!BioMachineryService.authenticateCameraController(sender, packet.camera, packet.controller, failureText)) return;
             ServerLevel level = sender.serverLevel();
-            if (!(level.getBlockEntity(packet.camera) instanceof IBioCamera)) {
-                BioMachineryNetwork.LOGGER.warn(
-                        "Preventing {} from keeping bio-camera[{}] alive: bio-camera invalid",
-                        sender.getName(), packet.camera.toShortString()
-                );
-                return;
-            }
             BioCameraManager.get(level).tryRenewCamera(packet.camera, sender.getUUID(), packet.yaw, packet.pitch);
         });
         context.setPacketHandled(true);

@@ -1,4 +1,4 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.rr;
 
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioCamera;
@@ -65,7 +65,7 @@ public class BioCameraOccupationPacket {
                 ServerLevel level = sender.serverLevel();
                 BlockPos corePos = packet.core;
                 if (newPos == null) {
-                    releaseIfOwned(level, oldPos, sender);
+                    BioMachineryService.releaseCameraIfOwned(level, oldPos, sender);
                     sendResponse(sender, ResultState.SUCCESS, null);
                     return;
                 }
@@ -120,7 +120,7 @@ public class BioCameraOccupationPacket {
                 // 确认发送玩家与事实相符
                 if (sender.getUUID().equals(occupier.getUUID())){
                     // 成功占用
-                    releaseIfOwned(level, oldPos, sender);
+                    BioMachineryService.releaseCameraIfOwned(level, oldPos, sender);
                     sendResponse(sender, ResultState.SUCCESS, newPos);
                     // 广播占用
                     BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(newCamera));
@@ -139,23 +139,6 @@ public class BioCameraOccupationPacket {
                 PacketDistributor.PLAYER.with(() -> player),
                 new Response(state, pos)
         );
-    }
-
-    private static void releaseIfOwned(ServerLevel level, BlockPos cameraPos, Player sender){
-        if (cameraPos == null) return;
-        BioCameraManager.CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(cameraPos);
-        if (occupation == null) return;
-        if (!sender.getUUID().equals(occupation.getPlayerUUID())) {
-            BioMachineryNetwork.LOGGER.warn(
-                    "Preventing {} from releasing camera[{}]: sender is not occupier",
-                    sender.getName(), cameraPos.toShortString()
-            );
-            return;
-        }
-        BioCameraManager.get(level).releaseCamera(cameraPos);
-        if (level.getBlockEntity(cameraPos) instanceof IBioCamera oldCamera) {
-            BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(oldCamera));
-        }
     }
 
     /**

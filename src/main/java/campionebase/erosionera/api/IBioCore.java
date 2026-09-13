@@ -1,5 +1,6 @@
 package campionebase.erosionera.api;
 
+import campionebase.erosionera.registry.BioMachineTypes;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ public interface IBioCore extends IBioMachine {
     @Override
     @NotNull
     default BioMachineType<? extends IBioCore> getMachineType() {
-        return null;
+        return BioMachineTypes.CORE.get();
     }
 
     @Nullable

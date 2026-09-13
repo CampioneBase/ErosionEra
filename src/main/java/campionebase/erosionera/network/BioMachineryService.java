@@ -2,8 +2,8 @@ package campionebase.erosionera.network;
 
 import campionebase.erosionera.api.*;
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
-import campionebase.erosionera.network.packet.BioMachineListPacket;
-import campionebase.erosionera.network.packet.BioMachineUpdatePacket;
+import campionebase.erosionera.network.packet.rr.BioMachineListPacket;
+import campionebase.erosionera.network.packet.s2c.BioMachineUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -11,16 +11,73 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
- * 活体机械服务层逻辑
+ * 活体机械服务层
  */
 public class BioMachineryService {
+    //region ================================== 验证 =======================================
+
+    /**
+     * 摄像机控制网络包验证验证
+     * @param sender 网络包发送人
+     * @param cameraPos 目标摄像机
+     * @param controllerPos 状态控制器
+     * @param failureText 失败信息
+     * @return 是否有效
+     */
+    public static boolean authenticateCameraController(ServerPlayer sender, BlockPos cameraPos, BlockPos controllerPos, String failureText){
+        ServerLevel level = sender.serverLevel();
+        if (!(level.getBlockEntity(cameraPos) instanceof IBioCamera camera)) {
+            BioMachineryNetwork.LOGGER.warn(
+                    "{}: bio-camera[{}] invalid",
+                    failureText, cameraPos.toShortString()
+            );
+            return false;
+        }
+
+        if (!(level.getBlockEntity(controllerPos) instanceof IBioController controller)) {
+            BioMachineryNetwork.LOGGER.warn(
+                    "{}: bio-controller[{}] invalid",
+                    failureText, controllerPos.toShortString()
+            );
+            return false;
+        }
+
+        Player user = controller.getUser();
+        if (user == null || !user.getUUID().equals(sender.getUUID())){
+            BioMachineryNetwork.LOGGER.warn(
+                    "{}: occupier[{}] invalid",
+                    failureText, sender.getName()
+            );
+            return false;
+        }
+
+        IBioCore core = controller.getCore();
+        if (core == null) {
+            BioMachineryNetwork.LOGGER.warn(
+                    "{}: bio-controller[{}] missing core",
+                    failureText, controllerPos.toShortString()
+            );
+            return false;
+        }
+
+        if (!isConnected(level, cameraPos, core.getBlockPos())){
+            BioMachineryNetwork.LOGGER.warn(
+                    "{}: bio-camera[{}] not connect to bio-core[{}] ",
+                    failureText, cameraPos.toShortString(), core.getBlockPos().toShortString()
+            );
+            return false;
+        }
+        return true;
+    }
+
+    //endregion
+    //region ================================== 查询 =======================================
+
     /** 寻找所有和此位置方块相连的 Bio Machine */
     public static @NotNull Set<IBioMachine> findAllConnectedFromConnector(@NotNull ServerLevel level, @NotNull BlockPos pos){
         return BioNetData.get(level)
@@ -66,7 +123,10 @@ public class BioMachineryService {
         return result;
     }
 
-    /** 向节点所在网络内正在使用控制器的玩家广播列表更新 */
+    //endregion
+    //region ================================== 广播 =======================================
+
+    /** 向节点所在网络内正在使用控制器的玩家广播全量列表更新 */
     public static void broadcastBioMachineListUpdate(@NotNull ServerLevel level, @NotNull BlockPos node){
         BioMachineryService
                 .findAllConnectedByConnector(level, node)
@@ -86,6 +146,7 @@ public class BioMachineryService {
                 });
     }
 
+    /** 向节点所在网络内正在使用控制器的玩家广播更新信息 */
     public static void broadcastBioMachineUpdate(
             @NotNull ServerLevel level,
             @NotNull BioMachineData data
@@ -102,6 +163,29 @@ public class BioMachineryService {
             );
         });
     }
+
+    //endregion
+    //region ================================== Bio Camera =======================================
+
+    public static void releaseCameraIfOwned(ServerLevel level, BlockPos cameraPos, Player sender){
+        if (cameraPos == null) return;
+        BioCameraManager.CameraOccupation occupation = BioCameraManager.get(level).getCameraOwner(cameraPos);
+        if (occupation == null) return;
+        if (!sender.getUUID().equals(occupation.getPlayerUUID())) {
+            BioMachineryNetwork.LOGGER.warn(
+                    "Preventing {} from releasing camera[{}]: sender is not occupier",
+                    sender.getName(), cameraPos.toShortString()
+            );
+            return;
+        }
+        BioCameraManager.get(level).releaseCamera(cameraPos);
+        if (level.getBlockEntity(cameraPos) instanceof IBioCamera oldCamera) {
+            BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(oldCamera));
+        }
+    }
+
+    //endregion
+    //region ================================== Bio Net =======================================
 
     /** 检测两点是否连通 */
     public static boolean isConnected(@NotNull ServerLevel level, @NotNull BlockPos a, @NotNull BlockPos b){
@@ -169,5 +253,7 @@ public class BioMachineryService {
             broadcastBioMachineListUpdate(level, pos);
         });
     }
+
+    //endregion
 }
 

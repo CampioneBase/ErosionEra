@@ -6,7 +6,6 @@ import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.mixin.CameraAccessor;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -27,7 +26,7 @@ public class BioCameraEvent {
         if (player == null) return;
         if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
 
-        IBioCamera bioCamera = menu.getCamera();
+        IBioCamera bioCamera = menu.getMachine();
         if (bioCamera == null) return;
 
         Camera camera = event.getCamera();
@@ -44,7 +43,7 @@ public class BioCameraEvent {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) return;
-        if (player.containerMenu instanceof BioControllerMenu menu && menu.getCamera() != null) {
+        if (player.containerMenu instanceof BioControllerMenu menu && menu.getMachine() != null) {
             event.setCanceled(true);
         }
     }
@@ -56,7 +55,7 @@ public class BioCameraEvent {
         if (player == null) return;
 
         if (!(player.containerMenu instanceof BioControllerMenu menu)) return;
-        IBioCamera bioCamera = menu.getCamera();
+        IBioCamera bioCamera = menu.getMachine();
         if (bioCamera == null) return;
 
         Camera camera = mc.gameRenderer.getMainCamera();

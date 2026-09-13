@@ -1,4 +1,4 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.c2s;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioControllable;

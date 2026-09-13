@@ -1,4 +1,4 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.c2s;
 
 import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import campionebase.erosionera.network.BioMachineryNetwork;

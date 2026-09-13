@@ -5,6 +5,7 @@ import campionebase.erosionera.api.IBioControllable;
 import campionebase.erosionera.api.IBioController;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.block.BioRedstoneBlock;
+import campionebase.erosionera.registry.BioMachineTypes;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +39,6 @@ public class BioRedstoneBlockEntity extends BlockEntity implements IBioMachine, 
 
     @Override
     public @NotNull BioMachineType<? extends IBioMachine> getMachineType() {
-        return BioMachineType.EMPTY;
+        return BioMachineTypes.REDSTONE.get();
     }
 }

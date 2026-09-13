@@ -2,6 +2,7 @@ package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.registry.BioMachineTypes;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,6 +16,6 @@ public class BioNutritionTankBlockEntity extends BlockEntity implements IBioMach
 
     @Override
     public @NotNull BioMachineType<? extends IBioMachine> getMachineType() {
-        return BioMachineType.EMPTY;
+        return BioMachineTypes.NUTRITION_TANK.get();
     }
 }

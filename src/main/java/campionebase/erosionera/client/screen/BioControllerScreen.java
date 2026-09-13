@@ -8,9 +8,9 @@ import campionebase.erosionera.client.gui.panel.CameraControllerPanel;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import campionebase.erosionera.network.BioCameraManager;
 import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.packet.BioCameraAlivePacket;
-import campionebase.erosionera.network.packet.BioCameraOccupationPacket;
-import campionebase.erosionera.network.packet.BioMachineListPacket;
+import campionebase.erosionera.network.packet.c2s.BioCameraAlivePacket;
+import campionebase.erosionera.network.packet.rr.BioCameraOccupationPacket;
+import campionebase.erosionera.network.packet.rr.BioMachineListPacket;
 import campionebase.erosionera.registry.BioMachineTypes;
 import campionebase.erosionera.registry.ErErKeyBindings;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -37,8 +37,8 @@ import java.util.*;
         modid = ErosionEra.MODID
 )
 public class BioControllerScreen extends Screen implements MenuAccess<BioControllerMenu> {
-
     private final SortedMap<BioMachineType<?>, AbstractBioMachinePanel<?>> panels = new TreeMap<>();
+    private int lastDataVersion = -1;
     private final CameraControllerPanel controller;
 
     private final BioControllerMenu menu;
@@ -48,20 +48,23 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         super(title);
         this.menu = menu;
         this.level = inventory.player.level();
-        this.controller = new CameraControllerPanel(this.level, menu);
+        this.controller = new CameraControllerPanel(this, menu);
     }
 
     @Override
     protected void init() {
         super.init();
         this.panels.put(BioMachineTypes.CAMERA.get(), this.controller); // 必有面板
+        this.controller.x = 16;
+        this.controller.y = this.height - 16;
         this.refreshPanels();
         if (this.minecraft != null) {
-            IBioCore core = this.menu.getCore();
-            if (core == null) return;
-            // 向服务器请求数据
-            BioMachineryNetwork.INSTANCE.sendToServer(new BioMachineListPacket.Request(core.getBlockPos()));
             this.windowHandle = this.minecraft.getWindow().getWindow();
+            IBioCore core = this.menu.getCore();
+            if (core != null) {
+                // 向服务器请求数据
+                BioMachineryNetwork.INSTANCE.sendToServer(new BioMachineListPacket.Request(core.getBlockPos()));
+            }
             //this.minecraft.mouseHandler.grabMouse();
             this.grabMouse();
         }
@@ -87,6 +90,12 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     }
 
     private void updatePanels(){
+        // 检查同步
+        if (this.lastDataVersion != this.menu.getDataVersion()){
+            this.refreshPanels();
+            this.lastDataVersion = this.menu.getDataVersion();
+        }
+        // 检查更新
         this.menu.drainUpdateQueue(update -> {
             AbstractBioMachinePanel<?> panel = this.panels.get(update.type());
             if (panel == null) return;
@@ -104,21 +113,25 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private void refreshPanels(){
         if (this.level == null) return;
         this.panels.values().forEach(AbstractBioMachinePanel::clear);
-        // 从menu里拉取列表同步 - 将机械按照类型分类 - 通过类型创建对应面板
+        // 拉取同步数据
         Set<BioMachineData> dataSet = this.menu.getDataSet();
         Map<AbstractBioMachinePanel<?>, List<BioMachineData>> cache = new LinkedHashMap<>();
-
+        // 按照类型分类
         dataSet.forEach(data -> {
             if (!(this.level.getBlockEntity(data.pos()) instanceof IBioMachine machine)) return;
             BioMachineType<?> type = machine.getMachineType();
             AbstractBioMachinePanel<?> panel = this.panels.get(type);
+            // 还未创建对应面板
             if (panel == null) {
-                panel = BioMachinePanels.createPanel(type, this.level);
+                if (!BioMachinePanels.hasPanel(type)) return;
+                panel = BioMachinePanels.createPanel(type, this);
+                // 未注册对应面板时直接跳过，不影响已有面板同步
                 if (panel == null) return;
                 this.panels.put(type, panel);
             }
             cache.computeIfAbsent(panel, ignored -> new LinkedList<>()).add(data);
         });
+        // 写入面板
         cache.forEach(AbstractBioMachinePanel::refreshData);
     }
 
@@ -147,16 +160,20 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     @Override
     public void tick() {
         super.tick();
-        IBioCamera camera = this.menu.getCamera();
-        if (camera == null) return;
-
         this.tickCount ++;
+        IBioCamera camera = this.menu.getMachine();
+        IBioController controller = this.menu.getController();
+
+
+
         if (this.tickCount % BioCameraManager.UPDATE_TICK_INTERVAL == 0){
-            BioMachineryNetwork.LOGGER.trace("[Health] Send bio-camera[{}]`s beat", camera.getBlockPos());
-            BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraAlivePacket(
-                    camera.getBlockPos(),
-                    this.menu.cameraYaw, this.menu.cameraPitch)
-            );
+            if (camera != null && controller != null){
+                BioMachineryNetwork.LOGGER.trace("[Health] Send bio-camera[{}]`s beat", camera.getBlockPos());
+                BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraAlivePacket(
+                        camera.getBlockPos(), this.menu.getController().getBlockPos(),
+                        this.menu.cameraYaw, this.menu.cameraPitch)
+                );
+            }
         }
     }
 
@@ -215,7 +232,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
                     this.minecraft.getWindow().getScreenWidth() * 0.5,
                     this.minecraft.getWindow().getScreenHeight() * 0.5);
         }
-        IBioCamera camera = this.menu.getCamera();
+        IBioCamera camera = this.menu.getMachine();
         if (camera == null) return;
 
         double dx = mouseX - this.minecraft.getWindow().getGuiScaledWidth() * 0.5;
@@ -238,6 +255,4 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
         return super.mouseClicked(mouseX, mouseY, keyCode);
     }
-
-
 }

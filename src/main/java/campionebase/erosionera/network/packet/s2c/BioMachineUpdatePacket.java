@@ -1,10 +1,9 @@
-package campionebase.erosionera.network.packet;
+package campionebase.erosionera.network.packet.s2c;
 
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.inventory.BioControllerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -21,9 +20,9 @@ public record BioMachineUpdatePacket(BioMachineData data) {
 
     public static void handle(BioMachineUpdatePacket packet, Supplier<NetworkEvent.Context> contextSupplier){
         NetworkEvent.Context context = contextSupplier.get();
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return;
         context.enqueueWork(() -> {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null) return;
             if (player.containerMenu instanceof BioControllerMenu menu){
                 menu.enqueueMessage(packet.data);
             }
