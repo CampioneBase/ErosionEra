@@ -4,6 +4,7 @@ import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioMachine;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -11,19 +12,11 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiFunction;
 
-public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
-    @FunctionalInterface
-    protected interface INBTSolution{
-        @NotNull
-        CompoundTag solve(CompoundTag oldNbt, CompoundTag newNbt);
-    }
-
+public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements GuiEventListener {
     protected final BioMachineType<M> type;
     protected final Screen screen;
     @NotNull
@@ -31,6 +24,8 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     protected int selectedIndex = -1;
 
     public int x, y, width, height;
+    private boolean focused = false;
+    private boolean closed = false;
 
     public AbstractBioMachinePanel(BioMachineType<M> type, Screen screen){
         this.type = type;
@@ -38,28 +33,24 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     }
 
     public void refreshData(List<BioMachineData> dataList){
-        this.clear();
+        BioMachineData current = null;
+        if (this.selectedIndex != -1){
+            current = this.getSelectedData();
+        }
+        this.entries.clear();
         this.entries.addAll(dataList);
         this.sortData();
+        if (current != null){
+            // 直接尝试还原选项
+            int index = this.indexOf(current.pos());
+            if (index != -1) this.selectedIndex = index;
+            return;
+        }
+        this.select(-1);
     }
 
     public void sortData(){
         this.entries.sort(Comparator.comparing(BioMachineData::pos));
-    }
-
-    protected final void updateData(BioMachineData data, INBTSolution solution){
-        assert solution != null;
-        BioMachineData oldData = this.findData(data.pos());
-        if (oldData == null) return;
-        int index = this.entries.indexOf(oldData);
-        if (index < 0) return;
-        BioMachineData newData = new BioMachineData(
-                this.type,
-                data.pos(),
-                solution.solve(oldData.customData(), data.customData())
-        );
-        this.entries.remove(index);
-        this.entries.add(index, newData);
     }
 
     @Nullable
@@ -70,25 +61,51 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
         return null;
     }
 
+    public int indexOf(BlockPos pos){
+        for (int i = 0; i < this.entries.size(); i++) {
+            if (this.entries.get(i).pos().equals(pos)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public boolean isEmpty(){
         return this.entries.isEmpty();
     }
 
     public boolean isVisible() {
         // 当面板内没有元素时，将面板隐藏起来而不直接移除，避免面板反复创建
-        return !this.isEmpty();
+        return !this.isEmpty() || this.closed;
     }
 
-    public abstract void handleUpdate(BioMachineData update);
+    public void handleUpdate(BioMachineData update){
+        assert update.type().equals(this.type) : "update data has wrong type." +
+                " Required: " + this.type.getDescriptionId() +
+                ", Provided: " + update.type().getDescriptionId();
+        BioMachineData oldData = this.findData(update.pos());
+        if (oldData == null) return;
+        int index = this.entries.indexOf(oldData);
+        if (index < 0) return;
+        this.entries.set(index, update);
+    }
 
     public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
 
-    protected boolean isFocus(int mouseX, int mouseY){
-        return mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
+    public boolean isFocused(){
+        return this.focused;
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
     public void selectNext(){
-        if (this.entries.isEmpty()) { this.selectedIndex = -1; return; }
+        if (this.entries.isEmpty()) {
+            this.selectedIndex = -1;
+            return;
+        }
         int index = this.selectedIndex;
         int limit = 0;
         while (limit++ < this.entries.size() + 1){
@@ -116,6 +133,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     }
 
     protected void select(int index){
+        if (index >= this.entries.size() || index < 0) index = -1;
         if (index != this.selectedIndex){
             this.selectedIndex = index;
             this.onSelectChanged();
@@ -127,22 +145,31 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     }
 
     protected boolean isSelectionValid(int index){
-        return true;
+        return index >= -1 && index < this.entries.size();
+
     }
 
     protected void onSelectChanged() {}
 
     @Nullable
-    public BioMachineData getSelectedEntry(){
-        if (this.selectedIndex > 0 && this.selectedIndex < this.entries.size()){
+    public BioMachineData getSelectedData(){
+        if (this.selectedIndex >= 0 && this.selectedIndex < this.entries.size()){
             return this.entries.get(this.selectedIndex);
         }
         return null;
     }
 
     @Nullable
+    public BioMachineData getSelectedData(int index){
+        if (index >= 0 && index < this.entries.size()){
+            return this.entries.get(index);
+        }
+        return null;
+    }
+
+    @Nullable
     public M getSelectedInstance(Level level){
-        BioMachineData data = this.getSelectedEntry();
+        BioMachineData data = this.getSelectedData();
         if (data == null) return null;
         return this.getInstanceAt(level, data.pos());
     }
@@ -150,7 +177,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> {
     @Nullable
     protected abstract M getInstanceAt(Level level, BlockPos pos);
 
-    public void clear(){
-        this.entries.clear();
+    public void close(){
+        this.closed = true;
     };
 }

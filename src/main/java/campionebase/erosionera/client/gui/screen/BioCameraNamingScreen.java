@@ -1,4 +1,4 @@
-package campionebase.erosionera.client.screen;
+package campionebase.erosionera.client.gui.screen;
 
 import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import campionebase.erosionera.data.lang.Translation;

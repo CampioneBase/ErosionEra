@@ -2,7 +2,7 @@ package campionebase.erosionera.block;
 
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import campionebase.erosionera.blockentity.BioCameraBlockEntity;
-import campionebase.erosionera.client.screen.BioCameraNamingScreen;
+import campionebase.erosionera.client.gui.screen.BioCameraNamingScreen;
 import campionebase.erosionera.network.BioMachineryService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

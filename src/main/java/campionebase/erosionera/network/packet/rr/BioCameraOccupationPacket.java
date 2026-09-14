@@ -3,7 +3,7 @@ package campionebase.erosionera.network.packet.rr;
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioCore;
-import campionebase.erosionera.client.screen.BioControllerScreen;
+import campionebase.erosionera.client.gui.screen.BioControllerScreen;
 import campionebase.erosionera.network.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

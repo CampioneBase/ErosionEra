@@ -1,13 +1,16 @@
 package campionebase.erosionera.client.gui.panel;
 
+import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioCore;
 import campionebase.erosionera.api.IBioMachineController;
+import campionebase.erosionera.blockentity.BioCameraBlockEntity;
 import campionebase.erosionera.network.BioMachineryNetwork;
 import campionebase.erosionera.network.packet.rr.BioCameraOccupationPacket;
 import campionebase.erosionera.registry.BioMachineTypes;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
 public class CameraControllerPanel extends CameraPanel{
@@ -50,5 +53,18 @@ public class CameraControllerPanel extends CameraPanel{
             }
         }
         super.select(-1);
+    }
+
+    @Override
+    protected boolean isSelectionValid(int index) {
+        if (index == -1) return true;
+        if (index < -1 || index >= this.entries.size()) return false;
+        BioMachineData data = this.getSelectedData(index);
+        assert data != null : "Null data selection." +
+                " Type: " + this.type.getDescriptionId() +
+                ", Index: " + index +
+                ", Size: " + this.entries.size();
+        CompoundTag tag = data.customData();
+        return !tag.contains(BioCameraBlockEntity.TAG_OCCUPIER);
     }
 }

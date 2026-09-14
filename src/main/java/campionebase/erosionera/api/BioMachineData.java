@@ -11,6 +11,11 @@ public record BioMachineData(
         @NotNull BlockPos pos,
         @NotNull CompoundTag customData
 ) {
+    @FunctionalInterface
+    public interface INBTSolution{
+        @NotNull
+        CompoundTag solve(CompoundTag oldNbt, CompoundTag newNbt);
+    }
     public static BioMachineData of(IBioMachine machine){
         return new BioMachineData(
                 machine.getMachineType(),
@@ -43,5 +48,20 @@ public record BioMachineData(
                 pos,
                 tag == null ? new CompoundTag() : tag
         );
+    }
+
+    public BioMachineData update(CompoundTag newNbt, INBTSolution solution){
+        return new BioMachineData(
+                this.type, this.pos,
+                solution.solve(this.customData, newNbt)
+        );
+    }
+
+    public BioMachineData merge(CompoundTag newNbt){
+        return update(newNbt, CompoundTag::merge);
+    }
+
+    public BioMachineData replace(CompoundTag newNbt){
+        return update(newNbt, (o, n) -> n);
     }
 }

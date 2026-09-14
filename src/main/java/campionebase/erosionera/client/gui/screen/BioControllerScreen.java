@@ -1,4 +1,4 @@
-package campionebase.erosionera.client.screen;
+package campionebase.erosionera.client.gui.screen;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.*;
@@ -112,7 +112,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     private void refreshPanels(){
         if (this.level == null) return;
-        this.panels.values().forEach(AbstractBioMachinePanel::clear);
+        Collection<AbstractBioMachinePanel<?>> closedPanels = new ArrayList<>(this.panels.values());
         // 拉取同步数据
         Set<BioMachineData> dataSet = this.menu.getDataSet();
         Map<AbstractBioMachinePanel<?>, List<BioMachineData>> cache = new LinkedHashMap<>();
@@ -128,11 +128,13 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
                 // 未注册对应面板时直接跳过，不影响已有面板同步
                 if (panel == null) return;
                 this.panels.put(type, panel);
+                closedPanels.remove(panel);
             }
             cache.computeIfAbsent(panel, ignored -> new LinkedList<>()).add(data);
         });
         // 写入面板
         cache.forEach(AbstractBioMachinePanel::refreshData);
+        closedPanels.forEach(AbstractBioMachinePanel::close);
     }
 
     public void onCameraOccupationResponse(BioCameraOccupationPacket.ResultState state, @Nullable BlockPos cameraPos){
@@ -163,9 +165,6 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.tickCount ++;
         IBioCamera camera = this.menu.getMachine();
         IBioController controller = this.menu.getController();
-
-
-
         if (this.tickCount % BioCameraManager.UPDATE_TICK_INTERVAL == 0){
             if (camera != null && controller != null){
                 BioMachineryNetwork.LOGGER.trace("[Health] Send bio-camera[{}]`s beat", camera.getBlockPos());

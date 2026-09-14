@@ -10,8 +10,6 @@ import java.util.Objects;
 public final class BioMachineType<M extends IBioMachine>
         implements BioMachineTypeTest<IBioMachine, M>, Comparable<BioMachineType<M>> {
     public static final String KEY = "bio_machine_type";
-    @Deprecated
-    public static final BioMachineType<IBioMachine> EMPTY = BioMachineType.Builder.of(IBioMachine.class).build();
     @NotNull
     private final ResourceLocation id;
     @NotNull
