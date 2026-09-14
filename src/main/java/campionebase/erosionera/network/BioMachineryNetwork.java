@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class BioMachineryNetwork {
     public static final Logger LOGGER = LogManager.getLogger(BioMachineryNetwork.class);
-    private static final String PROTOCOL_VERSION = "1.0";
+    private static final String PROTOCOL_VERSION = "1.1";
     private static int PACKET_ID = 0;
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "bio_machinery"),

@@ -9,19 +9,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public record BioControllerReleasePacket(@Nullable BlockPos camera, @NotNull BlockPos controller) {
+public record BioControllerReleasePacket(@NotNull BlockPos controller) {
     public static void encode(BioControllerReleasePacket packet, FriendlyByteBuf buf){
-        buf.writeNullable(packet.camera, FriendlyByteBuf::writeBlockPos);
         buf.writeBlockPos(packet.controller);
     }
 
     public static BioControllerReleasePacket decode(FriendlyByteBuf buf){
         return new BioControllerReleasePacket(
-                buf.readNullable(FriendlyByteBuf::readBlockPos),
                 buf.readBlockPos()
         );
     }
@@ -48,7 +45,9 @@ public record BioControllerReleasePacket(@Nullable BlockPos camera, @NotNull Blo
                 );
                 return;
             }
-            BioMachineryService.releaseCameraIfOwned(level, packet.camera, sender);
+
+            // 释放会话不依赖摄像机连通性，只按服务端记录的所有权清理。
+            BioMachineryService.releaseCamerasByController(level, packet.controller, sender);
             controller.onReleased();
         });
         context.setPacketHandled(true);

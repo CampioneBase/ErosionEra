@@ -43,8 +43,10 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
         if (current != null){
             // 直接尝试还原选项
             int index = this.indexOf(current.pos());
-            if (index != -1) this.selectedIndex = index;
-            return;
+            if (index != -1) {
+                this.selectedIndex = index;
+                return;
+            }
         }
         this.select(-1);
     }

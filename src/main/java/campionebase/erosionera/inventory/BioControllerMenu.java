@@ -143,8 +143,7 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
 
     public void exit() {
         if (this.level.isClientSide) {
-            BlockPos cameraPos = this.currentCamera == null ? null : this.currentCamera.getBlockPos();
-            BioMachineryNetwork.INSTANCE.sendToServer(new BioControllerReleasePacket(cameraPos, this.controllerPos));
+            BioMachineryNetwork.INSTANCE.sendToServer(new BioControllerReleasePacket(this.controllerPos));
             this.setMachine(null);
         } else if (this.level.getBlockEntity(this.controllerPos) instanceof IBioController controller){
             controller.onReleased();

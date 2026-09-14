@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,6 +76,21 @@ public class BioCameraManager {
         }
         LOGGER.debug("bio-camera[{}] released", camera.toShortString());
         this.cameraOccupations.remove(camera);
+    }
+
+    /** 释放指定控制器和玩家持有的全部摄像机 */
+    public @NotNull Set<BlockPos> releaseCamerasByController(@NotNull BlockPos controller, @NotNull UUID playerId){
+        Set<BlockPos> released = ConcurrentHashMap.newKeySet();
+        this.cameraOccupations.forEach((camera, occupation) -> {
+            if (!occupation.getController().equals(controller)) return;
+            if (!occupation.getPlayerUUID().equals(playerId)) return;
+            if (this.cameraOccupations.remove(camera, occupation)) {
+                released.add(camera);
+                LOGGER.debug("bio-camera[{}] released with bio-controller[{}]",
+                        camera.toShortString(), controller.toShortString());
+            }
+        });
+        return released;
     }
 
     public boolean isCameraOccupied(BlockPos camera){

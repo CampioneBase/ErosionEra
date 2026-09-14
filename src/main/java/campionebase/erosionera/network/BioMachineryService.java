@@ -184,6 +184,17 @@ public class BioMachineryService {
         }
     }
 
+    /** 释放指定控制器持有的全部摄像机，不要求摄像机当前仍与核心相连 */
+    public static void releaseCamerasByController(ServerLevel level, BlockPos controllerPos, Player sender){
+        Set<BlockPos> released = BioCameraManager.get(level)
+                .releaseCamerasByController(controllerPos, sender.getUUID());
+        released.forEach(cameraPos -> {
+            if (level.getBlockEntity(cameraPos) instanceof IBioCamera camera) {
+                BioMachineryService.broadcastBioMachineUpdate(level, BioMachineData.of(camera));
+            }
+        });
+    }
+
     //endregion
     //region ================================== Bio Net =======================================
 
