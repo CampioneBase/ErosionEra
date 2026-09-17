@@ -8,7 +8,8 @@
   ],
   "client": [
     "CameraAccessor",
-    "CameraMixin"
+    "CameraMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1
