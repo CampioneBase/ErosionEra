@@ -5,7 +5,6 @@ import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.registry.BioMachineTypes;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -51,7 +50,9 @@ public class BioMachinePanels {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
         event.enqueueWork(() -> {
-            register(BioMachineTypes.CAMERA.get(), CameraPanel::new);
+            register(BioMachineTypes.CAMERA.get(), BioCameraPanel::new);
+            register(BioMachineTypes.NUTRITION_TANK.get(), BioNutritionTankPanel::new);
+            register(BioMachineTypes.REDSTONE.get(), BioRedstonePanel::new);
         });
     }
 }

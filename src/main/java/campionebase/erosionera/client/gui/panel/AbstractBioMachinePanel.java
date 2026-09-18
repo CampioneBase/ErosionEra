@@ -3,20 +3,28 @@ package campionebase.erosionera.client.gui.panel;
 import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioMachine;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements GuiEventListener {
+@OnlyIn(Dist.CLIENT)
+public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements Renderable, LayoutElement, GuiEventListener {
     protected final BioMachineType<M> type;
     protected final Screen screen;
     @NotNull
@@ -31,6 +39,44 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
         this.type = type;
         this.screen = screen;
     }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public int getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.height;
+    }
+
+    @Override
+    public @NotNull ScreenRectangle getRectangle() {
+        return LayoutElement.super.getRectangle();
+    }
+
+    @Override
+    public void visitWidgets(@NotNull Consumer<AbstractWidget> consumer) { }
 
     public void refreshData(List<BioMachineData> dataList){
         BioMachineData current = null;
@@ -78,7 +124,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
 
     public boolean isVisible() {
         // 当面板内没有元素时，将面板隐藏起来而不直接移除，避免面板反复创建
-        return !this.isEmpty() || this.closed;
+        return !this.isEmpty() && !this.closed;
     }
 
     public void handleUpdate(BioMachineData update){
@@ -92,7 +138,13 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
         this.entries.set(index, update);
     }
 
-    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.drawString(Minecraft.getInstance().font,
+                this.type.getDescriptionId() + " rendering"
+                , this.x, this.y,
+                0xffc0c0c0);
+    }
 
     public boolean isFocused(){
         return this.focused;
@@ -181,5 +233,14 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
 
     public void close(){
         this.closed = true;
-    };
+    }
+
+    public void open(){
+        this.closed = false;
+    }
+
+    @Override
+    public int getTabOrderGroup() {
+        return this.type.getOrderWeight();
+    }
 }

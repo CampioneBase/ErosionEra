@@ -13,10 +13,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
-public class CameraControllerPanel extends CameraPanel{
+public class BioCameraControllerPanel extends BioCameraPanel {
     private final IBioMachineController<IBioCamera> controller;
 
-    public CameraControllerPanel(Screen screen, IBioMachineController<IBioCamera> controller) {
+    public BioCameraControllerPanel(Screen screen, IBioMachineController<IBioCamera> controller) {
         super(BioMachineTypes.CAMERA.get(), screen);
         this.controller = controller;
     }

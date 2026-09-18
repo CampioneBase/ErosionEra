@@ -12,12 +12,16 @@ public final class BioMachineType<M extends IBioMachine>
     public static final String KEY = "bio_machine_type";
     @NotNull
     private final ResourceLocation id;
+
     @NotNull
     private final Class<M> machineClazz;
+
+    private final int orderWeight;
 
     private BioMachineType(Builder<M> builder) {
         this.id = builder.id;
         this.machineClazz = builder.machineClazz;
+        this.orderWeight = builder.orderWeight;
     }
 
     public @NotNull ResourceLocation getId(){
@@ -26,6 +30,10 @@ public final class BioMachineType<M extends IBioMachine>
 
     public String getDescriptionId(){
         return this.id.toLanguageKey(KEY);
+    }
+
+    public int getOrderWeight() {
+        return this.orderWeight;
     }
 
     @Nullable
@@ -43,10 +51,12 @@ public final class BioMachineType<M extends IBioMachine>
     public static class Builder<M extends IBioMachine>{
         private final Class<M> machineClazz;
         private ResourceLocation id = ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "unknown");
+        private int orderWeight = Integer.MIN_VALUE;
 
         public static <M extends IBioMachine> Builder<M> of(Class<M> clazz){ return new Builder<>(clazz); }
 
         public Builder(Class<M> clazz) { this.machineClazz = clazz; }
+        public Builder<M> setOrderWeight(int orderWeight){ this.orderWeight = orderWeight; return this; }
         private BioMachineType<M> build() { return new BioMachineType<>(this); }
         public BioMachineType<M> build(String name){
             return this.build(ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, name));
@@ -60,6 +70,9 @@ public final class BioMachineType<M extends IBioMachine>
 
     @Override
     public int compareTo(@NotNull BioMachineType<M> other) {
+        if (this.orderWeight != other.orderWeight){
+            return this.orderWeight - other.orderWeight;
+        }
         return this.id.compareTo(other.id);
     }
 
