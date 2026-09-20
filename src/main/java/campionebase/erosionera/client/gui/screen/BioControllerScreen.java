@@ -2,6 +2,8 @@ package campionebase.erosionera.client.gui.screen;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.api.*;
+import campionebase.erosionera.client.gui.animation.AnimatedFloat;
+import campionebase.erosionera.client.gui.animation.Easing;
 import campionebase.erosionera.client.gui.layout.PanelLayout;
 import campionebase.erosionera.client.gui.panel.AbstractBioMachinePanel;
 import campionebase.erosionera.client.gui.panel.BioCameraControllerPanel;
@@ -60,6 +62,10 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private final BioControllerMenu menu;
     private final Level level;
     private final ItemStack cameraIcon;
+    private final AnimatedFloat rightPanelVisibility =
+            new AnimatedFloat(1.0F, PANEL_FADE_SECONDS);
+    private final AnimatedFloat listCollapseProgress =
+            new AnimatedFloat(0.0F, LIST_COLLAPSE_SECONDS);
 
     private @Nullable BioMachineType<?> selectedType;
     private List<BioMachineType<?>> visibleTypes = List.of();
@@ -67,8 +73,6 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private int leftDividerY = PANEL_PADDING;
     private long windowHandle;
     private long lastRenderTime = Util.getMillis();
-    private float rightPanelVisibility = 1.0F;
-    private float listCollapseProgress;
     private boolean mouseGrabbed;
     private int tickCount;
 
@@ -94,8 +98,8 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.layoutController();
 
         boolean controlling = this.controller.getSelectedIndex() != -1;
-        this.rightPanelVisibility = controlling ? 0.0F : 1.0F;
-        this.listCollapseProgress = controlling ? 1.0F : 0.0F;
+        this.rightPanelVisibility.snapTo(controlling ? 0.0F : 1.0F);
+        this.listCollapseProgress.snapTo(controlling ? 1.0F : 0.0F);
         this.lastRenderTime = Util.getMillis();
         this.lastDataVersion = this.menu.getDataVersion();
 
@@ -127,7 +131,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.updateAnimations();
         this.layoutController();
 
-        float cameraProgress = 1.0F - this.rightPanelVisibility;
+        float cameraProgress = 1.0F - this.rightPanelVisibility.value();
         int backgroundAlpha = Math.round(BACKGROUND_ALPHA * (1.0F - cameraProgress));
         if (backgroundAlpha > 0) {
             graphics.fill(0, 0, this.width, this.height,
@@ -215,22 +219,10 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
         boolean controlling = this.controller.getSelectedIndex() != -1;
         float cameraTarget = controlling ? 1.0F : 0.0F;
-        this.rightPanelVisibility = approach(this.rightPanelVisibility,
-                1.0F - cameraTarget, deltaSeconds / PANEL_FADE_SECONDS);
-        this.listCollapseProgress = approach(this.listCollapseProgress,
-                cameraTarget, deltaSeconds / LIST_COLLAPSE_SECONDS);
-    }
-
-    private static float approach(float current, float target, float amount) {
-        if (current < target) {
-            return Math.min(target, current + amount);
-        }
-        return Math.max(target, current - amount);
-    }
-
-    private static float easeOutCubic(float value) {
-        float inverse = 1.0F - Mth.clamp(value, 0.0F, 1.0F);
-        return 1.0F - inverse * inverse * inverse;
+        this.rightPanelVisibility.setTarget(1.0F - cameraTarget);
+        this.listCollapseProgress.setTarget(cameraTarget);
+        this.rightPanelVisibility.advance(deltaSeconds);
+        this.listCollapseProgress.advance(deltaSeconds);
     }
 
     private void layoutController() {
@@ -246,7 +238,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     private void renderTypeList(GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
-        float collapse = easeOutCubic(this.listCollapseProgress);
+        float collapse = Easing.EASE_OUT_CUBIC.apply(this.listCollapseProgress.value());
 
         if (collapse < 1.0F) {
             graphics.enableScissor(0, 0, LEFT_SECTION_WIDTH, this.leftDividerY);
@@ -259,9 +251,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
                 if (y + font.lineHeight > this.leftDividerY) break;
 
                 boolean selected = type.equals(this.selectedType);
-                Component text = selected
-                        ? Component.literal("选项：" + type.getDescriptionId())
-                        : Component.translatable(type.getDescriptionId());
+                Component text = Component.translatable(type.getDescriptionId());
                 int color = selected ? 0xffffffff : 0xffa7b0ad;
                 graphics.drawString(font, text, x, y, color, true);
                 y += LIST_ROW_HEIGHT;
@@ -282,18 +272,19 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     }
 
     private void renderRightPanel(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        if (this.rightPanelVisibility <= 0.001F) return;
+        float visibility = this.rightPanelVisibility.value();
+        if (visibility <= 0.001F) return;
 
         AbstractBioMachinePanel<?> panel = this.layoutSelectedPanel();
         if (panel == null || !panel.isVisible()) return;
 
-        float gone = easeOutCubic(1.0F - this.rightPanelVisibility);
+        float gone = Easing.EASE_OUT_CUBIC.apply(1.0F - visibility);
         int slide = Math.round(gone * PANEL_SLIDE_DISTANCE);
 
         graphics.pose().pushPose();
         graphics.pose().translate(slide, 0.0F, 0.0F);
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.rightPanelVisibility);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, visibility);
         panel.render(graphics, mouseX, mouseY, partialTick);
         graphics.flush();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -331,8 +322,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
                     this.updateMouseMode();
                 }
             }
-            case OCCUPIED, INVALID -> {
-            }
+            case OCCUPIED -> this.controller.markSelection(cameraPos, "*OCCUPIED*");
+            case INVALID -> this.controller.markSelection(cameraPos, "*INVALID*");
+            default -> throw new IllegalStateException("Unexpected value: " + state);
         }
     }
 
@@ -460,7 +452,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     }
 
     private @Nullable BioMachineType<?> getTypeAt(double mouseX, double mouseY) {
-        if (this.listCollapseProgress > 0.5F
+        if (this.listCollapseProgress.value() > 0.5F
                 || mouseX < PANEL_PADDING
                 || mouseX > LEFT_SECTION_WIDTH - PANEL_PADDING
                 || mouseY < PANEL_PADDING

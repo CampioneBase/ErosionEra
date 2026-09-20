@@ -55,6 +55,23 @@ public class BioCameraControllerPanel extends BioCameraPanel {
         super.select(-1);
     }
 
+    public void markSelection(BlockPos pos, String mark){
+        for (int i = 0; i < this.entries.size(); i++) {
+            BioMachineData data = this.getSelectedData(i);
+            assert data != null : "Null data selection." +
+                    " Type: " + this.type.getDescriptionId() +
+                    ", Index: " + i +
+                    ", Size: " + this.entries.size();
+            if (pos.equals(data.pos())) {
+                CompoundTag dataTag = data.customData();
+                if (!dataTag.contains(BioCameraBlockEntity.TAG_OCCUPIER)){
+                    dataTag.putString(BioCameraBlockEntity.TAG_OCCUPIER, mark);
+                }
+                return;
+            }
+        }
+    }
+
     @Override
     protected boolean isSelectionValid(int index) {
         if (index == -1) return true;

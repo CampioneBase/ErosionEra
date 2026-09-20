@@ -207,10 +207,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
 
     @Nullable
     public BioMachineData getSelectedData(){
-        if (this.selectedIndex >= 0 && this.selectedIndex < this.entries.size()){
-            return this.entries.get(this.selectedIndex);
-        }
-        return null;
+        return this.getSelectedData(this.selectedIndex);
     }
 
     @Nullable
