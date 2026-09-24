@@ -27,6 +27,8 @@ public class ErErItems {
     public static final RegistryObject<Item> BIO_NUTRITION_TANK = block(ErErBlocks.BIO_NUTRITION_TANK);
     public static final RegistryObject<Item> BIO_CAMERA = block(ErErBlocks.BIO_CAMERA);
     public static final RegistryObject<Item> BIO_REDSTONE = block(ErErBlocks.BIO_REDSTONE);
+    public static final RegistryObject<Item> BIO_CHEST = block(ErErBlocks.BIO_CHEST);
+    public static final RegistryObject<Item> BIO_BIN = block(ErErBlocks.BIO_BIN);
 
     private static RegistryObject<Item> block(RegistryObject<Block> block) {
         return block(block, new Item.Properties());

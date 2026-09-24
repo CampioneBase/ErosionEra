@@ -3,6 +3,7 @@ package campionebase.erosionera.client.gui.panel;
 import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.render.BioMachineRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -34,6 +35,8 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
     public int x, y, width, height;
     private boolean focused = false;
     private boolean closed = false;
+
+    protected final List<BioMachineRenderable> renderers = new LinkedList<>();
 
     public AbstractBioMachinePanel(BioMachineType<M> type, Screen screen){
         this.type = type;
@@ -85,7 +88,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
         }
         this.entries.clear();
         this.entries.addAll(dataList);
-        this.sortData();
+        this.entries.sort(Comparator.comparing(BioMachineData::pos));
         if (current != null){
             // 直接尝试还原选项
             int index = this.indexOf(current.pos());
@@ -95,10 +98,6 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
             }
         }
         this.select(-1);
-    }
-
-    public void sortData(){
-        this.entries.sort(Comparator.comparing(BioMachineData::pos));
     }
 
     @Nullable
@@ -140,6 +139,7 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        // 渲染占位字符
         graphics.drawString(Minecraft.getInstance().font,
                 this.type.getDescriptionId() + " rendering"
                 , this.x, this.y,

@@ -1,6 +1,6 @@
 package campionebase.erosionera.client.gui.animation;
 
-public class AnimatedFloat extends ScreenAnimation{
+public final class AnimatedFloat extends ScreenAnimation{
     private float value, target;
     private final float secondsPerUnit;
 

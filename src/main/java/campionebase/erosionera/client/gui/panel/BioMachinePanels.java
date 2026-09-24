@@ -51,6 +51,7 @@ public class BioMachinePanels {
     public static void onClientSetup(FMLClientSetupEvent event){
         event.enqueueWork(() -> {
             register(BioMachineTypes.CAMERA.get(), BioCameraPanel::new);
+            register(BioMachineTypes.STORAGE.get(), BioStoragePanel::new);
             register(BioMachineTypes.NUTRITION_TANK.get(), BioNutritionTankPanel::new);
             register(BioMachineTypes.REDSTONE.get(), BioRedstonePanel::new);
         });

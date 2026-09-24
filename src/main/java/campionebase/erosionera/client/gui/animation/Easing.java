@@ -13,7 +13,7 @@ public interface Easing extends Function<Float, Float> {
 
     @Override
     default Float apply(Float t) {
-        t = Mth.clamp(t, 0.0f, 1.0f);
+        t = Mth.clamp(t, 0.0001f, 1.0f);
         return this._unnormalizedApply(t);
     }
 

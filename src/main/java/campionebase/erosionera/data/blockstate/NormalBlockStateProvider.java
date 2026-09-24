@@ -3,6 +3,7 @@ package campionebase.erosionera.data.blockstate;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.registry.ErErBlocks;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -21,6 +22,9 @@ public class NormalBlockStateProvider extends BlockStateProvider {
         simpleBlock(ErErBlocks.BIO_CONTROLLER);
         simpleBlock(ErErBlocks.BIO_NUTRITION_TANK);
         simpleBlock(ErErBlocks.BIO_REDSTONE);
+
+        copyBlock(ErErBlocks.BIO_CHEST, mcLoc("barrel"));
+        copyBlock(ErErBlocks.BIO_BIN, mcLoc("barrel"));
     }
 
     private void simpleBlock(RegistryObject<Block> registryObject){
@@ -33,6 +37,20 @@ public class NormalBlockStateProvider extends BlockStateProvider {
                 .texture("particle", "block/" + name)
                 .renderType(mcLoc("solid"));
         simpleBlockWithItem(block, model);
+
+        itemModels().getBuilder(name).parent(model);
+    }
+
+    private void copyBlock(RegistryObject<Block> registryObject, ResourceLocation copied){
+        Block block = registryObject.get();
+        String name = registryObject.getId().getPath();
+
+        ModelFile model = models()
+                .getBuilder(name)
+                .parent(models().getExistingFile(copied));
+
+        simpleBlock(block, model);
+        itemModels().getBuilder(name).parent(model);
     }
 
     @Override

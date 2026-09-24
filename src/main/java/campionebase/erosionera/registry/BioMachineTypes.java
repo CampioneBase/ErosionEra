@@ -1,10 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.api.BioMachineType;
-import campionebase.erosionera.api.IBioCamera;
-import campionebase.erosionera.api.IBioCore;
-import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.*;
 import campionebase.erosionera.blockentity.BioNutritionTankBlockEntity;
 import campionebase.erosionera.blockentity.BioRedstoneBlockEntity;
 import campionebase.erosionera.data.lang.Translation;
@@ -36,6 +33,11 @@ public class BioMachineTypes {
     @Translation.ZH_CN("摄像机")
     public static final RegistryObject<BioMachineType<IBioCamera>> CAMERA = register("camera", BioMachineType
             .builder(IBioCamera.class)
+    );
+
+    @Translation.ZH_CN("存储")
+    public static final RegistryObject<BioMachineType<IBioStorage>> STORAGE = register("storage", BioMachineType
+            .builder(IBioStorage.class)
     );
 
     @Translation.ZH_CN("营养液储罐")

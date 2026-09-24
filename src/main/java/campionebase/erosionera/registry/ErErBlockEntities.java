@@ -17,30 +17,47 @@ public class ErErBlockEntities {
             ErErBlocks.BIO_CORE,
             BioCoreBlockEntity::new
     );
+
     public static final RegistryObject<BlockEntityType<BioNutritionTankBlockEntity>> BIO_NUTRITION_TANK = register(
             "bio_nutrition_tank",
             ErErBlocks.BIO_NUTRITION_TANK,
             BioNutritionTankBlockEntity::new
     );
+
     public static final RegistryObject<BlockEntityType<BioControllerBlockEntity>> BIO_CONTROLLER = register(
             "bio_controller",
             ErErBlocks.BIO_CONTROLLER,
             BioControllerBlockEntity::new
     );
+
     public static final RegistryObject<BlockEntityType<BioConnectorBlockEntity>> BIO_CONNECTOR = register(
             "bio_connector",
             ErErBlocks.BIO_CONNECTOR,
             BioConnectorBlockEntity::new
     );
+
     public static final RegistryObject<BlockEntityType<BioNodeBlockEntity>> BIO_NODE = register(
             "bio_node",
             ErErBlocks.BIO_CONNECTOR,
             BioNodeBlockEntity::new
     );
+
     public static final RegistryObject<BlockEntityType<BioCameraBlockEntity>> BIO_CAMERA = register(
             "bio_camera",
             ErErBlocks.BIO_CAMERA,
             BioCameraBlockEntity::new
+    );
+
+    public static final RegistryObject<BlockEntityType<BioChestBlockEntity>> BIO_CHEST = register(
+            "bio_chest",
+            ErErBlocks.BIO_CHEST,
+            BioChestBlockEntity::new
+    );
+
+    public static final RegistryObject<BlockEntityType<BioBinBlockEntity>> BIO_BIN = register(
+            "bio_bin",
+            ErErBlocks.BIO_CHEST,
+            BioBinBlockEntity::new
     );
 
     public static final RegistryObject<BlockEntityType<BioRedstoneBlockEntity>> BIO_REDSTONE = register(
