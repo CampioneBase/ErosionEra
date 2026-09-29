@@ -23,8 +23,8 @@ public class NormalBlockStateProvider extends BlockStateProvider {
         simpleBlock(ErErBlocks.BIO_NUTRITION_TANK);
         simpleBlock(ErErBlocks.BIO_REDSTONE);
 
-        copyBlock(ErErBlocks.BIO_CHEST, mcLoc("barrel"));
-        copyBlock(ErErBlocks.BIO_BIN, mcLoc("barrel"));
+        copyBlock(ErErBlocks.BIO_BARREL, mcLoc("block/barrel"));
+        copyBlock(ErErBlocks.BIO_BIN, mcLoc("block/barrel"));
     }
 
     private void simpleBlock(RegistryObject<Block> registryObject){

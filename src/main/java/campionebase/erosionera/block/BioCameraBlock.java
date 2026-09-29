@@ -2,16 +2,10 @@ package campionebase.erosionera.block;
 
 import campionebase.erosionera.blockentity.AbstractBioConnectorBlockEntity;
 import campionebase.erosionera.blockentity.BioCameraBlockEntity;
-import campionebase.erosionera.client.gui.screen.BioCameraNamingScreen;
 import campionebase.erosionera.network.BioMachineryService;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -22,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -113,26 +106,6 @@ public class BioCameraBlock extends Block implements EntityBlock {
             }
         }
         super.neighborChanged(blockState, level, pos, neighborBlock, neighborPos, movedByPiston);
-    }
-
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state,
-                                          @NotNull Level level,
-                                          @NotNull BlockPos pos,
-                                          @NotNull Player player,
-                                          @NotNull InteractionHand hand,
-                                          @NotNull BlockHitResult hit)
-    {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (level.isClientSide && itemStack.isEmpty()) {
-            // 获取当前名称
-            if (level.getBlockEntity(pos) instanceof BioCameraBlockEntity camera){
-                Minecraft.getInstance().setScreen(new BioCameraNamingScreen(camera));
-                return InteractionResult.SUCCESS;
-            }
-        }
-
-        return InteractionResult.PASS;
     }
 
     @Nullable

@@ -2,8 +2,10 @@ package campionebase.erosionera.client.gui.panel;
 
 import campionebase.erosionera.api.BioMachineType;
 import campionebase.erosionera.api.BioMachineData;
+import campionebase.erosionera.api.BioMachineUpdate;
 import campionebase.erosionera.api.IBioMachine;
 import campionebase.erosionera.api.render.BioMachineRenderable;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -126,24 +129,49 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
         return !this.isEmpty() && !this.closed;
     }
 
-    public void handleUpdate(BioMachineData update){
-        assert update.type().equals(this.type) : "update data has wrong type." +
-                " Required: " + this.type.getDescriptionId() +
-                ", Provided: " + update.type().getDescriptionId();
+    public void handleUpdate(BioMachineUpdate update){
+        assert update.type().equals(this.type) : "Update data has wrong type." +
+                "\nRequired: " + this.type.getDescriptionId() +
+                "\nProvided: " + update.type().getDescriptionId();
+
         BioMachineData oldData = this.findData(update.pos());
-        if (oldData == null) return;
-        int index = this.entries.indexOf(oldData);
-        if (index < 0) return;
-        this.entries.set(index, update);
+        if (update.operation() == BioMachineUpdate.Operation.REMOVE) {
+            if (oldData == null) return;
+            int selectedPos = this.selectedIndex;
+            int index = this.entries.indexOf(oldData);
+            this.entries.remove(index);
+            if (selectedPos == index) {
+                this.selectedIndex = -1;
+                this.onSelectChanged();
+            } else if (selectedPos > index) {
+                this.selectedIndex--;
+            }
+            this.onEntryRemoved(oldData);
+            return;
+        }
+
+        BioMachineData newData = update.apply(oldData);
+        if (newData == null) return;
+        if (oldData == null) {
+            int index = this.insertSorted(newData);
+            if (this.selectedIndex >= index) {
+                this.selectedIndex++;
+            }
+            this.onEntryAdded(newData);
+        } else {
+            int index = this.entries.indexOf(oldData);
+            this.entries.set(index, newData);
+            this.onEntryChanged(oldData, newData);
+        }
     }
 
+    // 此处partialTick 应当使用的是根据实际时间计算的 deltaSeconds。和原版功能一致，但易于维护
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // 渲染占位字符
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaSeconds) {
+        // 渲染占位字符 - 需要在子类重写此方法
         graphics.drawString(Minecraft.getInstance().font,
-                this.type.getDescriptionId() + " rendering"
-                , this.x, this.y,
-                0xffc0c0c0);
+                Component.translatable(this.type.getDescriptionId()).append(" panel is on construction")
+                , this.x, this.y, 0xffc0c0c0);
     }
 
     public boolean isFocused(){
@@ -204,6 +232,9 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
     }
 
     protected void onSelectChanged() {}
+    protected void onEntryAdded(BioMachineData data) {}
+    protected void onEntryRemoved(BioMachineData data) {}
+    protected void onEntryChanged(BioMachineData oldData, BioMachineData newData) {}
 
     @Nullable
     public BioMachineData getSelectedData(){
@@ -234,6 +265,16 @@ public abstract class AbstractBioMachinePanel<M extends IBioMachine> implements 
 
     public void open(){
         this.closed = false;
+    }
+
+    private int insertSorted(BioMachineData data) {
+        int index = 0;
+        while (index < this.entries.size()
+                && this.entries.get(index).pos().compareTo(data.pos()) <= 0) {
+            index++;
+        }
+        this.entries.add(index, data);
+        return index;
     }
 
     @Override

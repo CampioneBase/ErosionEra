@@ -48,15 +48,15 @@ public class ErErBlockEntities {
             BioCameraBlockEntity::new
     );
 
-    public static final RegistryObject<BlockEntityType<BioChestBlockEntity>> BIO_CHEST = register(
-            "bio_chest",
-            ErErBlocks.BIO_CHEST,
-            BioChestBlockEntity::new
+    public static final RegistryObject<BlockEntityType<BioBarrelBlockEntity>> BIO_BARREL = register(
+            "bio_barrel",
+            ErErBlocks.BIO_BARREL,
+            BioBarrelBlockEntity::new
     );
 
     public static final RegistryObject<BlockEntityType<BioBinBlockEntity>> BIO_BIN = register(
             "bio_bin",
-            ErErBlocks.BIO_CHEST,
+            ErErBlocks.BIO_BIN,
             BioBinBlockEntity::new
     );
 

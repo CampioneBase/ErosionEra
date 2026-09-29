@@ -1,9 +1,10 @@
 package campionebase.erosionera.blockentity;
 
-import campionebase.erosionera.api.render.PanelRendererFactory;
-import campionebase.erosionera.client.gui.panel.PanelRenderers;
+import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.render.BioMachineRenderable;
+import campionebase.erosionera.api.render.BioMachineRenderers;
+import campionebase.erosionera.data.lang.TranslationKeys;
 import campionebase.erosionera.registry.ErErBlockEntities;
-import campionebase.erosionera.registry.ErErBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +14,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -23,19 +23,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BioChestBlockEntity extends AbstractBioStorageBlockEntity implements MenuProvider, Container {
+public class BioBarrelBlockEntity extends AbstractBioStorageBlockEntity implements MenuProvider, Container {
     private static final int SLOT_COUNT = 27;
     private int openCount = 0;
     private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT){
@@ -46,22 +43,41 @@ public class BioChestBlockEntity extends AbstractBioStorageBlockEntity implement
         }
     };
 
-    public BioChestBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ErErBlockEntities.BIO_CHEST.get(), pos, blockState);
+    public BioBarrelBlockEntity(BlockPos pos, BlockState blockState) {
+        super(ErErBlockEntities.BIO_BARREL.get(), pos, blockState);
     }
 
     @Override
     public @NotNull ResourceLocation getId() {
-        return ErErBlocks.BIO_CHEST.getId();
+        return ErErBlockEntities.BIO_BARREL.getId();
     }
 
     @Override
     public CompoundTag getCustomData() {
-        return super.getCustomData();
+        CompoundTag tag = super.getCustomData();
+        tag.put(TAG_INVENTORY, this.inventory.serializeNBT());
+        return tag;
     }
 
-    public static PanelRendererFactory getRendererFactory(){
-        return PanelRenderers.DEFAULT;
+    public static @NotNull BioMachineRenderable getRenderer(CompoundTag customData){
+        ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT);
+        inventory.deserializeNBT(customData.getCompound(TAG_INVENTORY));
+
+        int occupiedSlots = 0;
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
+            if (!inventory.getStackInSlot(slot).isEmpty()) {
+                occupiedSlots++;
+            }
+        }
+
+        Component status = Component.translatable(
+                TranslationKeys.BIO_MACHINE_BARREL_SLOTS, occupiedSlots, SLOT_COUNT);
+        return BioMachineRenderers.selectedText(
+                Component.translatable(TranslationKeys.BIO_MACHINE_NAMED_STATUS,
+                        IBioMachine.getDisplayName(customData), status),
+                BioMachineRenderers.NORMAL_COLOR,
+                BioMachineRenderers.SELECTED_COLOR
+        );
     }
 
     @Override
@@ -102,11 +118,6 @@ public class BioChestBlockEntity extends AbstractBioStorageBlockEntity implement
     public void invalidateCaps() {
         super.invalidateCaps();
         this.itemHandlerCap.invalidate();
-    }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return Component.translatable(this.getMachineType().getDescriptionId());
     }
 
     @Nullable

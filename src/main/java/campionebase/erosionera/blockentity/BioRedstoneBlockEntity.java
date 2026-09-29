@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class BioRedstoneBlockEntity extends BlockEntity implements IBioMachine, IBioControllable {
+public class BioRedstoneBlockEntity extends AbstractBioMachineBlockEntity implements IBioMachine, IBioControllable {
     public BioRedstoneBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_REDSTONE.get(), pos, blockState);
     }

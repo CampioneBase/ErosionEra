@@ -2,14 +2,15 @@ package campionebase.erosionera.blockentity;
 
 import campionebase.erosionera.api.IBioCamera;
 import campionebase.erosionera.api.IBioMachine;
+import campionebase.erosionera.api.BioMachineData;
 import campionebase.erosionera.block.BioCameraBlock;
 import campionebase.erosionera.network.BioCameraManager;
+import campionebase.erosionera.network.BioMachineryService;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -44,7 +45,7 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
                 String name = occupation.getPlayerName();
                 if (name != null && !name.isEmpty()) tag.putString(TAG_OCCUPIER, name);
             }
-            tag.putString(TAG_NAME, this.getName());
+            if (this.customName != null) tag.putString(TAG_NAME, this.customName);
         }
         return tag;
     }
@@ -82,9 +83,7 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        if (tag.contains(TAG_NAME, Tag.TAG_STRING)) {
-            this.customName = tag.getString(TAG_NAME);
-        }
+        this.customName = tag.contains(TAG_NAME, Tag.TAG_STRING) ? tag.getString(TAG_NAME) : null;
     }
 
     @Override
@@ -103,28 +102,21 @@ public class BioCameraBlockEntity extends AbstractBioConnectorBlockEntity implem
     public void setRemoved() {
         super.setRemoved();
         if (this.level instanceof ServerLevel serverLevel)
-        BioCameraManager.get(serverLevel).releaseCamera(this.getBlockPos());
+            BioCameraManager.get(serverLevel).releaseCamera(this.getBlockPos());
     }
 
     public void setName(String name){
-        this.customName = name;
-        if (this.level instanceof ServerLevel){
+        String normalized = name == null ? "" : name.trim();
+        this.customName = normalized.isEmpty() ? null : normalized;
+        if (this.level instanceof ServerLevel serverLevel){
             this.setChanged();
             this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+            BioMachineryService.broadcastBioMachineUpdate(serverLevel, BioMachineData.of(this));
         }
     }
 
     @Override
-    public String getName() {
+    public @Nullable String getName() {
         return this.customName == null ? this.getDefaultName() : this.customName;
-    }
-
-    @Nullable
-    public String getCustomName(){
-        return this.customName;
-    }
-
-    public String getDefaultName(){
-        return "Camera[" + this.getBlockPos().toShortString() + "]";
     }
 }

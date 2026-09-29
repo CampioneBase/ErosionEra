@@ -1,10 +1,7 @@
 package campionebase.erosionera.client.gui.screen;
 
-import campionebase.erosionera.blockentity.BioCameraBlockEntity;
-import campionebase.erosionera.data.lang.Translation;
+import campionebase.erosionera.api.Nameable;
 import campionebase.erosionera.data.lang.TranslationKeys;
-import campionebase.erosionera.network.BioMachineryNetwork;
-import campionebase.erosionera.network.packet.c2s.BioCameraNamingPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -13,19 +10,15 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-@Translation
-public class BioCameraNamingScreen extends Screen {
-    @Translation.ZH_CN("命名活体摄像机")
-    public static final String TRANSLATION_KEY_TITLE = TranslationKeys.getKeyName("bio_camera_naming", "screen", "title");
-
-    private final BioCameraBlockEntity camera;
+public class RenameScreen extends Screen {
+    private final Nameable nameable;
     private EditBox nameField;
     private final String originalName;
 
-    public BioCameraNamingScreen(BioCameraBlockEntity camera) {
-        super(Component.translatable(TRANSLATION_KEY_TITLE));
-        this.camera = camera;
-        this.originalName = camera.getName();
+    public RenameScreen(Nameable nameable) {
+        super(Component.translatable(TranslationKeys.NAME).append(nameable.getDefaultName()));
+        this.nameable = nameable;
+        this.originalName = nameable.getName();
     }
 
     @Override
@@ -57,8 +50,7 @@ public class BioCameraNamingScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(graphics); // 半透明背景
-        String title = Component.translatable(TRANSLATION_KEY_TITLE).getString();
-        graphics.drawCenteredString(this.font, title, this.width / 2, this.height / 2 - 30, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, this.title, this.width / 2, this.height / 2 - 30, 0xFFFFFF);
         this.nameField.render(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
     }
@@ -75,15 +67,11 @@ public class BioCameraNamingScreen extends Screen {
     }
 
     private void confirm(){
-        BioMachineryNetwork.INSTANCE.sendToServer(new BioCameraNamingPacket(
-                this.camera.getBlockPos(),
-                this.nameField.getValue().trim()
-        ));
-        // this.camera.setName(this.nameField.getValue().trim());
+        this.nameable.setName(this.nameField.getValue().trim());
     }
 
     private void reset(){
-        this.nameField.setValue(this.camera.getDefaultName());
+        this.nameField.setValue(this.nameable.getDefaultName());
     }
 
     @Override

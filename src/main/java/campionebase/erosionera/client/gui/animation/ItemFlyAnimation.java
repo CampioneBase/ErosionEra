@@ -6,55 +6,89 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemFlyAnimation extends TimedAnimation{
-    private final ItemStack itemStack;
-    private final float fromX, fromY, toX, toY;
-    private final float moveDur = 0.4f, holdDur = 0.3f, fadeDur = 0.3f;
-    // 绘制数据
-    private float currentX, currentY, currentAlpha;
+public class ItemFlyAnimation extends TimedAnimation {
+    public enum Mode {
+        FADE_IN,
+        FADE_OUT,
+        MOVE
+    }
 
-    public ItemFlyAnimation(ItemStack itemStack, float fromX, float fromY, float toX, float toY){
+    private final ItemStack itemStack;
+    private final float fromX;
+    private final float fromY;
+    private final float toX;
+    private final float toY;
+    private final Mode mode;
+    private final Easing easing;
+    private final float moveDuration = 0.4F;
+    private final float fadeDuration = 0.3F;
+
+    private float currentX;
+    private float currentY;
+    private float currentAlpha;
+
+    public ItemFlyAnimation(ItemStack itemStack, float fromX, float fromY, float toX, float toY) {
+        this(itemStack, fromX, fromY, toX, toY, Mode.MOVE, Easing.EASE_OUT_CUBIC);
+    }
+
+    public ItemFlyAnimation(ItemStack itemStack,
+                            float fromX, float fromY,
+                            float toX, float toY,
+                            Mode mode) {
+        this(itemStack, fromX, fromY, toX, toY, mode, Easing.EASE_OUT_CUBIC);
+    }
+
+    public ItemFlyAnimation(ItemStack itemStack,
+                            float fromX, float fromY,
+                            float toX, float toY,
+                            Mode mode, Easing easing) {
         this.itemStack = itemStack;
         this.fromX = fromX;
         this.fromY = fromY;
         this.toX = toX;
         this.toY = toY;
+        this.mode = mode;
+        this.easing = easing;
+        this.currentX = fromX;
+        this.currentY = fromY;
+        this.currentAlpha = mode == Mode.FADE_IN ? 0.0F : 1.0F;
     }
 
     @Override
     protected float total() {
-        return this.moveDur + this.holdDur + this.fadeDur;
+        return this.mode == Mode.MOVE ? this.moveDuration : this.fadeDuration;
     }
 
     @Override
     protected void apply(float elapsed, float normalized) {
-        // 移动阶段
-        if (elapsed < this.moveDur) {
-            float p = Easing.CUBIC.apply(elapsed / this.moveDur);
-            this.currentX = Mth.lerp(p, this.fromX, this.toX);
-            this.currentY = Mth.lerp(p, this.fromY, this.toY);
-            this.currentAlpha = 1.0f;
-        }
-        // 停顿阶段
-        else if (elapsed < this.moveDur + this.holdDur) {
-            this.currentX = this.toX;
-            this.currentY = this.toY;
-            this.currentAlpha = 1.0f;
-        }
-        // 消失阶段
-        else {
-            float p = (elapsed - this.moveDur - this.holdDur) / this.fadeDur;
-            this.currentX = toX; this.currentY = this.toY;
-            this.currentAlpha = Mth.clamp(1.0F - p, 0.0F, 1.0F);
+        float progress = Mth.clamp(normalized, 0.0F, 1.0F);
+        float eased = progress <= 0.0F ? 0.0F : this.easing.apply(progress);
+
+        switch (this.mode) {
+            case MOVE -> {
+                this.currentX = Mth.lerp(eased, this.fromX, this.toX);
+                this.currentY = Mth.lerp(eased, this.fromY, this.toY);
+                this.currentAlpha = 1.0F;
+            }
+            case FADE_IN -> {
+                this.currentX = this.fromX;
+                this.currentY = this.fromY;
+                this.currentAlpha = eased;
+            }
+            case FADE_OUT -> {
+                this.currentX = this.fromX;
+                this.currentY = this.fromY;
+                this.currentAlpha = 1.0F - eased;
+            }
         }
     }
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, this.currentAlpha);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.currentAlpha);
         graphics.renderItem(this.itemStack, (int) this.currentX, (int) this.currentY);
         graphics.flush();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

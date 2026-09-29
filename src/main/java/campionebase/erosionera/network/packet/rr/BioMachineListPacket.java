@@ -47,6 +47,7 @@ public class BioMachineListPacket {
                 BioMachineryNetwork.INSTANCE.send(
                         PacketDistributor.PLAYER.with(() -> sender),
                         new Response(packet.core, dataSet));
+                BioMachineryService.setMachineSnapshot(level, packet.core, dataSet);
             });
             context.setPacketHandled(true);
         }

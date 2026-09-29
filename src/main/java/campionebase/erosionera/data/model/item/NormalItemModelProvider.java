@@ -20,6 +20,7 @@ public class NormalItemModelProvider extends ItemModelProvider {
         simpleItem(ErErItems.BIO_METAL);
 
         copyItem(ErErItems.BIO_WIRE, "chain");
+        copyItem(ErErItems.RENAME_TAG, "name_tag");
     }
 
     private ItemModelBuilder copyItem(final RegistryObject<Item> registryObject, String copied){

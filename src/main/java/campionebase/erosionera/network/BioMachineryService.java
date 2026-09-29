@@ -6,11 +6,14 @@ import campionebase.erosionera.network.packet.rr.BioMachineListPacket;
 import campionebase.erosionera.network.packet.s2c.BioMachineUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +22,9 @@ import java.util.stream.Collectors;
  * 活体机械服务层
  */
 public class BioMachineryService {
+    private static final Map<ResourceKey<Level>, Map<BlockPos, Map<BlockPos, BioMachineData>>>
+            MACHINE_SNAPSHOTS = new HashMap<>();
+
     //region ================================== 验证 =======================================
 
     /**
@@ -138,12 +144,71 @@ public class BioMachineryService {
                             .stream()
                             .map(BioMachineData::of)
                             .collect(Collectors.toSet());
-
-                    BioMachineryNetwork.INSTANCE.send(
-                            PacketDistributor.PLAYER.with(() -> serverPlayer),
-                            new BioMachineListPacket.Response(core.getBlockPos(), dataSet)
-                    );
+                    Map<BlockPos, BioMachineData> previous = getMachineSnapshot(level, core.getBlockPos());
+                    if (previous == null) {
+                        BioMachineryNetwork.INSTANCE.send(
+                                PacketDistributor.PLAYER.with(() -> serverPlayer),
+                                new BioMachineListPacket.Response(core.getBlockPos(), dataSet)
+                        );
+                    } else {
+                        List<BioMachineUpdate> updates = diffSnapshot(previous, dataSet);
+                        if (!updates.isEmpty()) {
+                            BioMachineryNetwork.INSTANCE.send(
+                                    PacketDistributor.PLAYER.with(() -> serverPlayer),
+                                    new BioMachineUpdatePacket(updates)
+                            );
+                        }
+                    }
+                    setMachineSnapshot(level, core.getBlockPos(), dataSet);
                 });
+    }
+
+    public static void setMachineSnapshot(@NotNull ServerLevel level,
+                                          @NotNull BlockPos core,
+                                          @NotNull Set<BioMachineData> dataSet) {
+        MACHINE_SNAPSHOTS
+                .computeIfAbsent(level.dimension(), ignored -> new HashMap<>())
+                .put(core, toSnapshot(dataSet));
+    }
+
+    private static @Nullable Map<BlockPos, BioMachineData> getMachineSnapshot(
+            @NotNull ServerLevel level,
+            @NotNull BlockPos core) {
+        Map<BlockPos, Map<BlockPos, BioMachineData>> levelSnapshots =
+                MACHINE_SNAPSHOTS.get(level.dimension());
+        return levelSnapshots == null ? null : levelSnapshots.get(core);
+    }
+
+    private static Map<BlockPos, BioMachineData> toSnapshot(Set<BioMachineData> dataSet) {
+        Map<BlockPos, BioMachineData> snapshot = new HashMap<>();
+        dataSet.forEach(data -> snapshot.put(data.pos(), data));
+        return snapshot;
+    }
+
+    private static List<BioMachineUpdate> diffSnapshot(Map<BlockPos, BioMachineData> oldSnapshot,
+                                                       Set<BioMachineData> newData) {
+        List<BioMachineUpdate> updates = new ArrayList<>();
+        Set<BlockPos> visited = new HashSet<>();
+
+        for (BioMachineData current : newData) {
+            visited.add(current.pos());
+            BioMachineData previous = oldSnapshot.get(current.pos());
+            if (previous == null) {
+                updates.add(BioMachineUpdate.added(current));
+                continue;
+            }
+            BioMachineUpdate update = BioMachineUpdate.changed(previous, current);
+            if (update != null) {
+                updates.add(update);
+            }
+        }
+
+        oldSnapshot.forEach((pos, previous) -> {
+            if (!visited.contains(pos)) {
+                updates.add(BioMachineUpdate.removed(previous));
+            }
+        });
+        return updates;
     }
 
     /** 向节点所在网络内正在使用控制器的玩家广播更新信息 */
@@ -157,10 +222,31 @@ public class BioMachineryService {
             if (core.getController() == null) return;
             if (!(core.getController().getUser() instanceof ServerPlayer serverPlayer)) return;
 
-            BioMachineryNetwork.INSTANCE.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new BioMachineUpdatePacket(data)
-            );
+            Map<BlockPos, BioMachineData> snapshot = getMachineSnapshot(level, core.getBlockPos());
+            if (snapshot == null) {
+                Set<BioMachineData> dataSet = findAllConnectedByConnector(level, core.getBlockPos())
+                        .stream()
+                        .map(BioMachineData::of)
+                        .collect(Collectors.toSet());
+                BioMachineryNetwork.INSTANCE.send(
+                        PacketDistributor.PLAYER.with(() -> serverPlayer),
+                        new BioMachineListPacket.Response(core.getBlockPos(), dataSet)
+                );
+                setMachineSnapshot(level, core.getBlockPos(), dataSet);
+                return;
+            }
+
+            BioMachineData previous = snapshot.get(pos);
+            BioMachineUpdate update = previous == null
+                    ? BioMachineUpdate.added(data)
+                    : BioMachineUpdate.changed(previous, data);
+            snapshot.put(pos, data);
+            if (update != null) {
+                BioMachineryNetwork.INSTANCE.send(
+                        PacketDistributor.PLAYER.with(() -> serverPlayer),
+                        new BioMachineUpdatePacket(List.of(update))
+                );
+            }
         });
     }
 

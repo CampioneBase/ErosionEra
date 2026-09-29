@@ -3,6 +3,7 @@ package campionebase.erosionera.registry;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.item.BioWireItem;
+import campionebase.erosionera.item.RenameTagItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -19,6 +20,8 @@ public class ErErItems {
     public static final RegistryObject<Item> BIO_CONTROLLER_BED = block(ErErBlocks.BIO_CONTROLLER_BED);
     @Translation.ZH_CN("活体管道")
     public static final RegistryObject<Item> BIO_WIRE = REGISTER.register("bio_wire", BioWireItem::new);
+    @Translation.ZH_CN("命名标签")
+    public static final RegistryObject<Item> RENAME_TAG = REGISTER.register("rename_tag", RenameTagItem::new);
 
     public static final RegistryObject<Item> BIU_CORE = block(ErErBlocks.BIO_CORE);
     public static final RegistryObject<Item> BIO_CONTROLLER = block(ErErBlocks.BIO_CONTROLLER);
@@ -27,7 +30,7 @@ public class ErErItems {
     public static final RegistryObject<Item> BIO_NUTRITION_TANK = block(ErErBlocks.BIO_NUTRITION_TANK);
     public static final RegistryObject<Item> BIO_CAMERA = block(ErErBlocks.BIO_CAMERA);
     public static final RegistryObject<Item> BIO_REDSTONE = block(ErErBlocks.BIO_REDSTONE);
-    public static final RegistryObject<Item> BIO_CHEST = block(ErErBlocks.BIO_CHEST);
+    public static final RegistryObject<Item> BIO_BARREL = block(ErErBlocks.BIO_BARREL);
     public static final RegistryObject<Item> BIO_BIN = block(ErErBlocks.BIO_BIN);
 
     private static RegistryObject<Item> block(RegistryObject<Block> block) {

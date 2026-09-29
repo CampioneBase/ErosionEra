@@ -46,7 +46,7 @@ public class AnimationQueue<T extends ScreenAnimation & Renderable> {
         if (this.spawnCooldown < 0) this.spawnCooldown = 0;
     }
 
-    public void render(GuiGraphics g, int mx, int my, float pt) {
-        for (T a : this.active) a.render(g, mx, my, pt);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        for (T animation : this.active) animation.render(graphics, mouseX, mouseY, partialTick);
     }
 }

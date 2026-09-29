@@ -27,7 +27,7 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
     private final Set<BioMachineData> dataSet = new HashSet<>();
     private int dataVersion = 0;
 
-    private final Queue<BioMachineData> updateQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<BioMachineUpdate> updateQueue = new ConcurrentLinkedQueue<>();
     @NotNull
     private final BlockPos controllerPos;
     @NotNull
@@ -85,14 +85,32 @@ public class BioControllerMenu extends AbstractContainerMenu implements IBioMach
         return this.dataVersion;
     }
 
-    public void enqueueMessage(BioMachineData data){
-        this.updateQueue.add(data);
+    public void enqueueUpdates(Collection<BioMachineUpdate> updates){
+        for (BioMachineUpdate update : updates) {
+            this.applyUpdate(update);
+            this.updateQueue.add(update);
+        }
     }
 
-    public void drainUpdateQueue(Consumer<BioMachineData> consumer){
-        BioMachineData update;
+    public void drainUpdateQueue(Consumer<BioMachineUpdate> consumer){
+        BioMachineUpdate update;
         while ((update = this.updateQueue.poll()) != null){
             consumer.accept(update);
+        }
+    }
+
+    private void applyUpdate(BioMachineUpdate update) {
+        BioMachineData current = this.dataSet.stream()
+                .filter(data -> data.pos().equals(update.pos()) && data.type().equals(update.type()))
+                .findFirst()
+                .orElse(null);
+        if (current != null) {
+            this.dataSet.remove(current);
+        }
+
+        BioMachineData updated = update.apply(current);
+        if (updated != null) {
+            this.dataSet.add(updated);
         }
     }
 

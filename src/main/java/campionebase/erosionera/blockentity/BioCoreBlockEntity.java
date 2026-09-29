@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class BioCoreBlockEntity extends BlockEntity implements IBioCore {
+public class BioCoreBlockEntity extends AbstractBioMachineBlockEntity implements IBioCore {
 
     public BioCoreBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_CORE.get(), pos, blockState);

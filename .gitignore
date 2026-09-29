@@ -120,3 +120,5 @@ src/generated/
 !gradle-wrapper.jar
 /design.md
 /tech.md
+
+*.puml

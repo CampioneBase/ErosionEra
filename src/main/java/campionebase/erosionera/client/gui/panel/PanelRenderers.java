@@ -7,12 +7,11 @@ import campionebase.erosionera.api.render.BioMachineRenderable;
 import campionebase.erosionera.api.render.BioMachineRenderers;
 import campionebase.erosionera.api.render.PanelRendererFactory;
 import campionebase.erosionera.blockentity.BioBinBlockEntity;
-import campionebase.erosionera.blockentity.BioChestBlockEntity;
+import campionebase.erosionera.blockentity.BioBarrelBlockEntity;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +30,7 @@ import java.util.Map;
 @Mod.EventBusSubscriber(
         value = Dist.CLIENT,
         modid = ErosionEra.MODID,
-        bus = Mod.EventBusSubscriber.Bus.FORGE
+        bus = Mod.EventBusSubscriber.Bus.MOD
 )
 public final class PanelRenderers {
     public static final Logger LOGGER = LogManager.getLogger(PanelRenderers.class);
@@ -96,7 +95,7 @@ public final class PanelRenderers {
 
     @SubscribeEvent
     public static void registerPanelRenderer(FMLClientSetupEvent event){
-        register(ErErBlockEntities.BIO_CHEST.getId(), BioChestBlockEntity.getRendererFactory());
-        register(ErErBlockEntities.BIO_BIN.getId(), BioBinBlockEntity.getRendererFactory());
+        register(ErErBlockEntities.BIO_BARREL.getId(), BioBarrelBlockEntity::getRenderer);
+        register(ErErBlockEntities.BIO_BIN.getId(), BioBinBlockEntity::getRenderer);
     }
 }

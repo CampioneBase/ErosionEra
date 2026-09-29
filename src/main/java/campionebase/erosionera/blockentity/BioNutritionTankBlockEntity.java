@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class BioNutritionTankBlockEntity extends BlockEntity implements IBioMachine {
+public class BioNutritionTankBlockEntity extends AbstractBioMachineBlockEntity implements IBioMachine {
     public BioNutritionTankBlockEntity(BlockPos pos, BlockState blockState) {
         super(ErErBlockEntities.BIO_NUTRITION_TANK.get(), pos, blockState);
     }

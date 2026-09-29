@@ -25,11 +25,12 @@ public class ErErTabs {
                 data.accept(ErErItems.BIO_CONTROLLER.get());
                 data.accept(ErErItems.BIO_NODE.get());
                 data.accept(ErErItems.BIO_WIRE.get());
+                data.accept(ErErItems.RENAME_TAG.get());
                 data.accept(ErErItems.BIO_CONNECTOR.get());
                 data.accept(ErErItems.BIO_NUTRITION_TANK.get());
                 data.accept(ErErItems.BIO_CAMERA.get());
                 data.accept(ErErItems.BIO_REDSTONE.get());
-                data.accept(ErErItems.BIO_CHEST.get());
+                data.accept(ErErItems.BIO_BARREL.get());
                 data.accept(ErErItems.BIO_BIN.get());
             })
             .build()

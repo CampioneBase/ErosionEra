@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractBioStorageBlockEntity extends BlockEntity implements IBioStorage {
+public abstract class AbstractBioStorageBlockEntity extends AbstractBioMachineBlockEntity implements IBioStorage {
     public static final String TAG_INVENTORY = "inventory";
     // 更新广播间隔
     public static final int BROADCAST_INTERVAL = 10;

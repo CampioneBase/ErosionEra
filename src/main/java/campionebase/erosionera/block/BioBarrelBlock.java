@@ -1,7 +1,7 @@
 package campionebase.erosionera.block;
 
 import campionebase.erosionera.blockentity.AbstractBioStorageBlockEntity;
-import campionebase.erosionera.blockentity.BioChestBlockEntity;
+import campionebase.erosionera.blockentity.BioBarrelBlockEntity;
 import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,9 +23,9 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BioChestBlock extends BarrelBlock implements EntityBlock {
+public class BioBarrelBlock extends BarrelBlock implements EntityBlock {
 
-    public BioChestBlock() {
+    public BioBarrelBlock() {
         super(BlockBehaviour.Properties.of()
 
         );
@@ -40,8 +40,8 @@ public class BioChestBlock extends BarrelBlock implements EntityBlock {
                                           @NotNull BlockHitResult result)
     {
         if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (level.getBlockEntity(pos) instanceof BioChestBlockEntity chest){
-            NetworkHooks.openScreen((ServerPlayer) player, chest, pos);
+        if (level.getBlockEntity(pos) instanceof BioBarrelBlockEntity barrel){
+            NetworkHooks.openScreen((ServerPlayer) player, barrel, pos);
             player.awardStat(Stats.OPEN_BARREL);
         }
 
@@ -51,7 +51,7 @@ public class BioChestBlock extends BarrelBlock implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState blockState) {
-        return new BioChestBlockEntity(pos, blockState);
+        return new BioBarrelBlockEntity(pos, blockState);
     }
 
     @Nullable
@@ -59,6 +59,6 @@ public class BioChestBlock extends BarrelBlock implements EntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level,
                                                                   @NotNull BlockState blockState,
                                                                   @NotNull BlockEntityType<T> type) {
-        return type == ErErBlockEntities.BIO_CHEST.get() ? AbstractBioStorageBlockEntity::serverTick : null;
+        return type == ErErBlockEntities.BIO_BARREL.get() ? AbstractBioStorageBlockEntity::serverTick : null;
     }
 }

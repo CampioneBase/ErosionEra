@@ -70,6 +70,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private @Nullable BioMachineType<?> selectedType;
     private List<BioMachineType<?>> visibleTypes = List.of();
     private int lastDataVersion = -1;
+    // 左侧水平分割线 用于分割类型列表与摄像机列表
     private int leftDividerY = PANEL_PADDING;
     private long windowHandle;
     private long lastRenderTime = Util.getMillis();
@@ -127,8 +128,12 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        long now = Util.getMillis();
+        float deltaSeconds = Math.min((now - this.lastRenderTime) / 1000.0F, 0.1F);
+        this.lastRenderTime = now;
+
         this.updatePanels();
-        this.updateAnimations();
+        this.updateAnimations(deltaSeconds);
         this.layoutController();
 
         float cameraProgress = 1.0F - this.rightPanelVisibility.value();
@@ -139,10 +144,11 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         }
 
         this.renderTypeList(graphics);
-        this.renderRightPanel(graphics, mouseX, mouseY, partialTick);
-        this.controller.render(graphics, mouseX, mouseY, partialTick);
+        this.renderRightPanel(graphics, mouseX, mouseY, deltaSeconds);
+        this.controller.render(graphics, mouseX, mouseY, deltaSeconds);
     }
 
+    // 读取更新消息队列更新面板
     private void updatePanels() {
         if (this.lastDataVersion != this.menu.getDataVersion()) {
             this.refreshPanels();
@@ -161,13 +167,14 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.updateMouseMode();
     }
 
+    // 全量刷新面板（重建）
     private void refreshPanels() {
         if (this.level == null) return;
 
         Collection<AbstractBioMachinePanel<?>> inactivePanels = new LinkedHashSet<>(this.panels.values());
         Set<BioMachineData> dataSet = this.menu.getDataSet();
         Map<AbstractBioMachinePanel<?>, List<BioMachineData>> cache = new LinkedHashMap<>();
-
+        // 根据Menu的原始数据创建对应面板
         dataSet.forEach(data -> {
             if (!(this.level.getBlockEntity(data.pos()) instanceof IBioMachine machine)) return;
             BioMachineType<?> type = machine.getMachineType();
@@ -181,8 +188,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
             inactivePanels.remove(panel);
             cache.computeIfAbsent(panel, ignored -> new LinkedList<>()).add(data);
         });
-
+        //面板重建数据列表
         cache.forEach((panel, dataList) -> {
+            dataList.sort(Comparator.comparing(BioMachineData::pos));
             panel.open();
             panel.refreshData(dataList);
         });
@@ -195,7 +203,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.updateVisibleTypes();
         this.ensureSelectedType();
     }
-
+    // 更新类型列表
     private void updateVisibleTypes() {
         this.visibleTypes = this.panels.entrySet().stream()
                 .filter(entry -> entry.getValue() != this.controller)
@@ -204,19 +212,15 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
                 .sorted()
                 .collect(Collectors.toList());
     }
-
+    // 还原选项
     private void ensureSelectedType() {
         if (this.selectedType != null && this.visibleTypes.contains(this.selectedType)) {
             return;
         }
         this.selectedType = this.visibleTypes.isEmpty() ? null : this.visibleTypes.get(0);
     }
-
-    private void updateAnimations() {
-        long now = Util.getMillis();
-        float deltaSeconds = Math.min((now - this.lastRenderTime) / 1000.0F, 0.1F);
-        this.lastRenderTime = now;
-
+    // 动画更新
+    private void updateAnimations(float deltaSeconds) {
         boolean controlling = this.controller.getSelectedIndex() != -1;
         float cameraTarget = controlling ? 1.0F : 0.0F;
         this.rightPanelVisibility.setTarget(1.0F - cameraTarget);
@@ -224,10 +228,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.rightPanelVisibility.advance(deltaSeconds);
         this.listCollapseProgress.advance(deltaSeconds);
     }
-
+    // 左下角摄像机列表布局更新
     private void layoutController() {
         this.controller.width = Math.max(1, LEFT_SECTION_WIDTH - PANEL_PADDING * 2);
-        this.controller.height = this.controller.getContentHeight();
         this.controller.x = PANEL_PADDING;
         this.controller.y = Math.max(PANEL_PADDING,
                 this.height - PANEL_PADDING - this.controller.height);
@@ -235,7 +238,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         this.leftDividerY = Math.max(PANEL_PADDING + LIST_ROW_HEIGHT,
                 this.controller.y - CONTENT_GAP);
     }
-
+    //region ----------------------- 左侧类型列表 ---------------------------
     private void renderTypeList(GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         float collapse = Easing.EASE_OUT_CUBIC.apply(this.listCollapseProgress.value());
@@ -270,8 +273,9 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
-
-    private void renderRightPanel(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    //endregion
+    //region -------------------------- 右侧面板 ---------------------------
+    private void renderRightPanel(GuiGraphics graphics, int mouseX, int mouseY, float deltaSeconds) {
         float visibility = this.rightPanelVisibility.value();
         if (visibility <= 0.001F) return;
 
@@ -285,7 +289,7 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         graphics.pose().translate(slide, 0.0F, 0.0F);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, visibility);
-        panel.render(graphics, mouseX, mouseY, partialTick);
+        panel.render(graphics, mouseX, mouseY, deltaSeconds);
         graphics.flush();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.pose().popPose();
@@ -302,13 +306,13 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
         int height = Math.max(0, this.height - y - PANEL_PADDING);
         panel.width = width;
         panel.height = height;
-
+        // TODO 使用布局做面板移动 [* | post | active | pre | * ]
         PanelLayout layout = new PanelLayout(x, y, width, height);
         layout.addChild(panel);
         layout.arrangeElements();
         return panel;
     }
-
+    //endregion
     public void onCameraOccupationResponse(BioCameraOccupationPacket.ResultState state, @Nullable BlockPos cameraPos) {
         switch (state) {
             case SUCCESS -> {
