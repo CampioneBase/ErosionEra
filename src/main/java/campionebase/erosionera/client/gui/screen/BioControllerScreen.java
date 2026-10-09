@@ -53,8 +53,8 @@ public class BioControllerScreen extends Screen implements MenuAccess<BioControl
     private static final int LIST_ROW_HEIGHT = 14;
     private static final int BACKGROUND_COLOR = 0x101010;
     private static final int BACKGROUND_ALPHA = 0xc0;
-    private static final float PANEL_FADE_SECONDS = 0.12F;
-    private static final float LIST_COLLAPSE_SECONDS = 0.18F;
+    private static final float PANEL_FADE_SECONDS = 0.6F;
+    private static final float LIST_COLLAPSE_SECONDS = 0.6F;
     private static final float PANEL_SLIDE_DISTANCE = 36.0F;
 
     private final SortedMap<BioMachineType<?>, AbstractBioMachinePanel<?>> panels = new TreeMap<>();

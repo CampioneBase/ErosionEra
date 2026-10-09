@@ -12,7 +12,7 @@ import net.minecraftforge.registries.*;
 
 import java.util.function.Supplier;
 
-@Translation(key = BioMachineType.KEY)
+@Translation(prefix = BioMachineType.KEY)
 public class BioMachineTypes {
     public static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, BioMachineType.KEY);
     public static final ResourceKey<Registry<BioMachineType<?>>> KEY = ResourceKey.createRegistryKey(NAME);
@@ -25,27 +25,27 @@ public class BioMachineTypes {
         return REGISTER.register(name, () -> builder.build(name));
     }
 
-    @Translation.ZH_CN("核心")
+    @Translation.Key("核心")
     public static final RegistryObject<BioMachineType<IBioCore>> CORE = register("core", BioMachineType
             .builder(IBioCore.class)
     );
 
-    @Translation.ZH_CN("摄像机")
+    @Translation.Key("摄像机")
     public static final RegistryObject<BioMachineType<IBioCamera>> CAMERA = register("camera", BioMachineType
             .builder(IBioCamera.class)
     );
 
-    @Translation.ZH_CN("存储")
+    @Translation.Key("存储")
     public static final RegistryObject<BioMachineType<IBioStorage>> STORAGE = register("storage", BioMachineType
             .builder(IBioStorage.class)
     );
 
-    @Translation.ZH_CN("营养液储罐")
+    @Translation.Key("营养液储罐")
     public static final RegistryObject<BioMachineType<BioNutritionTankBlockEntity>> NUTRITION_TANK = register("nutrition_tank", BioMachineType
             .builder(BioNutritionTankBlockEntity.class)
     );
 
-    @Translation.ZH_CN("红石控制")
+    @Translation.Key("红石控制")
     public static final RegistryObject<BioMachineType<BioRedstoneBlockEntity>> REDSTONE = register("redstone", BioMachineType
             .builder(BioRedstoneBlockEntity.class)
     );

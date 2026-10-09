@@ -7,29 +7,39 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Translation {
-    /** 翻译键 */
-    String key() default "";
+    /** 翻译键前缀 */
+    String prefix() default "";
     /** 模组名 */
     String namespace() default ErosionEra.MODID;
-    /** 物品的翻译名称格式 */
+    /** 翻译键后缀 */
     String[] suffix() default {""};
-    /** 翻译语言 */
-    Language lang() default Language.ZH_CN;
 
-    enum Language {
-        ZH_CN("zh_cn", Translation.ZH_CN.class),
-        EN_US("en_us", Translation.EN_US.class);
-
-        public final String locale;
-        public final Class<? extends Annotation> clazz;
-        Language(String locale, Class<? extends Annotation> clazz) {
-            this.locale = locale;
-            this.clazz = clazz;
-        }
+    /**
+     * 字段翻译注解，通过 lang 指定翻译语言。
+     * prefix / suffix 可覆盖 Translation 上的同名设置。
+     * 可重复使用，以在同一个字段上提供多种语言的翻译。
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @Repeatable(Keys.class)
+    @interface Key {
+        /** 翻译值 */
+        String[] value();
+        /** 翻译语言 */
+        String lang() default Translation.DEFAULT_LANG;
+        /** 覆盖 Translation 的翻译键前缀，为 null 时沿用 Translation 的设置 */
+        String prefix() default "";
+        /** 覆盖 Translation 的翻译键后缀，为 null 时沿用 Translation 的设置 */
+        String[] suffix() default {};
     }
 
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD})
-    @interface ZH_CN { String[] value();}
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD})
-    @interface EN_US { String[] value();}
+    /** Translation.Key 的容器注解，支持在字段上重复使用 */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @interface Keys {
+        Key[] value();
+    }
+
+    /** 默认翻译语言 */
+    String DEFAULT_LANG = "zh_cn";
 }

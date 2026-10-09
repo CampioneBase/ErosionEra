@@ -95,7 +95,7 @@ public final class BioMachineRenderers {
     }
 
     /** 垂直布局，指定间距 */
-    public static BioMachineRenderable vbox(List<BioMachineRenderable> children, int spacing){
+    public static BioMachineRenderable vbox(int spacing, List<BioMachineRenderable> children){
         return new VBox(List.copyOf(children), spacing);
     }
 

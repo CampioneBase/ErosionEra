@@ -39,6 +39,7 @@ public class ErosionEra {
         ErErItems.REGISTER.register(bus);
         ErErTabs.REGISTER.register(bus);
         ErErMenuTypes.REGISTER.register(bus);
+        ErErFluids.register(bus);
 
         BioMachineTypes.REGISTER.register(bus);
     }

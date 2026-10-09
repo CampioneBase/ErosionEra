@@ -11,16 +11,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
-@Translation(key = "item")
+@Translation(prefix = "item")
 public class ErErItems {
     public static final DeferredRegister<Item> REGISTER = DeferredRegister.create(Registries.ITEM, ErosionEra.MODID);
-    @Translation.ZH_CN("活体金属")
+    @Translation.Key("活体金属")
     public static final RegistryObject<Item> BIO_METAL = REGISTER.register("bio_metal", () -> new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> BIO_CONTROLLER_BED = block(ErErBlocks.BIO_CONTROLLER_BED);
-    @Translation.ZH_CN("活体管道")
+    @Translation.Key("活体管道")
     public static final RegistryObject<Item> BIO_WIRE = REGISTER.register("bio_wire", BioWireItem::new);
-    @Translation.ZH_CN("命名标签")
+    @Translation.Key("命名标签")
     public static final RegistryObject<Item> RENAME_TAG = REGISTER.register("rename_tag", RenameTagItem::new);
 
     public static final RegistryObject<Item> BIU_CORE = block(ErErBlocks.BIO_CORE);

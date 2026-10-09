@@ -6,7 +6,6 @@ import campionebase.erosionera.data.blockstate.BioConnectorBlockStateProvider;
 import campionebase.erosionera.data.blockstate.HorizontalBlockStateProvider;
 import campionebase.erosionera.data.blockstate.NormalBlockStateProvider;
 import campionebase.erosionera.data.lang.MultiLanguageProvider;
-import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.data.model.block.BedBlockModelProvider;
 import campionebase.erosionera.data.model.item.NormalItemModelProvider;
 import net.minecraft.core.HolderLookup;
@@ -40,6 +39,8 @@ public class DataProviderEvent {
         generator.addProvider(event.includeServer(), new BioConnectorBlockStateProvider(output, helper));
         generator.addProvider(event.includeServer(), new BioCameraBlockStateProvider(output, helper));
         // 生成翻译文件
-        generator.addProvider(event.includeClient(), new MultiLanguageProvider(output, Translation.Language.ZH_CN.locale));
+        for (String locale : MultiLanguageProvider.collectLanguages()) {
+            generator.addProvider(event.includeClient(), new MultiLanguageProvider(output, locale));
+        }
     }
 }

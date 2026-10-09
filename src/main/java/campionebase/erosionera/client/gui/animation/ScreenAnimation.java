@@ -1,7 +1,5 @@
 package campionebase.erosionera.client.gui.animation;
 
-import net.minecraft.client.gui.components.Renderable;
-
 public abstract class ScreenAnimation {
     protected boolean started;
     protected boolean finished;

@@ -19,11 +19,11 @@ import org.lwjgl.glfw.GLFW;
         value = Dist.CLIENT
 )
 @OnlyIn(Dist.CLIENT)
-@Translation(key = "key")
+@Translation(prefix = "key")
 public class ErErKeyBindings {
-    @Translation.ZH_CN("侵蚀国度：活体机械")
+    @Translation.Key("侵蚀国度：活体机械")
     public static final String KEY_CATEGORY_BM = "key.category." + ErosionEra.MODID + ".bio_machinery";
-    @Translation.ZH_CN("上一个摄像机")
+    @Translation.Key("上一个摄像机")
     public static final KeyMapping PREV_BIO_CAMERA_KEY = new KeyMapping(
             getKeyId("prev_bio_camera"),
             KeyConflictContext.IN_GAME,
@@ -31,7 +31,7 @@ public class ErErKeyBindings {
             GLFW.GLFW_KEY_Q,
             KEY_CATEGORY_BM
     );
-    @Translation.ZH_CN("下一个摄像机")
+    @Translation.Key("下一个摄像机")
     public static final KeyMapping NEXT_BIO_CAMERA_KEY = new KeyMapping(
             getKeyId("next_bio_camera"),
             KeyConflictContext.IN_GAME,
@@ -39,7 +39,7 @@ public class ErErKeyBindings {
             GLFW.GLFW_KEY_E,
             KEY_CATEGORY_BM
     );
-    @Translation.ZH_CN("活体控制 上")
+    @Translation.Key("活体控制 上")
     public static final KeyMapping BIO_CONTROL_UP = new KeyMapping(
             getKeyId("bio_control_up"),
             KeyConflictContext.IN_GAME,
@@ -47,7 +47,7 @@ public class ErErKeyBindings {
             GLFW.GLFW_KEY_W,
             KEY_CATEGORY_BM
     );
-    @Translation.ZH_CN("活体控制 下")
+    @Translation.Key("活体控制 下")
     public static final KeyMapping BIO_CONTROL_DOWN = new KeyMapping(
             getKeyId("bio_control_down"),
             KeyConflictContext.IN_GAME,
@@ -55,7 +55,7 @@ public class ErErKeyBindings {
             GLFW.GLFW_KEY_S,
             KEY_CATEGORY_BM
     );
-    @Translation.ZH_CN("活体控制 标记")
+    @Translation.Key("活体控制 标记")
     public static final KeyMapping BIO_CONTROL_MARK = new KeyMapping(
             getKeyId("bio_control_mark"),
             KeyConflictContext.IN_GAME,

@@ -11,14 +11,14 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-@Translation(key = "item_group")
+@Translation(prefix = "item_group")
 public class ErErTabs {
     public static final DeferredRegister<CreativeModeTab> REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ErosionEra.MODID);
-    @Translation.ZH_CN("侵蚀国度：活体机械")
+    @Translation.Key("侵蚀国度：活体机械")
     public static final RegistryObject<CreativeModeTab> BIO_MACHINERY = REGISTER.register("bio_machinery", () -> CreativeModeTab.builder()
             .title(Component.translatable("item_group.erosionera.bio_machinery"))
             .icon(() -> new ItemStack(ErErItems.BIO_METAL.get()))
-            .displayItems((parameters, data) ->{
+            .displayItems((parameters, data) -> {
                 data.accept(ErErItems.BIO_METAL.get());
                 data.accept(ErErItems.BIO_CONTROLLER_BED.get());
                 data.accept(ErErItems.BIU_CORE.get());
@@ -32,6 +32,14 @@ public class ErErTabs {
                 data.accept(ErErItems.BIO_REDSTONE.get());
                 data.accept(ErErItems.BIO_BARREL.get());
                 data.accept(ErErItems.BIO_BIN.get());
+            })
+            .build()
+    );
+    @Translation.Key("侵蚀国度")
+    public static final RegistryObject<CreativeModeTab> MAIN = REGISTER.register("main", () -> CreativeModeTab.builder()
+            .title(Component.translatable("item_group.erosionera.main"))
+            .displayItems((parameters, data) -> {
+                data.accept(ErErFluids.MANA_BUCKET.get());
             })
             .build()
     );

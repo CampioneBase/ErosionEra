@@ -14,15 +14,19 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class BioCameraPanel extends AbstractBioMachinePanel<IBioCamera> {
+    // 选项标记
     private static final int MAIN_MARKER_NONE = 0;
     private static final int MAIN_MARKER_TOP = -1;
     private static final int MAIN_MARKER_BOTTOM = 1;
+    // 动画时长
+    private static final float ANIMATION_TIME = 0.6F;
     // 显示最大行数
     public static final int VISIBLE_ENTRY_COUNT = 5;
     // 行间距
@@ -30,9 +34,9 @@ public class BioCameraPanel extends AbstractBioMachinePanel<IBioCamera> {
     // 主视角名称
     private static final Component MAIN_TEXT = Component.translatable(TranslationKeys.BIO_CAMERA_MAIN);
     // 总体限制高度
-    private final AnimatedInteger animatedHeight = new AnimatedInteger(this.lineHeight(), 0.018F, Easing.EASE_OUT_CUBIC);
+    private final AnimatedInteger animatedHeight = new AnimatedInteger(this.lineHeight(), ANIMATION_TIME, Easing.EASE_OUT_CUBIC);
     // 列表内容相对面板顶部的偏移
-    private final AnimatedInteger animatedOffsetY = new AnimatedInteger(0, 0.018F, Easing.EASE_OUT_CUBIC);
+    private final AnimatedInteger animatedOffsetY = new AnimatedInteger(0, ANIMATION_TIME, Easing.EASE_OUT_CUBIC);
     // 逻辑选项 -1 当前锚定在哪一个主视角标记
     private boolean isOnTop = true;
     // 等待异步选择确认时，-1 应当落在哪一个主视角标记上
@@ -83,9 +87,13 @@ public class BioCameraPanel extends AbstractBioMachinePanel<IBioCamera> {
             else {
                 // 摄像机
                 int index = row - 1;
-                int color = this.selectedIndex == index ? BioMachineRenderers.SELECTED_COLOR : BioMachineRenderers.NORMAL_COLOR;
+                boolean selected = this.selectedIndex == index;
+                int color = selected ? BioMachineRenderers.SELECTED_COLOR : BioMachineRenderers.NORMAL_COLOR;
                 BioMachineData data = this.entries.get(index);
                 String name = IBioMachine.getDisplayName(data.customData());
+                if (data.customData().contains(BioCameraBlockEntity.TAG_OCCUPIER, Tag.TAG_STRING)){
+                    name += " " + data.customData().getString(BioCameraBlockEntity.TAG_OCCUPIER);
+                }
                 graphics.drawString(font, name, this.x, pointY, color, false);
             }
         }
