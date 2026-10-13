@@ -217,3 +217,40 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+// ============================================================================
+// 发布到工作区本地 maven 仓库
+// ----------------------------------------------------------------------------
+// 附属模组（BioMachinery）通过 fg.deobf("campionebase:erosionera:0.0.1") 依赖本模组，
+// 这是 Forge 官方文档中 Mod Dependencies 的标准写法：开发环境必须消费「已 reobf 的构件」，
+// 直接加载核心的开发类或把源码集挂进别人的运行配置都会造成命名空间冲突。
+//
+// 产物默认落在工作区根目录的 .m2/repository，工作区内的附属模组直接引用它；
+// 单独克隆本仓库时该仓库不影响构建。
+// 需要时执行： gradlew :core:publishToWorkspaceMaven
+// ============================================================================
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // jar 任务已被 reobfJar 就地重写为生产命名空间，这里发布的正是它
+            artifact tasks.named('jar')
+            artifactId = 'erosionera'
+        }
+    }
+    repositories {
+        maven {
+            name = 'workspaceLocal'
+            url = rootProject.file('.m2/repository')
+        }
+    }
+}
+
+// 指向同一个仓库的便捷任务名，便于在文档与 IDE 里引用
+tasks.register('publishToWorkspaceMaven') {
+    group = 'publishing'
+    description = '把核心模组发布到工作区本地 maven 仓库，供附属模组依赖'
+    dependsOn tasks.named('publishMavenJavaPublicationToWorkspaceLocalRepository')
+}
+
