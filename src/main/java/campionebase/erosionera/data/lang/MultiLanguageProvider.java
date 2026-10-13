@@ -1,6 +1,5 @@
 package campionebase.erosionera.data.lang;
 
-import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.data.DataProviderUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
@@ -19,33 +18,49 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * 通用翻译文件生成器。
+ *
+ * <p>本身不绑定任何模组：模组 id 与命名空间都由构造参数传入，
+ * 核心模组与附属模组共用这一个实现，各自生成属于自己命名空间的语言文件。
+ * 语言文件内只包含「注解 namespace 等于本模组 id」的来源。
+ */
 public class MultiLanguageProvider extends LanguageProvider {
     private static final Logger LOGGER = LogManager.getLogger(MultiLanguageProvider.class);
     public static final String TIMESTAMP_KEY = "_auto_gen_timestamp";
 
+    /** 本生成器负责的模组 id / 命名空间 */
+    private final String namespace;
     private final String locale;
     /** 本次生成过程中失败的翻译来源，全部处理完后统一输出 */
     private final List<TranslationFailure> failures = new ArrayList<>();
 
-    public MultiLanguageProvider(PackOutput output, String locale) {
-        super(output, ErosionEra.MODID, locale);
+    /**
+     * @param output    数据生成输出
+     * @param modId     目标模组 id，决定语言文件的命名空间与归属（如 {@code LanguageProvider} 的输出路径）
+     * @param namespace 参与本次生成的翻译来源命名空间，通常与 {@code modId} 相同
+     * @param locale    语言代码，如 {@code zh_cn}
+     */
+    public MultiLanguageProvider(PackOutput output, String modId, String namespace, String locale) {
+        super(output, modId, locale);
+        this.namespace = namespace;
         this.locale = locale;
     }
 
     @Override
     protected void addTranslations() {
-        DataProviderUtils.scanClassesWithAnnotation(Translation.class)
+        DataProviderUtils.scanClassesWithAnnotation(Translation.class, this.namespace)
             .forEach(this::addTranslationsByAnnotation);
         this.add(TIMESTAMP_KEY, new Date().toString());
         this.logFailures();
     }
 
     /**
-     * 收集所有 Translation.Key 中声明的翻译语言
+     * 收集指定命名空间下所有 {@link Translation.Key} 中声明的翻译语言
      */
-    public static Set<String> collectLanguages() {
+    public static Set<String> collectLanguages(String namespace) {
         Set<String> languages = new TreeSet<>();
-        DataProviderUtils.scanClassesWithAnnotation(Translation.class).forEach(clazz -> {
+        DataProviderUtils.scanClassesWithAnnotation(Translation.class, namespace).forEach(clazz -> {
             for (Field field : clazz.getDeclaredFields()) {
                 for (Translation.Key key : field.getAnnotationsByType(Translation.Key.class)) {
                     languages.add(key.lang());

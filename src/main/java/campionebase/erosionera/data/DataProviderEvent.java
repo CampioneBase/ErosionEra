@@ -29,9 +29,10 @@ public class DataProviderEvent {
         generator.addProvider(event.includeServer(), new NormalBlockStateProvider(output, helper));
         // 生成物品模型
         generator.addProvider(event.includeClient(), new NormalItemModelProvider(output, helper));
-        // 生成翻译文件
-        for (String locale : MultiLanguageProvider.collectLanguages()) {
-            generator.addProvider(event.includeClient(), new MultiLanguageProvider(output, locale));
+        // 生成翻译文件：只处理本模组命名空间下的翻译来源
+        for (String locale : MultiLanguageProvider.collectLanguages(ErosionEra.MODID)) {
+            generator.addProvider(event.includeClient(),
+                    new MultiLanguageProvider(output, ErosionEra.MODID, ErosionEra.MODID, locale));
         }
     }
 }

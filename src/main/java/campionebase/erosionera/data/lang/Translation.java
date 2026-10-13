@@ -1,16 +1,24 @@
 package campionebase.erosionera.data.lang;
 
-import campionebase.erosionera.ErosionEra;
-
 import java.lang.annotation.*;
 
+/**
+ * 标记「携带翻译来源」的类，用于数据生成阶段自动产出语言文件。
+ *
+ * <p>本注解与具体模组无关：命名空间由使用方通过 {@link #namespace()} 显式声明，
+ * 不再硬编码任何模组 id。这样核心模组与任意附属模组都可以复用同一套注解，
+ * 附属模组无需再持有同义类的副本。
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Translation {
     /** 翻译键前缀 */
     String prefix() default "";
-    /** 模组名 */
-    String namespace() default ErosionEra.MODID;
+    /**
+     * 翻译键所属的命名空间（模组 id）。
+     * 必填：由被注解的类在其所属模组内显式给出。
+     */
+    String namespace();
     /** 翻译键后缀 */
     String[] suffix() default {""};
 
@@ -27,9 +35,9 @@ public @interface Translation {
         String[] value();
         /** 翻译语言 */
         String lang() default Translation.DEFAULT_LANG;
-        /** 覆盖 Translation 的翻译键前缀，为 null 时沿用 Translation 的设置 */
+        /** 覆盖 Translation 的翻译键前缀，为空时沿用 Translation 的设置 */
         String prefix() default "";
-        /** 覆盖 Translation 的翻译键后缀，为 null 时沿用 Translation 的设置 */
+        /** 覆盖 Translation 的翻译键后缀，为空时沿用 Translation 的设置 */
         String[] suffix() default {};
     }
 
