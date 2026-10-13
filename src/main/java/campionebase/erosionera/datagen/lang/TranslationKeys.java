@@ -1,9 +1,9 @@
-package campionebase.erosionera.data.lang;
+package campionebase.erosionera.datagen.lang;
 
 import campionebase.erosionera.ErosionEra;
 import net.minecraft.resources.ResourceLocation;
 
-@Translation(namespace = ErosionEra.MODID)
+@Translation
 public class TranslationKeys {
     public static String getKeyName(String name, String type){
         return ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, name).toLanguageKey(type);

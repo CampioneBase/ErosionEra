@@ -1,6 +1,6 @@
-package campionebase.erosionera.data.lang;
+package campionebase.erosionera.datagen.lang;
 
-import campionebase.erosionera.data.DataProviderUtils;
+import campionebase.erosionera.datagen.DataProviderUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.data.PackOutput;
@@ -21,46 +21,44 @@ import java.util.TreeSet;
 /**
  * 通用翻译文件生成器。
  *
- * <p>本身不绑定任何模组：模组 id 与命名空间都由构造参数传入，
- * 核心模组与附属模组共用这一个实现，各自生成属于自己命名空间的语言文件。
- * 语言文件内只包含「注解 namespace 等于本模组 id」的来源。
+ * <p>本身不绑定任何模组：模组 id 由构造参数传入，核心模组与附属模组共用这一个实现。
+ * 一个生成器只对应一个模组，输出命名空间与输入来源命名空间必然是同一个
  */
 public class MultiLanguageProvider extends LanguageProvider {
     private static final Logger LOGGER = LogManager.getLogger(MultiLanguageProvider.class);
     public static final String TIMESTAMP_KEY = "_auto_gen_timestamp";
 
-    /** 本生成器负责的模组 id / 命名空间 */
-    private final String namespace;
+    /** 本生成器负责的模组 id，同时是输出命名空间与翻译来源的扫描范围 */
+    private final String modId;
     private final String locale;
     /** 本次生成过程中失败的翻译来源，全部处理完后统一输出 */
     private final List<TranslationFailure> failures = new ArrayList<>();
 
     /**
-     * @param output    数据生成输出
-     * @param modId     目标模组 id，决定语言文件的命名空间与归属（如 {@code LanguageProvider} 的输出路径）
-     * @param namespace 参与本次生成的翻译来源命名空间，通常与 {@code modId} 相同
-     * @param locale    语言代码，如 {@code zh_cn}
+     * @param output 数据生成输出
+     * @param modId  目标模组 id：决定语言文件的输出路径/命名空间，同时限定翻译来源的扫描范围
+     * @param locale 语言代码，如 {@code zh_cn}
      */
-    public MultiLanguageProvider(PackOutput output, String modId, String namespace, String locale) {
+    public MultiLanguageProvider(PackOutput output, String modId, String locale) {
         super(output, modId, locale);
-        this.namespace = namespace;
+        this.modId = modId;
         this.locale = locale;
     }
 
     @Override
     protected void addTranslations() {
-        DataProviderUtils.scanClassesWithAnnotation(Translation.class, this.namespace)
+        DataProviderUtils.scanClassesWithAnnotationByModid(Translation.class, this.modId)
             .forEach(this::addTranslationsByAnnotation);
         this.add(TIMESTAMP_KEY, new Date().toString());
         this.logFailures();
     }
 
     /**
-     * 收集指定命名空间下所有 {@link Translation.Key} 中声明的翻译语言
+     * 收集指定模组下所有 {@link Translation.Key} 中声明的翻译语言
      */
-    public static Set<String> collectLanguages(String namespace) {
+    public static Set<String> collectLanguages(String modId) {
         Set<String> languages = new TreeSet<>();
-        DataProviderUtils.scanClassesWithAnnotation(Translation.class, namespace).forEach(clazz -> {
+        DataProviderUtils.scanClassesWithAnnotationByModid(Translation.class, modId).forEach(clazz -> {
             for (Field field : clazz.getDeclaredFields()) {
                 for (Translation.Key key : field.getAnnotationsByType(Translation.Key.class)) {
                     languages.add(key.lang());
@@ -98,14 +96,13 @@ public class MultiLanguageProvider extends LanguageProvider {
     private void addTranslationsByAnnotation(Class<?> clazz){
         Translation translation = clazz.getAnnotation(Translation.class);
         if (translation == null) return;
-        String namespace = translation.namespace();
         for (Field field : clazz.getDeclaredFields()){
             for (Translation.Key key : field.getAnnotationsByType(Translation.Key.class)){
                 if (!key.lang().equals(this.locale)) continue;
                 String prefix = key.prefix().isEmpty() ? translation.prefix() : key.prefix();
                 String[] suffixes = key.suffix().length == 0 ? translation.suffix() : key.suffix();
                 try {
-                    this.processField(field, namespace, prefix, suffixes, key.value());
+                    this.processField(field, prefix, suffixes, key.value());
                 } catch (Exception e) {
                     this.failures.add(new TranslationFailure(clazz.getName() + "#" + field.getName(), e));
                 }
@@ -114,7 +111,7 @@ public class MultiLanguageProvider extends LanguageProvider {
     }
 
     // 解析单个字段，保留对各类型的支持
-    private void processField(Field field, String namespace, String prefix, String[] suffixes, String[] values) throws Exception {
+    private void processField(Field field, String prefix, String[] suffixes, String[] values) throws Exception {
         field.setAccessible(true);
         Object fieldValue = field.get(null);
         // 字符串键
@@ -145,7 +142,7 @@ public class MultiLanguageProvider extends LanguageProvider {
         // 使用字段构建
         if (id == null){
             String path = field.getName().toLowerCase(Locale.ROOT);
-            id = ResourceLocation.fromNamespaceAndPath(namespace, path);
+            id = ResourceLocation.fromNamespaceAndPath(this.modId, path);
         }
 
         String key = prefix.isEmpty() ? id.toLanguageKey() : id.toLanguageKey(prefix);

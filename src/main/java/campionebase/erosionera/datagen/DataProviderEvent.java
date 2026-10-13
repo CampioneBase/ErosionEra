@@ -1,9 +1,9 @@
-package campionebase.erosionera.data;
+package campionebase.erosionera.datagen;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.data.blockstate.NormalBlockStateProvider;
-import campionebase.erosionera.data.lang.MultiLanguageProvider;
-import campionebase.erosionera.data.model.item.NormalItemModelProvider;
+import campionebase.erosionera.datagen.blockstate.NormalBlockStateProvider;
+import campionebase.erosionera.datagen.lang.MultiLanguageProvider;
+import campionebase.erosionera.datagen.model.item.NormalItemModelProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -29,10 +29,10 @@ public class DataProviderEvent {
         generator.addProvider(event.includeServer(), new NormalBlockStateProvider(output, helper));
         // 生成物品模型
         generator.addProvider(event.includeClient(), new NormalItemModelProvider(output, helper));
-        // 生成翻译文件：只处理本模组命名空间下的翻译来源
+        // 生成翻译文件：只处理本模组自身的翻译来源
         for (String locale : MultiLanguageProvider.collectLanguages(ErosionEra.MODID)) {
             generator.addProvider(event.includeClient(),
-                    new MultiLanguageProvider(output, ErosionEra.MODID, ErosionEra.MODID, locale));
+                    new MultiLanguageProvider(output, ErosionEra.MODID, locale));
         }
     }
 }

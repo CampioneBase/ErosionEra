@@ -1,7 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.data.lang.Translation;
+import campionebase.erosionera.datagen.lang.Translation;
 import campionebase.erosionera.fluid.ManaFluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +25,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Consumer;
 
-@Translation(namespace = ErosionEra.MODID)
+@Translation
 public class ErErFluids {
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, ErosionEra.MODID);
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ErosionEra.MODID);

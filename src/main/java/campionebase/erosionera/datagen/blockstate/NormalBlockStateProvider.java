@@ -1,4 +1,4 @@
-package campionebase.erosionera.data.blockstate;
+package campionebase.erosionera.datagen.blockstate;
 
 import campionebase.erosionera.ErosionEra;
 import net.minecraft.data.PackOutput;
