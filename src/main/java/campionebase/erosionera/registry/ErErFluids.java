@@ -60,17 +60,14 @@ public class ErErFluids {
                 public ResourceLocation getStillTexture() {
                     return ResourceLocation.parse("block/water_still");
                 }
-
                 @Override
                 public ResourceLocation getFlowingTexture() {
                     return ResourceLocation.parse("block/water_flow");
                 }
-
                 @Override
                 public ResourceLocation getOverlayTexture() {
                     return ResourceLocation.parse("block/water_overlay");
                 }
-
                 @Override
                 public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
                     return ResourceLocation.parse("textures/misc/underwater.png");

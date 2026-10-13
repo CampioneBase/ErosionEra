@@ -1,7 +1,6 @@
 package campionebase.erosionera.data.model.item;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.registry.ErErItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -10,6 +9,9 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * 核心模组的通用物品模型生成器。
+ */
 public class NormalItemModelProvider extends ItemModelProvider {
     public NormalItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, ErosionEra.MODID, existingFileHelper);
@@ -17,22 +19,21 @@ public class NormalItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        simpleItem(ErErItems.BIO_METAL);
-
-        copyItem(ErErItems.BIO_WIRE, "chain");
-        copyItem(ErErItems.RENAME_TAG, "name_tag");
+        // 核心模组当前的物品内容（侵蚀 / 魔力相关）在此注册
     }
 
-    private ItemModelBuilder copyItem(final RegistryObject<Item> registryObject, String copied){
+    /** 复用原版已有贴图的物品模型 */
+    protected ItemModelBuilder copyItem(final RegistryObject<Item> registryObject, String copied){
         String name = registryObject.getId().getPath();
         return withExistingParent(name, mcLoc("item/generated"))
                 .texture("layer0", mcLoc("item/" + copied));
     }
 
-    private ItemModelBuilder simpleItem(final RegistryObject<Item> registryObject){
+    /** 使用自身贴图的物品模型 */
+    protected ItemModelBuilder simpleItem(final RegistryObject<Item> registryObject){
         String name = registryObject.getId().getPath();
         return withExistingParent(name, mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/" + name));
+                .texture("layer0", "item/" + name);
     }
 
     @Override
