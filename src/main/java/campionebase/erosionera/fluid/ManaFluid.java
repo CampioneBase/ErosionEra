@@ -13,7 +13,7 @@ public abstract class ManaFluid extends ForgeFlowingFluid {
                 ErErFluids.MANA_TYPE,
                 ErErFluids.MANA_SOURCE,
                 ErErFluids.MANA_FLOWING)
-                .block(ErErFluids.MANA_BLOCK)
+                .block(ErErFluids.MANA_LIQUID)
                 .bucket(ErErFluids.MANA_BUCKET)
         );
     }
@@ -45,7 +45,7 @@ public abstract class ManaFluid extends ForgeFlowingFluid {
 
         public Flowing(){
             super();
-            registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
+            this.registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, 7));
         }
 
         @Override

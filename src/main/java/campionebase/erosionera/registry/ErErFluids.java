@@ -38,6 +38,7 @@ public class ErErFluids {
         ITEMS.register(bus);
     }
     //region ========= 魔力液 =========
+    @Translation.Key(prefix = "fluid_type", value = "魔力")
     public static final RegistryObject<FluidType> MANA_TYPE = FLUID_TYPES.register("mana",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.erosionera.mana")
@@ -79,7 +80,7 @@ public class ErErFluids {
     public static final RegistryObject<FlowingFluid> MANA_SOURCE = FLUIDS.register("mana_source", ManaFluid.Source::new);
     public static final RegistryObject<FlowingFluid> MANA_FLOWING = FLUIDS.register("mana_flowing", ManaFluid.Flowing::new);
     @Translation.Key(prefix = "block", value = "魔力池")
-    public static final RegistryObject<LiquidBlock> MANA_BLOCK = BLOCKS.register("mana_block", () -> new LiquidBlock(
+    public static final RegistryObject<LiquidBlock> MANA_LIQUID = BLOCKS.register("mana_liquid", () -> new LiquidBlock(
             MANA_SOURCE,
             BlockBehaviour.Properties.copy(Blocks.WATER)
     ));

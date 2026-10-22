@@ -1,7 +1,9 @@
 package campionebase.erosionera;
 
+import campionebase.erosionera.magic.spell.RuneEntry;
 import campionebase.erosionera.registry.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -18,6 +20,7 @@ public class ErosionEra {
     public static final Logger LOGGER = LogManager.getLogger(ErosionEra.class);
 
     public ErosionEra(final FMLJavaModLoadingContext context) {
+        ErosionEraConfig.register(context);
         this.init(context);
         context.getModEventBus().addListener(this::setup);
         MinecraftForge.EVENT_BUS.register(this);
@@ -26,11 +29,20 @@ public class ErosionEra {
     private void init(final FMLJavaModLoadingContext context){
         IEventBus bus = context.getModEventBus();
         ErErEntities.REGISTER.register(bus);
+        ErErTabs.REGISTER.register(bus);
+        ErErItems.register(bus);
         ErErFluids.register(bus);
+
+
+        RuneTypes.REGISTER.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         LOGGER.info("{} common setup complete", MODID);
+    }
+
+    private void reload(final AddReloadListenerEvent event){
+        event.addListener(new RuneEntry.Loader());
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
