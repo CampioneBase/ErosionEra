@@ -1,4 +1,4 @@
-package campionebase.erosionera.datagen.lang;
+package campionebase.erosionera.data.lang;
 
 import java.lang.annotation.*;
 

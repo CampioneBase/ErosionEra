@@ -1,9 +1,9 @@
-package campionebase.erosionera.datagen;
+package campionebase.erosionera.data;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.datagen.blockstate.NormalBlockStateProvider;
-import campionebase.erosionera.datagen.lang.MultiLanguageProvider;
-import campionebase.erosionera.datagen.model.item.NormalItemModelProvider;
+import campionebase.erosionera.data.blockstate.NormalBlockStateProvider;
+import campionebase.erosionera.data.lang.MultiLanguageProvider;
+import campionebase.erosionera.data.model.item.NormalItemModelProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;

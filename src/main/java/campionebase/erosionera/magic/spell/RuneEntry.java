@@ -9,17 +9,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +26,8 @@ public record RuneEntry(
     int mana,
     int delay
 ) {
-    public static final String DIR = "runes";
+    /** 数据包目录：`data/<namespace>/rune/*.json`。 */
+    public static final String DIR = "rune";
     private static Map<ResourceLocation, RuneEntry> entries = Map.of();
     private static Codec<RuneEntry> _codec;
     public static Codec<RuneEntry> codec(){
@@ -67,17 +64,15 @@ public record RuneEntry(
                              @NotNull ResourceManager manager,
                              @NotNull ProfilerFiller filler)
         {
-            RegistryAccess access = ServerLifecycleHooks.getCurrentServer().registryAccess();
-            RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, access);
-
             Map<ResourceLocation, RuneEntry> map = new HashMap<>();
             files.forEach((id, json) -> RuneEntry.codec()
-                    .parse(ops, json)
+                    .parse(JsonOps.INSTANCE, json)
                     .resultOrPartial(err ->
                             ErosionEra.LOGGER.error("Bad rune {}: {}", id, err)
                     )
                     .ifPresent(entry -> map.put(id, entry)));
             entries = Map.copyOf(map);
+            ErosionEra.LOGGER.info("Loaded {} rune(s) from {}", map.size(), DIR);
         }
     }
 

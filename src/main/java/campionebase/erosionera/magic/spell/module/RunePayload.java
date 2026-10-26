@@ -3,22 +3,21 @@ package campionebase.erosionera.magic.spell.module;
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.magic.IMagic;
 import campionebase.erosionera.magic.spell.RuneSequence;
+import campionebase.erosionera.magic.spell.RuneSequenceSpell;
 import campionebase.erosionera.magic.spell.RuneUnits;
-import campionebase.erosionera.magic.spell.Spell;
-import campionebase.erosionera.magic.spell.logic.IRuneLogic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 符文序列载荷：刻录石装进容器的东西。
+ * 符文序列载荷：魔法石里"一个魔法"的其中一种实现。
  *
- * <p>持久化的是**符文 id 列表**（magic_rune.md §3.4），遍历逻辑在运行时构造。
- * 解析出的魔法是泛用魔法 {@link Spell}。
+ * <p>持久化的是**符文 id 列表**（magic_rune.md §3.4），术式实例在运行时构造。
+ * 解析出的魔法是 {@link RuneSequenceSpell}。
  */
 public final class RunePayload implements SpellPayload {
 
     public static final ResourceLocation TYPE =
-            ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "runes");
+            ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "rune");
 
     private final RuneSequence sequence;
 
@@ -30,11 +29,6 @@ public final class RunePayload implements SpellPayload {
         return this.sequence;
     }
 
-    /** 基于本载荷创建**新的**运行时遍历逻辑（每颗子弹一份）。 */
-    public IRuneLogic newLogic() {
-        return this.sequence.newLogic();
-    }
-
     @Override
     public ResourceLocation type() {
         return TYPE;
@@ -42,7 +36,7 @@ public final class RunePayload implements SpellPayload {
 
     @Override
     public IMagic magic() {
-        return new Spell(this.sequence);
+        return new RuneSequenceSpell(this.sequence);
     }
 
     @Override

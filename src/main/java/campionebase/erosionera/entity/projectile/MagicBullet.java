@@ -2,7 +2,6 @@ package campionebase.erosionera.entity.projectile;
 
 import campionebase.erosionera.magic.spell.*;
 import campionebase.erosionera.magic.spell.behaviour.RuneBehaviour;
-import campionebase.erosionera.magic.spell.logic.IRuneLogic;
 import campionebase.erosionera.registry.ErErEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -21,13 +20,13 @@ import java.util.*;
  * <h2>魔法弹</h2>
  * 一个可以运动的魔法介质实体。
  *
- * <p>符文的遍历由 {@link IRuneLogic} 负责（本模组内置线性实现），
- * 子弹自身只持有"当前逻辑"与逐 tick 的运行状态（延迟、目标、生命周期、运动）。
+ * <p>符文的遍历由 {@link ISpell} 承担（术式实例自带游标），
+ * 子弹自身只持有"当前术式"与逐 tick 的运行状态（延迟、目标、生命周期、运动）。
  */
 public class MagicBullet extends AbstractManaProjectile {
 
-    /** 符文遍历逻辑；游标始终指向**下一个待执行**符文。 */
-    private final IRuneLogic logic;
+    /** 载体自己的术式实例；游标始终指向**下一个待执行**符文。 */
+    private final ISpell spell;
     // 剩余等待时间
     private int remaining;
     // 目标
@@ -40,15 +39,15 @@ public class MagicBullet extends AbstractManaProjectile {
 
     private final Set<UUID> hitEntities = new HashSet<>();
 
-    public MagicBullet(Level level, IRuneLogic logic) {
+    public MagicBullet(Level level, ISpell spell) {
         super(ErErEntities.MAGIC_BULLET.get(), level);
-        this.logic = logic;
+        this.spell = spell;
     }
 
     public MagicBullet(EntityType<MagicBullet> type, Level level) {
         super(type, level);
-        // 客户端/反序列化占位：空逻辑，不会执行任何符文
-        this.logic = RuneSequence.EMPTY.newLogic();
+        // 客户端/反序列化占位：空术式，不会执行任何符文
+        this.spell = RuneSequence.EMPTY.newSpell();
     }
 
     public MagicBullet(PlayMessages.SpawnEntity spawnEntity, Level level) {
@@ -61,9 +60,9 @@ public class MagicBullet extends AbstractManaProjectile {
         return false;
     }
 
-    /** 当前遍历逻辑（存档与调试用）。 */
-    public IRuneLogic logic() {
-        return this.logic;
+    /** 当前术式实例（调试用）。 */
+    public ISpell spell() {
+        return this.spell;
     }
 
     @Override
@@ -89,7 +88,7 @@ public class MagicBullet extends AbstractManaProjectile {
         }
 
         // 符文已全部执行
-        if (this.logic.isFinished()) {
+        if (this.spell.isFinished()) {
             this.discard();
             return;
         }
@@ -99,16 +98,16 @@ public class MagicBullet extends AbstractManaProjectile {
         context.target = this.target;
 
         // 当前符文
-        RuneEntry entry = this.logic.currentEntry();
+        RuneEntry entry = this.spell.currentEntry();
         if (entry == null) {
             // 该符文已失效（数据包缺失等）：跳过并继续
-            this.logic.advance();
+            this.spell.advance();
             return;
         }
 
         // 解析符文
         this.parseBehaviour(entry.behaviour(), serverLevel, context, events, this.getOwner());
-        this.logic.advance();
+        this.spell.advance();
         this.remaining = entry.delay();
     }
 
@@ -149,9 +148,9 @@ public class MagicBullet extends AbstractManaProjectile {
             List<SpellEvent> events,
             @Nullable Entity owner
     ) {
-        // 构造符文：以"本符文之后**尚未执行**的部分"作为新载体的逻辑
+        // 构造符文：以"本符文之后**尚未执行**的部分"作为新载体的术式
         if (behaviour instanceof RuneBehaviour.Builder builder) {
-            IRuneLogic child = this.logic.copy();
+            ISpell child = this.spell.copy();
             child.advance();
             MagicBullet spawned = builder.create(level, owner, this.position(), this.movement.velocity, child);
             if (spawned != null) {

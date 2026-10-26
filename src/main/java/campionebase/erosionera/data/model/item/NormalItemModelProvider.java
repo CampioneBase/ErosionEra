@@ -1,4 +1,4 @@
-package campionebase.erosionera.datagen.model.item;
+package campionebase.erosionera.data.model.item;
 
 import campionebase.erosionera.ErosionEra;
 import net.minecraft.data.PackOutput;

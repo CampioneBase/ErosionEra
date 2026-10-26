@@ -1,6 +1,6 @@
-package campionebase.erosionera.datagen.lang;
+package campionebase.erosionera.data.lang;
 
-import campionebase.erosionera.datagen.DataProviderUtils;
+import campionebase.erosionera.data.DataProviderUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.data.PackOutput;

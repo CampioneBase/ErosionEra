@@ -1,7 +1,5 @@
 package campionebase.erosionera.magic.spell;
 
-import campionebase.erosionera.magic.spell.logic.IRuneLogic;
-import campionebase.erosionera.magic.spell.logic.LinearRuneLogic;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +12,12 @@ import java.util.function.Consumer;
 /**
  * 符文序列：**不可变数据**（有序的符文 id 列表）。
  *
- * <p>遍历游标不在这里——那属于 {@link IRuneLogic} 的运行时状态。
+ * <p>遍历游标不在这里——它属于 {@link ISpell} 的运行时状态。
  * 两者分离的原因：序列需要在配方、NBT、载荷间自由共享，而游标必须每颗子弹一份，
  * 混在一起会造成共享可变状态（尤其 {@link #EMPTY} 这种全局实例）。
  */
 public final class RuneSequence {
 
-    public static final String TAG_RUNES = RuneUnits.TAG_RUNES;
     public static final RuneSequence EMPTY = new RuneSequence(List.of());
 
     private final List<ResourceLocation> ids;
@@ -37,9 +34,9 @@ public final class RuneSequence {
         return RuneUnits.read(itemStack);
     }
 
-    /** 创建一份**新的**线性遍历逻辑（每颗子弹一份）。 */
-    public IRuneLogic newLogic() {
-        return new LinearRuneLogic(this);
+    /** 创建一份**新的**术式实例（含独立游标，每颗子弹一份）。 */
+    public ISpell newSpell() {
+        return new RuneSequenceSpell(this);
     }
 
     /** 符文法力总和。 */

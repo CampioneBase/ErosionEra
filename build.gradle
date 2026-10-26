@@ -124,8 +124,9 @@ minecraft {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', 'erosionera'
 
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'erosionera', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            // 注意：这里不能出现 datagen 的 --mod/--all/--output/--existing 参数。
+            // GameTest 服务端走的是原版 Main，不认识这些选项，会直接抛
+            // UnrecognizedOptionException: mod is not a recognized option。
 
             mods {
                 erosionera {

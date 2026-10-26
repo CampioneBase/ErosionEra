@@ -8,19 +8,22 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 容器载荷在物品 NBT 中的存放格式。
+ * 魔法石（容器）在物品 NBT 中记录"一个魔法"的格式。
  *
  * <pre>
  * {
- *   "module_type": "erosionera:runes",   // 载荷类型判别
- *   "module_data": { ... }               // 载荷自身数据
+ *   "magic_type": "erosionera:rune",     // 魔法类型（载荷类型判别）
+ *   "magic_data": { ... }               // 该类型自己的数据
  * }
  * </pre>
+ *
+ * <p>魔法石的核心含义就是**存储一个魔法（类型 + 数据）**，因此键名用 magic_ 前缀；
+ * 容器只认这两个键，具体类型的解释交给 {@link SpellPayloads}。
  */
 final class SpellContainerData {
 
-    static final String TAG_MODULE_TYPE = "module_type";
-    static final String TAG_MODULE_DATA = "module_data";
+    static final String TAG_MAGIC_TYPE = "magic_type";
+    static final String TAG_MAGIC_DATA = "magic_data";
 
     private SpellContainerData() {
         throw new UnsupportedOperationException();
@@ -29,20 +32,20 @@ final class SpellContainerData {
     @Nullable
     static SpellPayload get(ItemStack stack) {
         CompoundTag tag = stack.getTag();
-        if (tag == null || !tag.contains(TAG_MODULE_TYPE)) {
+        if (tag == null || !tag.contains(TAG_MAGIC_TYPE)) {
             return null;
         }
-        ResourceLocation type = ResourceLocation.tryParse(tag.getString(TAG_MODULE_TYPE));
+        ResourceLocation type = ResourceLocation.tryParse(tag.getString(TAG_MAGIC_TYPE));
         if (type == null) {
             return null;
         }
-        return SpellPayloads.load(type, tag.getCompound(TAG_MODULE_DATA));
+        return SpellPayloads.load(type, tag.getCompound(TAG_MAGIC_DATA));
     }
 
     static void set(ItemStack stack, SpellPayload payload) {
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putString(TAG_MODULE_TYPE, payload.type().toString());
-        tag.put(TAG_MODULE_DATA, payload.save());
+        tag.putString(TAG_MAGIC_TYPE, payload.type().toString());
+        tag.put(TAG_MAGIC_DATA, payload.save());
     }
 
     @Nullable
@@ -50,8 +53,8 @@ final class SpellContainerData {
         SpellPayload payload = get(stack);
         CompoundTag tag = stack.getTag();
         if (tag != null) {
-            tag.remove(TAG_MODULE_TYPE);
-            tag.remove(TAG_MODULE_DATA);
+            tag.remove(TAG_MAGIC_TYPE);
+            tag.remove(TAG_MAGIC_DATA);
         }
         return payload;
     }

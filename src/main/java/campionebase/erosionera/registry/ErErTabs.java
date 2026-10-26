@@ -1,8 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.datagen.lang.Translation;
-import campionebase.erosionera.item.RuneStoneItem;
+import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.magic.spell.RuneEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -16,18 +15,19 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 @Translation(prefix = "item_group")
 public class ErErTabs {
-    public static final DeferredRegister<CreativeModeTab> REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ErosionEra.MODID);
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ErosionEra.MODID);
     @Translation.Key("侵蚀国度")
-    public static final RegistryObject<CreativeModeTab> MAIN = REGISTER.register("main", () -> CreativeModeTab.builder()
+    public static final RegistryObject<CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("item_group.erosionera.main"))
             .displayItems((parameters, data) -> {
                 ErErItems.ITEMS.getEntries().forEach(r -> data.accept(r.get()));
+                ErErItems.BLOCKS.getEntries().forEach(r -> data.accept(r.get()));
                 ErErFluids.ITEMS.getEntries().forEach(r -> data.accept(r.get()));
             })
             .build()
     );
     @Translation.Key("侵蚀国度：符文石")
-    public static final RegistryObject<CreativeModeTab> RUNE = REGISTER.register("rune", () -> CreativeModeTab.builder()
+    public static final RegistryObject<CreativeModeTab> RUNE = TABS.register("rune", () -> CreativeModeTab.builder()
             .title(Component.translatable("item_group.erosionera.rune"))
             .icon(() -> ErErItems.RUNE_STONE.get().getDefaultInstance())
             .displayItems((parameters, data) -> {

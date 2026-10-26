@@ -1,5 +1,6 @@
-package campionebase.erosionera.magic.spell;
+package campionebase.erosionera.recipe.custom;
 
+import campionebase.erosionera.magic.spell.ISpellContainer;
 import campionebase.erosionera.magic.spell.module.SpellPayload;
 import campionebase.erosionera.magic.spell.module.SpellPayloads;
 import campionebase.erosionera.registry.ErErRecipes;
@@ -22,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
  * <p><b>关键约束</b>：{@link #getRemainingItems} 是只读语义（预览阶段也会调用），
  * 因此对副本执行 {@code removePayload}，绝不修改输入物品栈。
  */
-public class SpellUnbindingRecipe extends CustomRecipe {
+public class MagicStoneUnbindingRecipe extends CustomRecipe {
 
-    public SpellUnbindingRecipe(ResourceLocation id, CraftingBookCategory category) {
+    public MagicStoneUnbindingRecipe(ResourceLocation id, CraftingBookCategory category) {
         super(id, category);
     }
 

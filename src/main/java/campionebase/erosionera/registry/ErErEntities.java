@@ -1,7 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.datagen.lang.Translation;
+import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.entity.projectile.MagicBullet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Translation(prefix = "entity")
 public class ErErEntities {
-    public static final DeferredRegister<EntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ErosionEra.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ErosionEra.MODID);
 
     @Translation.Key("魔法弹")
     public static final RegistryObject<EntityType<MagicBullet>> MAGIC_BULLET = register("magic_bullet",
@@ -21,10 +21,11 @@ public class ErErEntities {
                     .setShouldReceiveVelocityUpdates(true)
                     .fireImmune()
                     .noSummon()
+                    .noSave()
                     .sized(0.5f, 0.5f)
     );
 
     private static <T extends Entity> RegistryObject<EntityType<T>> register(String name, EntityType.Builder<T> builder) {
-        return REGISTER.register(name, () -> builder.build(name));
+        return ENTITIES.register(name, () -> builder.build(name));
     }
 }

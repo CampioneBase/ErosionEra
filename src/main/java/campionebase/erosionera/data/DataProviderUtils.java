@@ -1,4 +1,4 @@
-package campionebase.erosionera.datagen;
+package campionebase.erosionera.data;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModFileInfo;

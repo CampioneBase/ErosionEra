@@ -1,7 +1,7 @@
 package campionebase.erosionera.magic.spell.behaviour;
 
 import campionebase.erosionera.entity.projectile.MagicBullet;
-import campionebase.erosionera.magic.spell.logic.IRuneLogic;
+import campionebase.erosionera.magic.spell.ISpell;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -38,9 +38,9 @@ public record SimpleBuilder() implements RuneBehaviour.Builder {
             @Nullable Entity owner,
             Vec3 position,
             Vec3 velocity,
-            IRuneLogic logic
+            ISpell spell
     ) {
-        MagicBullet bullet = new MagicBullet(level, logic);
+        MagicBullet bullet = new MagicBullet(level, spell);
         bullet.setOwner(owner);
         Vec3 spawn = velocity.lengthSqr() > EPSILON_SQR
                 ? position.add(velocity.normalize().scale(SPAWN_OFFSET))

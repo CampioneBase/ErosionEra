@@ -1,9 +1,9 @@
 package campionebase.erosionera.magic.spell.behaviour;
 
 import campionebase.erosionera.entity.projectile.MagicBullet;
+import campionebase.erosionera.magic.spell.ISpell;
 import campionebase.erosionera.magic.spell.SpellContext;
 import campionebase.erosionera.magic.spell.SpellEvent;
-import campionebase.erosionera.magic.spell.logic.IRuneLogic;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -18,14 +18,14 @@ public interface RuneBehaviour {
         /**
          * 生成魔法弹载体。
          *
-         * @param logic 该载体的**独立**遍历逻辑（游标已就位，通常已越过 Builder 自身）
+         * @param spell 该载体**独立**的术式实例（游标已就位，通常已越过 Builder 自身）
          */
         MagicBullet create(
                 ServerLevel level,
                 @Nullable Entity owner,
                 Vec3 position,
                 Vec3 velocity,
-                IRuneLogic logic
+                ISpell spell
         );
     }
 

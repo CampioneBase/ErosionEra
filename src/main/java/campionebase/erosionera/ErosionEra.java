@@ -28,20 +28,23 @@ public class ErosionEra {
 
     private void init(final FMLJavaModLoadingContext context){
         IEventBus bus = context.getModEventBus();
-        ErErEntities.REGISTER.register(bus);
-        ErErTabs.REGISTER.register(bus);
+        ErErBlocks.BLOCKS.register(bus);
+        ErErBlockEntities.BLOCK_ENTITIES.register(bus);
         ErErItems.register(bus);
+        ErErEntities.ENTITIES.register(bus);
+        ErErTabs.TABS.register(bus);
         ErErFluids.register(bus);
 
-
         RuneTypes.REGISTER.register(bus);
+        ErErRecipes.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         LOGGER.info("{} common setup complete", MODID);
     }
 
-    private void reload(final AddReloadListenerEvent event){
+    @SubscribeEvent
+    public void reload(final AddReloadListenerEvent event){
         event.addListener(new RuneEntry.Loader());
     }
 

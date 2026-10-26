@@ -1,7 +1,7 @@
 package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
-import campionebase.erosionera.datagen.lang.Translation;
+import campionebase.erosionera.data.lang.Translation;
 import campionebase.erosionera.fluid.ManaFluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;

@@ -1,5 +1,6 @@
-package campionebase.erosionera.magic.spell;
+package campionebase.erosionera.recipe.custom;
 
+import campionebase.erosionera.magic.spell.ISpellContainer;
 import campionebase.erosionera.magic.spell.module.ISpellModule;
 import campionebase.erosionera.magic.spell.module.SpellPayload;
 import campionebase.erosionera.registry.ErErRecipes;
@@ -20,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
  * {@link ISpellModule}（模块，刻录石 / Mantra 石等）。
  * 新增模块类型不需要改动本配方。
  */
-public class SpellBindingRecipe extends CustomRecipe {
+public class MagicStoneBindingRecipe extends CustomRecipe {
 
-    public SpellBindingRecipe(ResourceLocation id, CraftingBookCategory category) {
+    public MagicStoneBindingRecipe(ResourceLocation id, CraftingBookCategory category) {
         super(id, category);
     }
 

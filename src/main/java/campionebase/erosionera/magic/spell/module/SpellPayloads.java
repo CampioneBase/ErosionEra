@@ -47,7 +47,7 @@ public final class SpellPayloads {
     private static final Map<ResourceLocation, Type<?>> TYPES = new LinkedHashMap<>();
 
     static {
-        // 内置：符文序列 → 刻录石
+        // 内置：符文序列 → 魔法石
         register(RunePayload.TYPE, new Type<RunePayload>() {
             @Override
             public RunePayload load(CompoundTag tag) {
@@ -56,7 +56,7 @@ public final class SpellPayloads {
 
             @Override
             public ItemStack toModule(RunePayload payload) {
-                ItemStack stone = new ItemStack(ErErItems.SPELL_STONE.get());
+                ItemStack stone = new ItemStack(ErErItems.MAGIC_STONE.get());
                 RuneUnits.write(stone.getOrCreateTag(), payload.sequence());
                 return stone;
             }
