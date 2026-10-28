@@ -20,7 +20,7 @@ public class ErErBlockEntities {
     }
 
     public static final RegistryObject<BlockEntityType<RuneCraftingTableBlockEntity>> RUNE_CRAFTING_TABLE = register(
-            "rune_crafting_entity",
+            "rune_crafting_table",
             ErErBlocks.RUNE_CRAFTING_TABLE,
             RuneCraftingTableBlockEntity::new
     );

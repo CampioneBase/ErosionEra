@@ -4,6 +4,7 @@ import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.data.blockstate.NormalBlockStateProvider;
 import campionebase.erosionera.data.lang.MultiLanguageProvider;
 import campionebase.erosionera.data.model.item.NormalItemModelProvider;
+import campionebase.erosionera.data.rune.BuilderRuneProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -26,7 +27,7 @@ public class DataProviderEvent {
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> registries = event.getLookupProvider();
         // 生成方块状态
-        generator.addProvider(event.includeServer(), new NormalBlockStateProvider(output, helper));
+        generator.addProvider(event.includeClient(), new NormalBlockStateProvider(output, helper));
         // 生成物品模型
         generator.addProvider(event.includeClient(), new NormalItemModelProvider(output, helper));
         // 生成翻译文件：只处理本模组自身的翻译来源
@@ -34,5 +35,8 @@ public class DataProviderEvent {
             generator.addProvider(event.includeClient(),
                     new MultiLanguageProvider(output, ErosionEra.MODID, locale));
         }
+
+        // 生成符文
+        generator.addProvider(event.includeServer(), new BuilderRuneProvider(output, helper));
     }
 }

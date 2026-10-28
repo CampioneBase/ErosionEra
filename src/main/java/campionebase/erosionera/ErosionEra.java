@@ -35,7 +35,7 @@ public class ErosionEra {
         ErErTabs.TABS.register(bus);
         ErErFluids.register(bus);
 
-        RuneTypes.REGISTER.register(bus);
+        RuneTypes.TYPES.register(bus);
         ErErRecipes.register(bus);
     }
 

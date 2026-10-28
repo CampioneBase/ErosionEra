@@ -1,5 +1,7 @@
 package campionebase.erosionera.magic;
 
+import campionebase.erosionera.magic.resource.ResourceCost;
+
 /**
  * 施法条件。
  *

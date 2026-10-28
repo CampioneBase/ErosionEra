@@ -1,4 +1,4 @@
-package campionebase.erosionera.magic.spell.module;
+package campionebase.erosionera.magic.module;
 
 import campionebase.erosionera.magic.IMagic;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * <b>任何载荷最终只解析成一个 {@link IMagic}</b>。
  *
  * <ul>
- *   <li>{@link RunePayload} —— 刻录石的符文 id 列表 → 解析为泛用魔法（Spell）</li>
+ *   <li>{@link SpellPayload} —— 刻录石的符文 id 列表 → 解析为泛用魔法（Spell）</li>
  *   <li>{@link MantraPayload} —— 只含一个 Mantra id → 解析为非泛用魔法（Mantra）</li>
  *   <li>扩展模组可注册自己的载荷类型，同样只需能解析出 {@link IMagic}</li>
  * </ul>
@@ -20,10 +20,10 @@ import org.jetbrains.annotations.Nullable;
  * <p>因此施法器（法杖）<b>不需要</b>区分 Spell / Mantra / 扩展类型——它只做：
  * {@code payload.magic().cast(ctx)}，施法条件与资源消耗由魔法自身负责。
  *
- * <p>新增载荷类型需到 {@link SpellPayloads} 注册（类型 id → 读取器 + 模块物品工厂），
+ * <p>新增载荷类型需到 {@link MagicPayloads} 注册（类型 id → 读取器 + 模块物品工厂），
  * 容器与配方无需改动。
  */
-public interface SpellPayload {
+public interface MagicPayload {
 
     /** 载荷类型 id，用于 NBT 判别与注册表查找。 */
     ResourceLocation type();

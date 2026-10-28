@@ -37,18 +37,18 @@ public class ErErRecipes {
 
     // ------------------------------------------------------------------ 符文台
 
-    /** 符文台配方类别：{@code erosionera:rune_table}。 */
-    public static final RegistryObject<RecipeType<RuneRecipe>> RUNE_TABLE_TYPE =
-            RECIPE_TYPES.register("rune_table", () -> new RecipeType<>() {
+    /** 符文台配方类别：{@code erosionera:rune_craft}。 */
+    public static final RegistryObject<RecipeType<RuneRecipe>> RUNE_CRAFT =
+            RECIPE_TYPES.register(RuneRecipe.NAME, () -> new RecipeType<>() {
                 @Override
                 public String toString() {
-                    return ErosionEra.MODID + ":rune_table";
+                    return ErosionEra.MODID + ":" + RuneRecipe.NAME;
                 }
             });
 
-    /** 符文台配方序列化器：JSON 里的 {@code "type": "erosionera:rune_table"}。 */
-    public static final RegistryObject<RecipeSerializer<RuneRecipe>> RUNE_TABLE_SERIALIZER =
-            SERIALIZERS.register("rune_table", RuneRecipeSerializer::new);
+    /** 符文台配方序列化器：JSON 里的 {@code "type": "erosionera:rune_craft"}。 */
+    public static final RegistryObject<RecipeSerializer<RuneRecipe>> RUNE_CRAFT_SERIALIZER =
+            SERIALIZERS.register(RuneRecipe.NAME, RuneRecipeSerializer::new);
 
     // ------------------------------------------------------------------ 装载 / 卸下（合成台特例配方）
 

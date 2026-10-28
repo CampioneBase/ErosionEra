@@ -1,4 +1,4 @@
-package campionebase.erosionera.magic.spell.module;
+package campionebase.erosionera.magic.module;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.magic.IMagic;
@@ -14,14 +14,14 @@ import net.minecraft.resources.ResourceLocation;
  * <p>持久化的是**符文 id 列表**（magic_rune.md §3.4），术式实例在运行时构造。
  * 解析出的魔法是 {@link RuneSequenceSpell}。
  */
-public final class RunePayload implements SpellPayload {
+public final class SpellPayload implements MagicPayload {
 
     public static final ResourceLocation TYPE =
-            ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "rune");
+            ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "spell");
 
     private final RuneSequence sequence;
 
-    public RunePayload(RuneSequence sequence) {
+    public SpellPayload(RuneSequence sequence) {
         this.sequence = sequence == null ? RuneSequence.EMPTY : sequence;
     }
 
@@ -46,12 +46,12 @@ public final class RunePayload implements SpellPayload {
         return tag;
     }
 
-    public static RunePayload load(CompoundTag tag) {
-        return new RunePayload(RuneUnits.read(tag));
+    public static SpellPayload load(CompoundTag tag) {
+        return new SpellPayload(RuneUnits.read(tag));
     }
 
     @Override
     public String toString() {
-        return "RunePayload" + this.sequence;
+        return "SpellPayload" + this.sequence;
     }
 }

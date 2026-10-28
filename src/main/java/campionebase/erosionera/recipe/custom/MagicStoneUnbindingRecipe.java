@@ -1,8 +1,8 @@
 package campionebase.erosionera.recipe.custom;
 
-import campionebase.erosionera.magic.spell.ISpellContainer;
-import campionebase.erosionera.magic.spell.module.SpellPayload;
-import campionebase.erosionera.magic.spell.module.SpellPayloads;
+import campionebase.erosionera.magic.module.IMagicContainer;
+import campionebase.erosionera.magic.module.MagicPayload;
+import campionebase.erosionera.magic.module.MagicPayloads;
 import campionebase.erosionera.registry.ErErRecipes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 卸下：已装载的容器 → 模块（空容器作为剩余物返还）。
  *
- * <p>只对接 {@link ISpellContainer}；模块物品由 {@link SpellPayloads} 按载荷类型还原。
+ * <p>只对接 {@link IMagicContainer}；模块物品由 {@link MagicPayloads} 按载荷类型还原。
  *
  * <p><b>关键约束</b>：{@link #getRemainingItems} 是只读语义（预览阶段也会调用），
  * 因此对副本执行 {@code removePayload}，绝不修改输入物品栈。
@@ -40,13 +40,13 @@ public class MagicStoneUnbindingRecipe extends CustomRecipe {
             if (++count > 1) {
                 return false;
             }
-            ISpellContainer spellContainer = ISpellContainer.of(stack);
+            IMagicContainer spellContainer = IMagicContainer.of(stack);
             if (spellContainer == null || !spellContainer.canUnbind(stack)) {
                 return false;
             }
             // 载荷必须能还原成模块物品，否则卸下会把它吞掉
-            SpellPayload payload = spellContainer.getPayload(stack);
-            if (payload == null || !SpellPayloads.canProduceModule(payload)) {
+            MagicPayload payload = spellContainer.getPayload(stack);
+            if (payload == null || !MagicPayloads.canProduceModule(payload)) {
                 return false;
             }
         }
@@ -60,16 +60,16 @@ public class MagicStoneUnbindingRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            ISpellContainer spellContainer = ISpellContainer.of(stack);
+            IMagicContainer spellContainer = IMagicContainer.of(stack);
             if (spellContainer == null) {
                 continue;
             }
-            SpellPayload payload = spellContainer.getPayload(stack);
+            MagicPayload payload = spellContainer.getPayload(stack);
             if (payload == null) {
                 continue;
             }
             // 载荷类型决定返还哪种模块物品（刻录石 / Mantra 石 …）
-            return SpellPayloads.toModule(payload);
+            return MagicPayloads.toModule(payload);
         }
         return ItemStack.EMPTY;
     }
@@ -82,7 +82,7 @@ public class MagicStoneUnbindingRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            ISpellContainer spellContainer = ISpellContainer.of(stack);
+            IMagicContainer spellContainer = IMagicContainer.of(stack);
             if (spellContainer == null || !spellContainer.hasPayload(stack)) {
                 continue;
             }

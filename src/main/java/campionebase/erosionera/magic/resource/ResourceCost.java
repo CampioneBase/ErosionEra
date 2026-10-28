@@ -1,4 +1,6 @@
-package campionebase.erosionera.magic;
+package campionebase.erosionera.magic.resource;
+
+import campionebase.erosionera.magic.IMagic;
 
 /**
  * 施法所需资源。

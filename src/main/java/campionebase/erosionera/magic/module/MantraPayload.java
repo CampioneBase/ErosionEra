@@ -1,4 +1,4 @@
-package campionebase.erosionera.magic.spell.module;
+package campionebase.erosionera.magic.module;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.magic.IMagic;
@@ -10,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Mantra 载荷：数据**只有一个 Mantra id**。
  *
- * <p>与 {@link RunePayload} 的差别只是数据形态；对容器与施法器而言两者等价——
+ * <p>与 {@link SpellPayload} 的差别只是数据形态；对容器与施法器而言两者等价——
  * 都通过 {@link #magic()} 收敛成 {@link IMagic}。
  */
-public final class MantraPayload implements SpellPayload {
+public final class MantraPayload implements MagicPayload {
 
     public static final ResourceLocation TYPE =
             ResourceLocation.fromNamespaceAndPath(ErosionEra.MODID, "mantra");

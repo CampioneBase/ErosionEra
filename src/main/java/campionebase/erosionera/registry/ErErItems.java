@@ -2,9 +2,7 @@ package campionebase.erosionera.registry;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.data.lang.Translation;
-import campionebase.erosionera.item.MagicStoneItem;
-import campionebase.erosionera.item.RuneStoneItem;
-import campionebase.erosionera.item.SimpleWandItem;
+import campionebase.erosionera.item.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

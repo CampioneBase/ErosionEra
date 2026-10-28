@@ -5,10 +5,8 @@ import com.mojang.serialization.MapCodec;
 
 public final class RuneType<T extends RuneBehaviour> {
     public static final String KEY = "rune_type";
-    private final RuneCategory category;
     private final MapCodec<T> codec;
-    public RuneType(RuneCategory category, MapCodec<T> codec){
-        this.category = category;
+    public RuneType(MapCodec<T> codec){
         this.codec = codec;
     }
 

@@ -1,5 +1,6 @@
 package campionebase.erosionera.magic;
 
+import campionebase.erosionera.magic.resource.ResourceCost;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;

@@ -33,7 +33,14 @@ public class RuneRecipeSerializer implements RecipeSerializer<RuneRecipe> {
         Ingredient core = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "core"));
 
         List<Ingredient> materials = new ArrayList<>();
-        if (json.has("material")) {
+        if (json.has("materials")) {
+            JsonArray array = GsonHelper.getAsJsonArray(json, "materials");
+            for (JsonElement element : array) {
+                materials.add(Ingredient.fromJson(element));
+            }
+        }
+        // 兼容性防呆
+        else if (json.has("material")) {
             JsonArray array = GsonHelper.getAsJsonArray(json, "material");
             for (JsonElement element : array) {
                 materials.add(Ingredient.fromJson(element));

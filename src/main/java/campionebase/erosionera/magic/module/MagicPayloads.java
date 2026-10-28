@@ -1,4 +1,4 @@
-package campionebase.erosionera.magic.spell.module;
+package campionebase.erosionera.magic.module;
 
 import campionebase.erosionera.ErosionEra;
 import campionebase.erosionera.magic.spell.RuneUnits;
@@ -23,14 +23,14 @@ import java.util.Map;
  * <p>扩展模组注册自己的载荷后，容器能持久化它、卸下时能还原成对应模块物品，
  * 配方与容器一概不需要改动。
  */
-public final class SpellPayloads {
+public final class MagicPayloads {
 
     /**
      * 载荷类型定义。
      *
      * @param <S> 具体载荷类型
      */
-    public interface Type<S extends SpellPayload> {
+    public interface Type<S extends MagicPayload> {
         /** 从 NBT 读取载荷；数据非法时返回 {@code null}。 */
         @Nullable
         S load(CompoundTag tag);
@@ -48,14 +48,14 @@ public final class SpellPayloads {
 
     static {
         // 内置：符文序列 → 魔法石
-        register(RunePayload.TYPE, new Type<RunePayload>() {
+        register(SpellPayload.TYPE, new Type<SpellPayload>() {
             @Override
-            public RunePayload load(CompoundTag tag) {
-                return RunePayload.load(tag);
+            public SpellPayload load(CompoundTag tag) {
+                return SpellPayload.load(tag);
             }
 
             @Override
-            public ItemStack toModule(RunePayload payload) {
+            public ItemStack toModule(SpellPayload payload) {
                 ItemStack stone = new ItemStack(ErErItems.MAGIC_STONE.get());
                 RuneUnits.write(stone.getOrCreateTag(), payload.sequence());
                 return stone;
@@ -77,12 +77,12 @@ public final class SpellPayloads {
         });
     }
 
-    private SpellPayloads() {
+    private MagicPayloads() {
         throw new UnsupportedOperationException();
     }
 
     /** 注册载荷类型；重复注册抛异常（静默覆盖会让"哪个定义生效"不可追踪）。 */
-    public static <S extends SpellPayload> void register(ResourceLocation id, Type<S> type) {
+    public static <S extends MagicPayload> void register(ResourceLocation id, Type<S> type) {
         if (TYPES.containsKey(id)) {
             throw new IllegalStateException("Duplicate spell payload type: " + id);
         }
@@ -96,14 +96,14 @@ public final class SpellPayloads {
     /** 按类型 id + NBT 还原载荷；类型未注册或数据非法时返回 {@code null}。 */
     @Nullable
     @SuppressWarnings("unchecked")
-    public static SpellPayload load(ResourceLocation id, CompoundTag tag) {
+    public static MagicPayload load(ResourceLocation id, CompoundTag tag) {
         Type<?> type = TYPES.get(id);
         if (type == null) {
             ErosionEra.LOGGER.warn("Unknown spell payload type {}, payload ignored", id);
             return null;
         }
         try {
-            return ((Type<SpellPayload>) type).load(tag);
+            return ((Type<MagicPayload>) type).load(tag);
         } catch (Exception e) {
             ErosionEra.LOGGER.warn("Failed to read spell payload of type {}: {}", id, e.toString());
             return null;
@@ -116,17 +116,17 @@ public final class SpellPayloads {
      * @return 未知类型或工厂不可用时返回 {@link ItemStack#EMPTY}
      */
     @SuppressWarnings("unchecked")
-    public static ItemStack toModule(SpellPayload payload) {
+    public static ItemStack toModule(MagicPayload payload) {
         Type<?> type = TYPES.get(payload.type());
         if (type == null) {
             ErosionEra.LOGGER.warn("No module factory for spell payload type {}", payload.type());
             return ItemStack.EMPTY;
         }
-        return ((Type<SpellPayload>) type).toModule(payload);
+        return ((Type<MagicPayload>) type).toModule(payload);
     }
 
     /** 该载荷当前能否被还原成模块物品（卸下配方据此决定是否匹配）。 */
-    public static boolean canProduceModule(SpellPayload payload) {
+    public static boolean canProduceModule(MagicPayload payload) {
         return !toModule(payload).isEmpty();
     }
 }

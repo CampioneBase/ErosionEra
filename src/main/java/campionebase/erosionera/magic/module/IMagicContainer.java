@@ -1,21 +1,22 @@
-package campionebase.erosionera.magic.spell;
+package campionebase.erosionera.magic.module;
 
 import campionebase.erosionera.magic.IMagic;
-import campionebase.erosionera.magic.spell.module.SpellPayload;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * 「可装卸模块」的容器契约（法杖等）。
  *
- * <p>容器只知道自己在装一个 {@link SpellPayload}，<b>不知道</b>模块具体是刻录石还是
- * Mantra 石；配方也只认 {@link campionebase.erosionera.magic.spell.module.ISpellModule}。
+ * <p>容器只知道自己在装一个 {@link MagicPayload}，<b>不知道</b>模块具体是刻录石还是
+ * Mantra 石；配方也只认 {@link IMagicModule}。
  * 新增模块类型不需要改动容器或配方。
  *
  * <p>实现方式：让 <b>Item</b> 实现本接口。默认实现已把整条链路接好，
  * 通常只需要按需覆盖 {@link #isOnCooldown(ItemStack)} 或 {@link #slotCount()}。
+ *
+ * @see IMagicModule
  */
-public interface ISpellContainer {
+public interface IMagicContainer {
 
     /** 可同时承载的模块数量；默认单槽。多槽需要覆盖负载方法。 */
     default int slotCount() {
@@ -35,19 +36,19 @@ public interface ISpellContainer {
 
     /** 当前承载的载荷；空槽返回 {@code null}。 */
     @Nullable
-    default SpellPayload getPayload(ItemStack stack) {
-        return SpellContainerData.get(stack);
+    default MagicPayload getPayload(ItemStack stack) {
+        return MagicContainerData.get(stack);
     }
 
     /** 写入载荷。 */
-    default void setPayload(ItemStack stack, SpellPayload payload) {
-        SpellContainerData.set(stack, payload);
+    default void setPayload(ItemStack stack, MagicPayload payload) {
+        MagicContainerData.set(stack, payload);
     }
 
     /** 取出并移除载荷；空槽返回 {@code null}。 */
     @Nullable
-    default SpellPayload removePayload(ItemStack stack) {
-        return SpellContainerData.remove(stack);
+    default MagicPayload removePayload(ItemStack stack) {
+        return MagicContainerData.remove(stack);
     }
 
     /** 是否已有承载内容。 */
@@ -66,7 +67,7 @@ public interface ISpellContainer {
      */
     @Nullable
     default IMagic magicOf(ItemStack stack) {
-        SpellPayload payload = this.getPayload(stack);
+        MagicPayload payload = this.getPayload(stack);
         return payload == null ? null : payload.magic();
     }
 
@@ -84,10 +85,10 @@ public interface ISpellContainer {
 
     /** 从物品栈取容器；不是容器物品时返回 {@code null}。 */
     @Nullable
-    static ISpellContainer of(ItemStack stack) {
+    static IMagicContainer of(ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
             return null;
         }
-        return stack.getItem() instanceof ISpellContainer container ? container : null;
+        return stack.getItem() instanceof IMagicContainer container ? container : null;
     }
 }

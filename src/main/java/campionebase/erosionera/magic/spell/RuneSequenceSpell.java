@@ -3,7 +3,7 @@ package campionebase.erosionera.magic.spell;
 import campionebase.erosionera.entity.projectile.MagicBullet;
 import campionebase.erosionera.magic.MagicContext;
 import campionebase.erosionera.magic.MagicResult;
-import campionebase.erosionera.magic.ResourceCost;
+import campionebase.erosionera.magic.resource.ResourceCost;
 import campionebase.erosionera.magic.spell.behaviour.RuneBehaviour;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -79,7 +79,7 @@ public class RuneSequenceSpell implements ISpell {
             return MagicResult.error("builder produced nothing");
         }
         // 资源结算放在成功之后，避免失败时白扣
-        ctx.manaPool().consumeMana(this.getCost().manaCost());
+        ctx.manaPool().extract(this.getCost().manaCost());
         serverLevel.addFreshEntity(bullet);
         return result;
     }

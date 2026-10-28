@@ -1,6 +1,7 @@
 package campionebase.erosionera.block;
 
 import campionebase.erosionera.block.entity.RuneCraftingTableBlockEntity;
+import campionebase.erosionera.registry.ErErBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -9,13 +10,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -34,13 +35,14 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p><b>交互语义</b>：空手 = 取下 1 个（直接进手）；手持物品 = 放入 1 个。
  */
-public class RuneCraftingTableBlock extends Block implements EntityBlock {
+public class RuneCraftingTableBlock extends BaseEntityBlock {
     public static final VoxelShape BASE_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
 
     public RuneCraftingTableBlock() {
         super(BlockBehaviour.Properties.of()
                 .sound(SoundType.STONE)
                 .requiresCorrectToolForDrops()
+                .pushReaction(PushReaction.BLOCK)
         );
     }
 
@@ -98,7 +100,21 @@ public class RuneCraftingTableBlock extends Block implements EntityBlock {
         return RuneCraftingTableBlockEntity.isCoreRegion(localX, localZ);
     }
 
-    // ------------------------------------------------------------------ 取下
+    @Override
+    public void onRemove(
+            BlockState oldState,
+            @NotNull Level level,
+            @NotNull BlockPos pos,
+            BlockState newState,
+            boolean isMoving
+    ) {
+        if (!oldState.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof RuneCraftingTableBlockEntity blockEntity) {
+                blockEntity.dropAll();
+            }
+        }
+        super.onRemove(oldState, level, pos, newState, isMoving);
+    }
 
     private boolean takeOne(RuneCraftingTableBlockEntity table, Player player, InteractionHand hand, boolean coreRegion) {
         int slot;
@@ -120,8 +136,6 @@ public class RuneCraftingTableBlock extends Block implements EntityBlock {
         player.setItemInHand(hand, taken);
         return true;
     }
-
-    // ------------------------------------------------------------------ 放入
 
     private boolean placeOne(RuneCraftingTableBlockEntity table, Player player, InteractionHand hand,
                              ItemStack held, boolean coreRegion) {
@@ -162,5 +176,13 @@ public class RuneCraftingTableBlock extends Block implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new RuneCraftingTableBlockEntity(pos, state);
+    }
+
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            @NotNull Level level,
+            @NotNull BlockState blockState,
+            @NotNull BlockEntityType<T> type
+    ) {
+        return createTickerHelper(type, ErErBlockEntities.RUNE_CRAFTING_TABLE.get(), RuneCraftingTableBlockEntity::tick);
     }
 }

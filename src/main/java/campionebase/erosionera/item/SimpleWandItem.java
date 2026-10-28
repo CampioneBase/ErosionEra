@@ -1,10 +1,10 @@
 package campionebase.erosionera.item;
 
 import campionebase.erosionera.magic.IMagic;
-import campionebase.erosionera.magic.IManaPool;
+import campionebase.erosionera.magic.resource.IManaPool;
 import campionebase.erosionera.magic.MagicContext;
 import campionebase.erosionera.magic.MagicResult;
-import campionebase.erosionera.magic.spell.ISpellContainer;
+import campionebase.erosionera.magic.module.IMagicContainer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
  * {@code cast(ctx)}，施法条件与资源消耗都由魔法自身负责。
  * 因此这里不区分 Spell / Mantra / 扩展魔法类型——新增魔法类型不需要改本类。
  */
-public class SimpleWandItem extends AbstractMagicWeaponItem implements ISpellContainer {
+public class SimpleWandItem extends AbstractMagicWeaponItem implements IMagicContainer {
 
     public SimpleWandItem() {
         super(new Item.Properties()

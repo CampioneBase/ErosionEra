@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 符文台配方：核心物品 + 若干材料 → 一颗符文石。
@@ -36,7 +37,7 @@ import java.util.List;
  * （先找出核心物品，剩余槽位再逐个匹配材料）。这样方块的槽位布局可以自由调整。
  */
 public record RuneRecipe(
-        @Nullable ResourceLocation id,
+        ResourceLocation id,
         Ingredient core,
         List<Ingredient> materials,
         int mpt,
@@ -44,36 +45,28 @@ public record RuneRecipe(
         ResourceLocation result
 ) implements Recipe<Container> {
 
+    public static final String NAME = "rune_recipe";
+
     // ------------------------------------------------------------------ 匹配
 
     @Override
     public boolean matches(@NotNull Container container, @NotNull Level level) {
         List<ItemStack> stacks = nonEmptyStacks(container);
+        if (stacks.isEmpty()) return false;
         // 输入数量必须恰好是 1 个核心 + N 份材料
         if (stacks.size() != 1 + this.materials.size()) {
             return false;
         }
 
         // 先定位核心物品
-        int coreIndex = -1;
-        for (int i = 0; i < stacks.size(); i++) {
-            if (this.core.test(stacks.get(i))) {
-                coreIndex = i;
-                break;
-            }
-        }
-        if (coreIndex < 0) {
-            return false;
-        }
+        if (!this.core.test(stacks.get(0))) return false;
 
-        // 剩余槽位逐一匹配材料（贪心）。材料之间若有重叠，贪心可能误判；
-        // 对符文台这种 1+N 的低复杂度形状可以接受，将来若出现重叠材料再改回溯。
-        List<ItemStack> remaining = new ArrayList<>(stacks);
-        remaining.remove(coreIndex);
+        // 剩余槽位逐一匹配材料（贪心）
+        stacks.remove(0);
         for (Ingredient material : this.materials) {
             int found = -1;
-            for (int i = 0; i < remaining.size(); i++) {
-                if (material.test(remaining.get(i))) {
+            for (int i = 0; i < stacks.size(); i++) {
+                if (material.test(stacks.get(i))) {
                     found = i;
                     break;
                 }
@@ -81,9 +74,9 @@ public record RuneRecipe(
             if (found < 0) {
                 return false;
             }
-            remaining.remove(found);
+            stacks.remove(found);
         }
-        return remaining.isEmpty();
+        return stacks.isEmpty();
     }
 
     private static List<ItemStack> nonEmptyStacks(Container container) {
@@ -138,17 +131,28 @@ public record RuneRecipe(
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return ErErRecipes.RUNE_TABLE_SERIALIZER.get();
+        return ErErRecipes.RUNE_CRAFT_SERIALIZER.get();
     }
 
     @Override
     public @NotNull RecipeType<?> getType() {
-        return ErErRecipes.RUNE_TABLE_TYPE.get();
+        return ErErRecipes.RUNE_CRAFT.get();
     }
 
     @Override
-    @Nullable
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return this.id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RuneRecipe that)) return false;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

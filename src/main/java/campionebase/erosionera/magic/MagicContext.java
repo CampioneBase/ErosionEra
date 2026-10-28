@@ -1,14 +1,11 @@
 package campionebase.erosionera.magic;
 
-import net.minecraft.resources.ResourceLocation;
+import campionebase.erosionera.magic.resource.IManaPool;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * 施法上下文：一次施法所需的全部输入。

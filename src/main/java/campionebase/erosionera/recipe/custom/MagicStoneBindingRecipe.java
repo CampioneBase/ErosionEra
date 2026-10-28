@@ -1,8 +1,8 @@
 package campionebase.erosionera.recipe.custom;
 
-import campionebase.erosionera.magic.spell.ISpellContainer;
-import campionebase.erosionera.magic.spell.module.ISpellModule;
-import campionebase.erosionera.magic.spell.module.SpellPayload;
+import campionebase.erosionera.magic.module.IMagicContainer;
+import campionebase.erosionera.magic.module.IMagicModule;
+import campionebase.erosionera.magic.module.MagicPayload;
 import campionebase.erosionera.registry.ErErRecipes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 装载：空容器 + 模块 → 已装载的容器。
  *
- * <p>只对接两个抽象：{@link ISpellContainer}（容器）与
- * {@link ISpellModule}（模块，刻录石 / Mantra 石等）。
+ * <p>只对接两个抽象：{@link IMagicContainer}（容器）与
+ * {@link IMagicModule}（模块，刻录石 / Mantra 石等）。
  * 新增模块类型不需要改动本配方。
  */
 public class MagicStoneBindingRecipe extends CustomRecipe {
@@ -42,7 +42,7 @@ public class MagicStoneBindingRecipe extends CustomRecipe {
                 return false;
             }
 
-            ISpellContainer spellContainer = ISpellContainer.of(stack);
+            IMagicContainer spellContainer = IMagicContainer.of(stack);
             if (spellContainer != null) {
                 if (!spellContainer.canBind(stack) || !containerStack.isEmpty()) {
                     return false;
@@ -51,7 +51,7 @@ public class MagicStoneBindingRecipe extends CustomRecipe {
                 continue;
             }
 
-            ISpellModule module = ISpellModule.of(stack);
+            IMagicModule module = IMagicModule.of(stack);
             if (module != null) {
                 if (!module.canInstall(stack) || !moduleStack.isEmpty()) {
                     return false;
@@ -75,20 +75,20 @@ public class MagicStoneBindingRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (ISpellContainer.of(stack) != null) {
+            if (IMagicContainer.of(stack) != null) {
                 containerStack = stack;
-            } else if (ISpellModule.of(stack) != null) {
+            } else if (IMagicModule.of(stack) != null) {
                 moduleStack = stack;
             }
         }
 
-        ISpellContainer spellContainer = ISpellContainer.of(containerStack);
-        ISpellModule module = ISpellModule.of(moduleStack);
+        IMagicContainer spellContainer = IMagicContainer.of(containerStack);
+        IMagicModule module = IMagicModule.of(moduleStack);
         if (spellContainer == null || module == null) {
             return ItemStack.EMPTY;
         }
 
-        SpellPayload payload = module.payload(moduleStack);
+        MagicPayload payload = module.payload(moduleStack);
         if (payload == null) {
             return ItemStack.EMPTY;
         }
